@@ -3336,12 +3336,14 @@ function renderBrowseView() {
 }
 
 function scrollBrowseTo(id) {
-  // Scroll the browse view so the given construction is at the top
   const target = el.browseView.querySelector(`.browse-construction[data-id="${id}"]`);
   if (!target) return;
-  // Use scrollIntoView with block:start; offset slightly so the section header is visible
-  const top = target.offsetTop - 16;
-  el.browseView.scrollTop = top;
+  // Use getBoundingClientRect for reliable positioning regardless of layout
+  const targetRect = target.getBoundingClientRect();
+  const containerRect = el.browseView.getBoundingClientRect();
+  // Current scroll + (target's position relative to container) - small offset for breathing room
+  const delta = targetRect.top - containerRect.top;
+  el.browseView.scrollTop += delta - 12;
 }
 
 function switchView(view) {
@@ -3352,9 +3354,11 @@ function switchView(view) {
     el.browseView.classList.add('active');
     el.tabDrill.classList.remove('active');
     el.tabBrowse.classList.add('active');
-    // Jump to the current construction and highlight it
     highlightBrowseCurrent();
-    requestAnimationFrame(() => scrollBrowseTo(state.currentId));
+    // Wait for layout to compute, then scroll
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => scrollBrowseTo(state.currentId));
+    });
   } else {
     el.drillView.classList.remove('hidden');
     el.browseView.classList.remove('active');
