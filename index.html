@@ -1,0 +1,3774 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ATSU 120選 シャドーイング・ドリル</title>
+<style>
+  /* ==============================
+     FONTS
+     ============================== */
+  @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@500&display=swap');
+
+  :root {
+    --bg-0: #0a0e1a;
+    --bg-1: #111729;
+    --bg-2: #1a2238;
+    --bg-3: #232d4a;
+    --border: #2a3553;
+    --border-soft: #1f2942;
+    --text-0: #f1f5ff;
+    --text-1: #c8d1e8;
+    --text-2: #8b94b3;
+    --text-3: #5a6585;
+    --accent: #7ab8ff;
+    --accent-dim: #4a78bf;
+    --accent-soft: rgba(122, 184, 255, 0.12);
+    --jp-accent: #b89eff;
+    --jp-accent-soft: rgba(184, 158, 255, 0.1);
+    --good: #6eddb0;
+    --warn: #ffb86b;
+    --bad: #ff7b8d;
+    --shadow-1: 0 4px 20px rgba(0, 0, 0, 0.3);
+    --shadow-2: 0 8px 40px rgba(0, 0, 0, 0.4);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body { height: 100%; }
+
+  body {
+    font-family: 'Manrope', 'Noto Sans JP', sans-serif;
+    background: var(--bg-0);
+    background-image:
+      radial-gradient(ellipse at top left, rgba(122, 184, 255, 0.06), transparent 50%),
+      radial-gradient(ellipse at bottom right, rgba(184, 158, 255, 0.05), transparent 50%);
+    background-attachment: fixed;
+    color: var(--text-0);
+    overflow-x: hidden;
+    line-height: 1.5;
+  }
+
+  /* ==============================
+     LAYOUT
+     ============================== */
+  .app {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    height: 100vh;
+    max-height: 100vh;
+  }
+
+  /* ----- Sidebar ----- */
+  .sidebar {
+    background: var(--bg-1);
+    border-right: 1px solid var(--border-soft);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .sidebar-search {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border-soft);
+  }
+  .search-input {
+    width: 100%;
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    color: var(--text-0);
+    padding: 9px 12px;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 13px;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .search-input::placeholder { color: var(--text-3); }
+  .search-input:focus {
+    outline: none;
+    border-color: var(--accent-dim);
+    background: var(--bg-3);
+  }
+
+  .construction-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px 8px 16px;
+  }
+  .construction-list::-webkit-scrollbar { width: 8px; }
+  .construction-list::-webkit-scrollbar-thumb {
+    background: var(--bg-3);
+    border-radius: 4px;
+  }
+
+  .section-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text-3);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 14px 14px 8px;
+  }
+
+  .construction-item {
+    padding: 9px 12px;
+    border-radius: 7px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--text-1);
+    font-size: 13px;
+    transition: background 0.12s, color 0.12s;
+    margin: 1px 4px;
+  }
+  .construction-item:hover {
+    background: var(--bg-2);
+    color: var(--text-0);
+  }
+  .construction-item.active {
+    background: var(--accent-soft);
+    color: var(--accent);
+  }
+  .construction-item.active .item-num {
+    background: var(--accent);
+    color: var(--bg-0);
+  }
+  .construction-item.placeholder {
+    color: var(--text-3);
+    opacity: 0.5;
+  }
+  .construction-item.placeholder:hover {
+    background: transparent;
+    cursor: default;
+  }
+
+  .item-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 600;
+    background: var(--bg-3);
+    color: var(--text-2);
+    padding: 2px 6px;
+    border-radius: 4px;
+    min-width: 30px;
+    text-align: center;
+    transition: background 0.12s, color 0.12s;
+  }
+  .item-text {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-weight: 500;
+  }
+
+  /* ----- Main ----- */
+  .main {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .main-header {
+    padding: 16px 36px 14px;
+    border-bottom: 1px solid var(--border-soft);
+    background: var(--bg-1);
+  }
+
+  .header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .pattern-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text-0);
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+  .pattern-title .pattern-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--accent);
+    background: var(--accent-soft);
+    padding: 3px 7px;
+    border-radius: 5px;
+    margin-right: 10px;
+    vertical-align: middle;
+    font-weight: 600;
+  }
+  .pattern-meaning {
+    color: var(--text-2);
+    font-size: 13px;
+    margin-top: 4px;
+    font-weight: 500;
+  }
+
+  /* ==============================
+     STAGE (the example display)
+     ============================== */
+  .stage {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    overflow-y: auto;
+    position: relative;
+  }
+
+  .progress-row {
+    position: absolute;
+    top: 20px;
+    left: 36px;
+    right: 36px;
+    display: flex;
+    gap: 4px;
+  }
+  .progress-pip {
+    flex: 1;
+    height: 3px;
+    background: var(--bg-2);
+    border-radius: 2px;
+    transition: background 0.2s;
+  }
+  .progress-pip.done { background: var(--accent-dim); }
+  .progress-pip.current { background: var(--accent); box-shadow: 0 0 8px var(--accent); }
+
+  .example-card {
+    max-width: 800px;
+    width: 100%;
+    text-align: center;
+  }
+  .example-counter {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-3);
+    letter-spacing: 0.15em;
+    margin-bottom: 28px;
+    text-transform: uppercase;
+  }
+  .example-counter .current {
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  .example-en {
+    font-size: 44px;
+    font-weight: 600;
+    color: var(--text-0);
+    letter-spacing: -0.02em;
+    line-height: 1.3;
+    margin-bottom: 28px;
+    min-height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .example-ja {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--jp-accent);
+    background: var(--jp-accent-soft);
+    padding: 16px 28px;
+    border-radius: 12px;
+    display: inline-block;
+    transition: opacity 0.2s, transform 0.2s;
+  }
+  .example-ja.hidden {
+    opacity: 0;
+    transform: translateY(-4px);
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .placeholder-message {
+    text-align: center;
+    color: var(--text-3);
+    font-size: 15px;
+    max-width: 480px;
+    line-height: 1.6;
+  }
+  .placeholder-message strong {
+    color: var(--text-1);
+    display: block;
+    font-size: 17px;
+    margin-bottom: 8px;
+  }
+
+  /* ==============================
+     CONTROLS (bottom bar)
+     ============================== */
+  .controls {
+    background: var(--bg-1);
+    border-top: 1px solid var(--border-soft);
+    padding: 14px 36px 16px;
+  }
+
+  .controls-main {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .btn {
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    color: var(--text-1);
+    padding: 10px 14px;
+    border-radius: 9px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+  }
+  .btn:hover {
+    background: var(--bg-3);
+    color: var(--text-0);
+    border-color: var(--accent-dim);
+  }
+  .btn:active { transform: translateY(1px); }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn:disabled:hover { background: var(--bg-2); border-color: var(--border); color: var(--text-1); }
+
+  .btn-icon {
+    padding: 0;
+    width: 42px;
+    height: 42px;
+    min-width: 42px;
+  }
+  .btn-icon svg { display: block; }
+
+  .btn-primary {
+    background: var(--accent);
+    color: var(--bg-0);
+    border-color: var(--accent);
+    width: 52px;
+    height: 52px;
+    min-width: 52px;
+    border-radius: 50%;
+  }
+  .btn-primary:hover {
+    background: #95c8ff;
+    border-color: #95c8ff;
+    color: var(--bg-0);
+  }
+  .btn-primary.playing {
+    background: var(--warn);
+    border-color: var(--warn);
+    color: var(--bg-0);
+  }
+  .btn-primary.playing:hover {
+    background: #ffc483;
+    border-color: #ffc483;
+  }
+  .btn-primary.playing .icon-play { display: none; }
+  .btn-primary.playing .icon-pause { display: block !important; }
+
+  .controls-options {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 28px;
+    flex-wrap: wrap;
+    color: var(--text-2);
+    font-size: 12px;
+  }
+  .option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+  }
+  .option label { cursor: pointer; }
+  .option select, .option input[type="number"] {
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    color: var(--text-0);
+    padding: 5px 8px;
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 12px;
+    cursor: pointer;
+  }
+  .option select:focus, .option input:focus {
+    outline: none;
+    border-color: var(--accent-dim);
+  }
+  .option input[type="number"] { width: 56px; }
+
+  .option-toggle {
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    padding: 5px 12px;
+    border-radius: 6px;
+    color: var(--text-2);
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    transition: all 0.15s;
+  }
+  .option-toggle.on {
+    background: var(--accent-soft);
+    border-color: var(--accent-dim);
+    color: var(--accent);
+  }
+
+  /* ==============================
+     VIEW SWITCHER (Drill / Browse)
+     ============================== */
+  .view-switcher {
+    display: flex;
+    gap: 4px;
+    padding: 4px;
+    background: var(--bg-2);
+    border-radius: 9px;
+    border: 1px solid var(--border);
+  }
+  .view-switcher button {
+    background: transparent;
+    border: none;
+    color: var(--text-2);
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .view-switcher button:hover { color: var(--text-0); }
+  .view-switcher button.active {
+    background: var(--accent-soft);
+    color: var(--accent);
+  }
+
+  /* ==============================
+     BROWSE VIEW (all examples)
+     ============================== */
+  .browse-view {
+    flex: 1;
+    overflow-y: auto;
+    padding: 28px 36px 60px;
+    display: none;
+  }
+  .browse-view.active { display: block; }
+  .drill-view { display: flex; flex-direction: column; flex: 1; overflow: hidden; }
+  .drill-view.hidden { display: none; }
+
+  .browse-section {
+    margin-bottom: 36px;
+  }
+  .browse-section-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-3);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border-soft);
+  }
+
+  .browse-construction {
+    background: var(--bg-1);
+    border: 1px solid var(--border-soft);
+    border-radius: 12px;
+    padding: 18px 22px;
+    margin-bottom: 14px;
+    transition: border-color 0.15s;
+  }
+  .browse-construction:hover {
+    border-color: var(--accent-dim);
+  }
+
+  .browse-header {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 4px;
+    flex-wrap: wrap;
+  }
+  .browse-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    background: var(--accent-soft);
+    padding: 3px 7px;
+    border-radius: 5px;
+    font-weight: 600;
+  }
+  .browse-pattern {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--text-0);
+    letter-spacing: -0.01em;
+  }
+  .browse-meaning {
+    font-size: 12px;
+    color: var(--text-2);
+    margin-bottom: 14px;
+    font-family: 'Noto Sans JP', sans-serif;
+  }
+  .browse-jump {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-2);
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    margin-left: auto;
+  }
+  .browse-jump:hover {
+    background: var(--accent-soft);
+    border-color: var(--accent-dim);
+    color: var(--accent);
+  }
+
+  .browse-examples {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 24px;
+  }
+  .browse-ex {
+    display: grid;
+    grid-template-columns: 22px 1fr;
+    gap: 8px;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--border-soft);
+    align-items: start;
+  }
+  .browse-ex:last-child,
+  .browse-ex:nth-last-child(2) {
+    border-bottom: none;
+  }
+  .browse-ex-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--text-3);
+    line-height: 1.5;
+    padding-top: 2px;
+  }
+  .browse-ex-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .browse-ex-en {
+    font-size: 14px;
+    color: var(--text-0);
+    line-height: 1.4;
+    font-weight: 500;
+  }
+  .browse-ex-ja {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 12px;
+    color: var(--text-2);
+    line-height: 1.4;
+  }
+  @media (max-width: 900px) {
+    .browse-examples { grid-template-columns: 1fr; }
+    .browse-ex:nth-last-child(2) { border-bottom: 1px solid var(--border-soft); }
+  }
+
+  /* ----- responsive ----- */
+  @media (max-width: 800px) {
+    .app { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
+    .sidebar {
+      max-height: 38vh;
+      border-right: none;
+      border-bottom: 1px solid var(--border-soft);
+    }
+    .main-header { padding: 12px 18px 10px; }
+    .pattern-title { font-size: 18px; }
+    .pattern-title .pattern-num { font-size: 11px; padding: 2px 6px; margin-right: 8px; }
+    .pattern-meaning { font-size: 12px; }
+    .stage { padding: 24px 18px; }
+    .progress-row { left: 18px; right: 18px; top: 14px; }
+    .example-en { font-size: 26px; min-height: 80px; margin-bottom: 20px; }
+    .example-ja { font-size: 17px; padding: 12px 20px; }
+    .controls { padding: 10px 18px 14px; }
+    .controls-main { gap: 8px; margin-bottom: 10px; }
+    .btn-icon { width: 38px; height: 38px; min-width: 38px; }
+    .btn-primary { width: 48px; height: 48px; min-width: 48px; }
+    .controls-options { gap: 12px; }
+  }
+
+  /* highlight pulse on speak */
+  .example-en.speaking {
+    animation: pulse 0.4s ease;
+  }
+  @keyframes pulse {
+    0%, 100% { color: var(--text-0); }
+    50% { color: var(--accent); }
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar">
+    <div class="sidebar-search">
+      <input class="search-input" id="searchInput" placeholder="検索 (構文・意味)" type="text">
+    </div>
+
+    <nav class="construction-list" id="constructionList"></nav>
+  </aside>
+
+  <!-- ============ MAIN ============ -->
+  <main class="main">
+    <header class="main-header">
+      <div class="header-top">
+        <div>
+          <div class="pattern-title">
+            <span class="pattern-num" id="patternNum">01</span>
+            <span id="patternText">It's 形容詞 to do</span>
+          </div>
+          <div class="pattern-meaning" id="patternMeaning">〜するのは形容詞だ</div>
+        </div>
+        <div class="view-switcher">
+          <button id="tabDrill" class="active">ドリル</button>
+          <button id="tabBrowse">一覧</button>
+        </div>
+      </div>
+    </header>
+
+    <div class="drill-view" id="drillView">
+      <div class="stage" id="stage">
+        <div class="progress-row" id="progressRow"></div>
+
+        <div class="example-card" id="exampleCard">
+          <div class="example-counter">
+            <span class="current" id="exCurrent">1</span> / <span id="exTotal">12</span>
+          </div>
+          <div class="example-en" id="exampleEn"></div>
+          <div class="example-ja" id="exampleJa"></div>
+        </div>
+      </div>
+
+      <footer class="controls">
+      <div class="controls-main">
+        <button class="btn btn-icon" id="btnPrev" title="前へ (←)">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M15.41 7.41 14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+        </button>
+        <button class="btn btn-icon" id="btnSpeak" title="読み上げ (Space)">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
+        </button>
+        <button class="btn btn-primary btn-icon" id="btnPlay" title="自動再生 (P)">
+          <svg class="icon-play" viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+          <svg class="icon-pause" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" style="display:none"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+        </button>
+        <button class="btn btn-icon" id="btnShuffle" title="例文シャッフル (S)">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M10.59 9.17 5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z"/></svg>
+        </button>
+        <button class="btn btn-icon" id="btnRandomC" title="ランダム構文 (R)">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M19.78 4.22a.625.625 0 0 0-.44-.18H4.66c-.34 0-.62.28-.62.62v14.68c0 .34.28.62.62.62h14.68c.34 0 .62-.28.62-.62V4.66c0-.16-.06-.32-.18-.44zM8.5 17a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm0-6a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm3.5 3a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm3.5 3a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm0-6a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"/></svg>
+        </button>
+        <button class="btn btn-icon" id="btnNext" title="次へ (→)">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M10 6 8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+        </button>
+      </div>
+
+      <div class="controls-options">
+        <div class="option">
+          <label for="optMode">モード:</label>
+          <select id="optMode">
+            <option value="en">英のみ</option>
+            <option value="ja-en">日→英</option>
+            <option value="en-ja">英→日</option>
+          </select>
+        </div>
+        <div class="option">
+          <label for="optRate">速度:</label>
+          <select id="optRate">
+            <option value="0.7">0.7×</option>
+            <option value="0.85">0.85×</option>
+            <option value="1.0" selected>1.0×</option>
+            <option value="1.15">1.15×</option>
+            <option value="1.3">1.3×</option>
+          </select>
+        </div>
+        <div class="option">
+          <label for="optRepeat">繰返:</label>
+          <input id="optRepeat" max="10" min="1" type="number" value="2">
+        </div>
+        <div class="option">
+          <label for="optGap">間隔(秒):</label>
+          <input id="optGap" max="10" min="0" step="0.5" type="number" value="3">
+        </div>
+        <div class="option">
+          <label for="optFlow">進行:</label>
+          <select id="optFlow">
+            <option value="single">この構文のみ</option>
+            <option value="sequential">構文を順番に</option>
+            <option value="shuffle-c">構文シャッフル</option>
+            <option value="shuffle-all">全シャッフル</option>
+          </select>
+        </div>
+        <button class="option-toggle on" id="optShowJa">日本語訳</button>
+      </div>
+    </footer>
+    </div><!-- /.drill-view -->
+
+    <div class="browse-view" id="browseView"></div>
+  </main>
+</div>
+
+<script>
+// ATSU 120選 シャドーイング・ドリル データ
+// 各構文に対し、主語/時制/疑問/目的語などを変えた12パターンの例文
+// 構文の型と訳語の枠組みは Atsueigo「ATSUの表現・構文厳選120選」を参照
+// 例文（12パターン）はオリジナルに書き起こし
+
+const CONSTRUCTIONS = [
+  // ===== 初級編 (01-30) =====
+  {
+    id: 1,
+    section: "初級",
+    pattern: "It's 形容詞 to do",
+    meaning: "〜するのは形容詞だ",
+    examples: [
+      { en: "It's important to exercise every day.", ja: "毎日運動するのは大事だ。" },
+      { en: "It's fun to study English.", ja: "英語を勉強するのは楽しい。" },
+      { en: "It's hard to wake up early.", ja: "早起きするのは難しい。" },
+      { en: "It's necessary to drink water.", ja: "水を飲むことは必要だ。" },
+      { en: "It was easy to find your house.", ja: "君の家を見つけるのは簡単だった。" },
+      { en: "It was difficult to finish on time.", ja: "時間通りに終えるのは難しかった。" },
+      { en: "It's dangerous to drive at night.", ja: "夜に運転するのは危険だ。" },
+      { en: "It's nice to meet new people.", ja: "新しい人に会うのはいいものだ。" },
+      { en: "Is it safe to walk here?", ja: "ここを歩くのは安全ですか?" },
+      { en: "Is it hard to learn Japanese?", ja: "日本語を学ぶのは難しいですか?" },
+      { en: "It's not easy to change habits.", ja: "習慣を変えるのは簡単じゃない。" },
+      { en: "It wasn't expensive to fix the car.", ja: "車を直すのは高くなかった。" },
+    ],
+  },
+  {
+    id: 2,
+    section: "初級",
+    pattern: "It's 形容詞 that 文",
+    meaning: "文は形容詞だ",
+    examples: [
+      { en: "It's amazing that you finished so quickly.", ja: "あなたがそんなに早く終えたのはすごい。" },
+      { en: "It's strange that he didn't call.", ja: "彼が電話してこなかったのは変だ。" },
+      { en: "It's surprising that she knows my name.", ja: "彼女が私の名前を知っているのは驚きだ。" },
+      { en: "It's clear that you worked hard.", ja: "あなたが頑張ったのは明らかだ。" },
+      { en: "It's sad that they had to leave.", ja: "彼らが帰らなければならなかったのは悲しい。" },
+      { en: "It was lucky that we caught the train.", ja: "電車に間に合ったのはラッキーだった。" },
+      { en: "It's true that he speaks five languages.", ja: "彼が5ヶ国語話せるのは本当だ。" },
+      { en: "It's obvious that she's tired.", ja: "彼女が疲れているのは明らかだ。" },
+      { en: "Is it true that you're moving?", ja: "引っ越すって本当ですか?" },
+      { en: "Is it possible that I left it at home?", ja: "家に置いてきた可能性はある?" },
+      { en: "It's not surprising that he won.", ja: "彼が勝ったのは驚きじゃない。" },
+      { en: "It wasn't clear that you were joking.", ja: "あなたが冗談を言っているのは明らかじゃなかった。" },
+    ],
+  },
+  {
+    id: 3,
+    section: "初級",
+    pattern: "X is so 形容詞 that 文",
+    meaning: "Xはとても形容詞だから文だ",
+    examples: [
+      { en: "It was so good that I couldn't stop eating.", ja: "美味しすぎて止まらなかった。" },
+      { en: "He's so funny that everyone loves him.", ja: "彼は面白すぎてみんなに好かれている。" },
+      { en: "The movie was so boring that I fell asleep.", ja: "映画があまりにつまらなくて寝てしまった。" },
+      { en: "She's so smart that she finished first.", ja: "彼女は賢すぎて一番に終わった。" },
+      { en: "It's so cold that I can't feel my hands.", ja: "寒すぎて手の感覚がない。" },
+      { en: "I was so tired that I went straight to bed.", ja: "疲れすぎてすぐ寝た。" },
+      { en: "The bag was so heavy that I couldn't lift it.", ja: "そのバッグは重すぎて持ち上げられなかった。" },
+      { en: "He spoke so fast that I didn't understand.", ja: "彼が早口すぎて分からなかった。" },
+      { en: "It's so hot that I want to stay inside.", ja: "暑すぎて中にいたい。" },
+      { en: "Was it so loud that you couldn't hear me?", ja: "うるさすぎて聞こえなかった?" },
+      { en: "It wasn't so difficult that I had to give up.", ja: "諦めるほど難しくはなかった。" },
+      { en: "She's not so busy that she can't help.", ja: "彼女は手伝えないほど忙しくはない。" },
+    ],
+  },
+  {
+    id: 4,
+    section: "初級",
+    pattern: "X is too 形容詞 to do",
+    meaning: "Xは形容詞すぎて〜できない",
+    examples: [
+      { en: "I'm too tired to go out.", ja: "疲れすぎて出かけられない。" },
+      { en: "It's too cold to swim.", ja: "寒すぎて泳げない。" },
+      { en: "He's too young to drive.", ja: "彼は若すぎて運転できない。" },
+      { en: "This coffee is too hot to drink.", ja: "このコーヒーは熱すぎて飲めない。" },
+      { en: "She was too shy to speak up.", ja: "彼女は恥ずかしすぎて発言できなかった。" },
+      { en: "The box was too heavy to carry alone.", ja: "その箱は重すぎて一人で運べなかった。" },
+      { en: "I'm too busy to take a vacation.", ja: "忙しすぎて休みが取れない。" },
+      { en: "It's too late to call him now.", ja: "今は彼に電話するには遅すぎる。" },
+      { en: "Were you too tired to finish?", ja: "疲れすぎて終えられなかった?" },
+      { en: "Aren't you too full to eat dessert?", ja: "お腹いっぱいでデザート食べられないんじゃない?" },
+      { en: "He's not too old to learn.", ja: "彼は学ぶには年を取りすぎてはいない。" },
+      { en: "It's not too far to walk.", ja: "歩くには遠すぎない。" },
+    ],
+  },
+  {
+    id: 5,
+    section: "初級",
+    pattern: "X is 形容詞 enough to do",
+    meaning: "〜するにはXは十分形容詞だ",
+    examples: [
+      { en: "I'm not confident enough to speak in public.", ja: "人前で話せるほど自信がない。" },
+      { en: "It's fast enough to watch YouTube.", ja: "YouTubeを見られるくらい速い。" },
+      { en: "He's tall enough to reach the shelf.", ja: "彼は棚に手が届くくらい背が高い。" },
+      { en: "She's old enough to vote.", ja: "彼女は投票できる年齢だ。" },
+      { en: "Are you brave enough to try it?", ja: "試すくらいの勇気はある?" },
+      { en: "Is the soup hot enough to eat?", ja: "スープは食べられるくらい熱い?" },
+      { en: "The room is big enough to fit ten people.", ja: "部屋は10人入れるくらい大きい。" },
+      { en: "I'm hungry enough to eat a whole pizza.", ja: "ピザ一枚食べられるくらいお腹が空いてる。" },
+      { en: "He was lucky enough to meet her.", ja: "彼は彼女に会えるほど幸運だった。" },
+      { en: "Was she rich enough to buy the house?", ja: "彼女はその家を買えるくらいお金持ちだった?" },
+      { en: "I'm not strong enough to lift this.", ja: "これを持ち上げられるほど強くない。" },
+      { en: "It wasn't warm enough to go to the beach.", ja: "ビーチに行けるほど暖かくはなかった。" },
+    ],
+  },
+  {
+    id: 6,
+    section: "初級",
+    pattern: "find it 形容詞 to do",
+    meaning: "〜することは形容詞だと思う",
+    examples: [
+      { en: "I find it interesting to study English.", ja: "英語を勉強するのは面白いと思う。" },
+      { en: "I find it difficult to speak in public.", ja: "人前で話すのは難しいと思う。" },
+      { en: "She finds it easy to make friends.", ja: "彼女は友達を作るのは簡単だと感じる。" },
+      { en: "He finds it boring to watch sports.", ja: "彼はスポーツを見るのはつまらないと思う。" },
+      { en: "We find it useful to take notes.", ja: "私たちはメモを取るのは役立つと思う。" },
+      { en: "I found it hard to wake up early.", ja: "早起きするのは大変だった。" },
+      { en: "Did you find it helpful to read the book?", ja: "本を読むのは役に立った?" },
+      { en: "Do you find it strange to live alone?", ja: "一人暮らしは変だと思う?" },
+      { en: "I don't find it funny at all.", ja: "全然面白いと思わない。" },
+      { en: "She doesn't find it necessary to apologize.", ja: "彼女は謝る必要があるとは思っていない。" },
+      { en: "I find it relaxing to walk in the park.", ja: "公園を歩くのはリラックスできると思う。" },
+      { en: "We found it exciting to travel abroad.", ja: "海外旅行はワクワクすると感じた。" },
+    ],
+  },
+  {
+    id: 7,
+    section: "初級",
+    pattern: "文 so that 文",
+    meaning: "文のために文する",
+    examples: [
+      { en: "I'm saving money so that I can travel.", ja: "旅行できるように貯金している。" },
+      { en: "I study English so that I can make friends.", ja: "友達を作れるように英語を勉強する。" },
+      { en: "She woke up early so that she wouldn't be late.", ja: "遅れないように早く起きた。" },
+      { en: "He spoke slowly so that I could understand.", ja: "私が理解できるように彼はゆっくり話した。" },
+      { en: "We left early so that we could avoid traffic.", ja: "渋滞を避けるために早く出発した。" },
+      { en: "Write it down so that you don't forget.", ja: "忘れないように書いておいて。" },
+      { en: "I'm taking notes so that I can review later.", ja: "後で復習できるようにメモを取っている。" },
+      { en: "She works hard so that she can buy a house.", ja: "家を買えるように彼女は頑張って働いている。" },
+      { en: "Did you call him so that he could pick you up?", ja: "迎えに来てもらえるように彼に電話した?" },
+      { en: "I exercise so that I can stay healthy.", ja: "健康でいられるように運動している。" },
+      { en: "He's learning to cook so that he can save money.", ja: "節約できるように料理を覚えている。" },
+      { en: "Bring an umbrella so that you don't get wet.", ja: "濡れないように傘を持っていって。" },
+    ],
+  },
+  {
+    id: 8,
+    section: "初級",
+    pattern: "否定文 + at all",
+    meaning: "全く+否定文",
+    examples: [
+      { en: "I don't like coffee at all.", ja: "コーヒーは全然好きじゃない。" },
+      { en: "I'm not surprised at all.", ja: "全く驚いていない。" },
+      { en: "She doesn't speak French at all.", ja: "彼女はフランス語を全く話さない。" },
+      { en: "He wasn't angry at all.", ja: "彼は全く怒っていなかった。" },
+      { en: "I don't understand this at all.", ja: "これが全く分からない。" },
+      { en: "We didn't sleep at all last night.", ja: "昨夜は全く眠れなかった。" },
+      { en: "It doesn't bother me at all.", ja: "それは全く気にならない。" },
+      { en: "I'm not tired at all.", ja: "全然疲れていない。" },
+      { en: "Don't you like it at all?", ja: "全然好きじゃないの?" },
+      { en: "Wasn't it interesting at all?", ja: "全く面白くなかった?" },
+      { en: "She hasn't called me at all.", ja: "彼女は全く電話してこない。" },
+      { en: "I haven't seen him at all this week.", ja: "今週彼を全く見ていない。" },
+    ],
+  },
+  {
+    id: 9,
+    section: "初級",
+    pattern: "X is the same as Y",
+    meaning: "XはYと同じだ",
+    examples: [
+      { en: "Your phone is the same as mine.", ja: "あなたの携帯、私のと同じだ。" },
+      { en: "Her bag is the same as my sister's.", ja: "彼女のバッグ、妹のと同じだ。" },
+      { en: "This recipe is the same as my mom's.", ja: "このレシピ、うちの母のと同じだ。" },
+      { en: "His answer was the same as mine.", ja: "彼の答えは私のと同じだった。" },
+      { en: "My opinion is the same as yours.", ja: "私の意見はあなたと同じだ。" },
+      { en: "The price is the same as last year.", ja: "値段は去年と同じだ。" },
+      { en: "Is this the same as the other one?", ja: "これは別の方と同じ?" },
+      { en: "Is your schedule the same as mine?", ja: "あなたのスケジュール、私と同じ?" },
+      { en: "Today's weather is the same as yesterday.", ja: "今日の天気は昨日と同じだ。" },
+      { en: "Her style is not the same as before.", ja: "彼女のスタイルは前と同じじゃない。" },
+      { en: "It's not the same as it used to be.", ja: "昔と同じじゃない。" },
+      { en: "The new version is the same as the old one.", ja: "新版は旧版と同じだ。" },
+    ],
+  },
+  {
+    id: 10,
+    section: "初級",
+    pattern: "Just because 文 doesn't mean 文",
+    meaning: "文だからといって文だとは限らない",
+    examples: [
+      { en: "Just because it looks good doesn't mean it's delicious.", ja: "見た目が良いからといって美味しいとは限らない。" },
+      { en: "Just because he smiles doesn't mean he's kind.", ja: "笑顔だからといって優しいとは限らない。" },
+      { en: "Just because she's rich doesn't mean she's happy.", ja: "金持ちだからといって幸せとは限らない。" },
+      { en: "Just because it's cheap doesn't mean it's bad.", ja: "安いからといって悪いとは限らない。" },
+      { en: "Just because you're tired doesn't mean you can skip class.", ja: "疲れているからといって授業をサボっていいわけじゃない。" },
+      { en: "Just because I disagree doesn't mean I don't like you.", ja: "意見が違うからといって嫌いなわけじゃない。" },
+      { en: "Just because he's older doesn't mean he's right.", ja: "年上だからといって正しいとは限らない。" },
+      { en: "Just because it rained doesn't mean it'll rain again.", ja: "雨が降ったからといってまた降るとは限らない。" },
+      { en: "Just because she said yes doesn't mean she meant it.", ja: "イエスと言ったからといって本気とは限らない。" },
+      { en: "Just because I live here doesn't mean I know everything.", ja: "ここに住んでるからといって何でも知っているとは限らない。" },
+      { en: "Just because it's popular doesn't mean it's good.", ja: "人気だからといって良いとは限らない。" },
+      { en: "Just because he apologized doesn't mean he changed.", ja: "謝ったからといって変わったとは限らない。" },
+    ],
+  },
+  {
+    id: 11,
+    section: "初級",
+    pattern: "X is not necessarily 形容詞",
+    meaning: "Xは必ずしも形容詞ではない",
+    examples: [
+      { en: "Expensive clothes are not necessarily fashionable.", ja: "高い服が必ずしもオシャレとは限らない。" },
+      { en: "Speaking English doesn't necessarily mean you're smart.", ja: "英語が話せるからといって必ずしも賢いわけじゃない。" },
+      { en: "Older isn't necessarily wiser.", ja: "年上が必ずしも賢いとは限らない。" },
+      { en: "The most expensive isn't necessarily the best.", ja: "一番高いのが必ずしも一番良いとは限らない。" },
+      { en: "Famous people aren't necessarily happy.", ja: "有名人が必ずしも幸せとは限らない。" },
+      { en: "Studying hard doesn't necessarily lead to success.", ja: "頑張って勉強するのが必ずしも成功につながるとは限らない。" },
+      { en: "Big companies aren't necessarily good employers.", ja: "大企業が必ずしも良い雇用主とは限らない。" },
+      { en: "She's not necessarily right.", ja: "彼女が必ずしも正しいとは限らない。" },
+      { en: "Living in Tokyo isn't necessarily exciting.", ja: "東京に住むのが必ずしもワクワクするとは限らない。" },
+      { en: "More money doesn't necessarily mean more happiness.", ja: "お金が増えれば必ずしも幸せが増えるわけじゃない。" },
+      { en: "He's not necessarily wrong.", ja: "彼が必ずしも間違っているわけじゃない。" },
+      { en: "Being busy doesn't necessarily mean being productive.", ja: "忙しいからといって必ずしも生産的とは限らない。" },
+    ],
+  },
+  {
+    id: 12,
+    section: "初級",
+    pattern: "X used to do",
+    meaning: "Xはよく〜していた",
+    examples: [
+      { en: "I used to play soccer every weekend.", ja: "毎週末よくサッカーをしていた。" },
+      { en: "I used to live in Tokyo.", ja: "昔は東京に住んでいた。" },
+      { en: "It used to take 20 minutes to get there.", ja: "そこに行くのに昔は20分かかっていた。" },
+      { en: "She used to work at a coffee shop.", ja: "彼女は昔カフェで働いていた。" },
+      { en: "We used to go camping every summer.", ja: "毎年夏にキャンプに行っていた。" },
+      { en: "He used to smoke a lot.", ja: "彼は昔よくタバコを吸っていた。" },
+      { en: "I used to hate vegetables.", ja: "昔は野菜が嫌いだった。" },
+      { en: "Did you use to play any sports?", ja: "昔何かスポーツしてた?" },
+      { en: "Didn't she use to live next door?", ja: "彼女、昔隣に住んでなかった?" },
+      { en: "I didn't use to drink coffee.", ja: "昔はコーヒーを飲まなかった。" },
+      { en: "They used to be best friends.", ja: "彼らは昔親友だった。" },
+      { en: "There used to be a bookstore on this corner.", ja: "この角には昔本屋があった。" },
+    ],
+  },
+  {
+    id: 13,
+    section: "初級",
+    pattern: "X is used to 名詞/動名詞",
+    meaning: "Xは名詞/動名詞に慣れている",
+    examples: [
+      { en: "I'm already used to speaking English.", ja: "もう英語を話すのに慣れてる。" },
+      { en: "I used to be very nervous, but I'm used to it now.", ja: "昔はすごく緊張したけど、もう慣れた。" },
+      { en: "She's used to working long hours.", ja: "彼女は長時間労働に慣れている。" },
+      { en: "I'm not used to the cold weather here.", ja: "ここの寒さに慣れていない。" },
+      { en: "He's used to living alone.", ja: "彼は一人暮らしに慣れている。" },
+      { en: "Are you used to waking up early?", ja: "早起きに慣れた?" },
+      { en: "I'm getting used to my new job.", ja: "新しい仕事に慣れてきた。" },
+      { en: "We're used to spicy food.", ja: "私たちは辛い食べ物に慣れている。" },
+      { en: "She wasn't used to driving on the left.", ja: "彼女は左側通行に慣れていなかった。" },
+      { en: "I'm used to working from home now.", ja: "もう在宅勤務に慣れた。" },
+      { en: "Are they used to the noise?", ja: "彼らは騒音に慣れてる?" },
+      { en: "I'll get used to it eventually.", ja: "そのうち慣れるよ。" },
+    ],
+  },
+  {
+    id: 14,
+    section: "初級",
+    pattern: "X is not as 形容詞 as I expected",
+    meaning: "Xは思ったほど形容詞じゃない",
+    examples: [
+      { en: "The food was not as delicious as I expected.", ja: "料理は期待したほど美味しくなかった。" },
+      { en: "He didn't speak English as fluently as I expected.", ja: "彼は期待したほど流暢に英語を話さなかった。" },
+      { en: "The movie wasn't as scary as I thought.", ja: "映画は思ったほど怖くなかった。" },
+      { en: "The exam wasn't as hard as I expected.", ja: "試験は思ったほど難しくなかった。" },
+      { en: "This bag isn't as heavy as it looks.", ja: "このバッグは見かけほど重くない。" },
+      { en: "Tokyo isn't as crowded as I expected.", ja: "東京は思ったほど混んでいない。" },
+      { en: "The hotel wasn't as nice as I hoped.", ja: "ホテルは期待していたほど良くなかった。" },
+      { en: "He's not as tall as I thought.", ja: "彼は思ったほど背が高くない。" },
+      { en: "It's not as expensive as I expected.", ja: "思ったほど高くない。" },
+      { en: "She wasn't as friendly as I thought she'd be.", ja: "彼女は思ったほどフレンドリーじゃなかった。" },
+      { en: "The trip wasn't as fun as I expected.", ja: "旅行は思ったほど楽しくなかった。" },
+      { en: "It's not as cold today as I thought.", ja: "今日は思ったほど寒くない。" },
+    ],
+  },
+  {
+    id: 15,
+    section: "初級",
+    pattern: "spend 時間 doing",
+    meaning: "〜することに時間を費やす",
+    examples: [
+      { en: "I usually spend about 8 hours studying English.", ja: "普段、8時間くらい英語の勉強をする。" },
+      { en: "I spent 2 hours practicing the guitar yesterday.", ja: "昨日2時間ギターの練習をした。" },
+      { en: "She spends too much time on her phone.", ja: "彼女は携帯にかけすぎる時間が長すぎる。" },
+      { en: "We spent the whole weekend cleaning the house.", ja: "週末ずっと家の掃除に費やした。" },
+      { en: "How much time do you spend reading?", ja: "読書にどれくらい時間を使う?" },
+      { en: "He spends an hour commuting every day.", ja: "彼は毎日1時間通勤に費やす。" },
+      { en: "I don't want to spend time arguing.", ja: "言い争いに時間を使いたくない。" },
+      { en: "We spent the afternoon walking around the city.", ja: "午後は街を歩き回って過ごした。" },
+      { en: "Did you spend a lot of time preparing?", ja: "準備に時間をたくさん使った?" },
+      { en: "I spend most of my time working.", ja: "ほとんどの時間を仕事に使ってる。" },
+      { en: "Let's not spend too much time on this.", ja: "これにあまり時間をかけないようにしよう。" },
+      { en: "She spent three years learning Japanese.", ja: "彼女は日本語を学ぶのに3年費やした。" },
+    ],
+  },
+  {
+    id: 16,
+    section: "初級",
+    pattern: "feel like doing",
+    meaning: "〜したい気分だ",
+    examples: [
+      { en: "I feel like working out today.", ja: "今日はエクササイズしたい気分だ。" },
+      { en: "I don't feel like doing anything today.", ja: "今日は何もしたくない気分だ。" },
+      { en: "Do you feel like going out tonight?", ja: "今夜出かける気分?" },
+      { en: "I feel like eating sushi.", ja: "寿司食べたい気分。" },
+      { en: "She didn't feel like talking.", ja: "彼女は話す気分じゃなかった。" },
+      { en: "I feel like taking a nap.", ja: "昼寝したい気分。" },
+      { en: "He doesn't feel like cooking tonight.", ja: "彼は今夜料理する気分じゃない。" },
+      { en: "Do you feel like watching a movie?", ja: "映画見たい気分?" },
+      { en: "I felt like crying when I heard the news.", ja: "ニュースを聞いて泣きたい気分になった。" },
+      { en: "I don't feel like going to work today.", ja: "今日は仕事行きたくない気分。" },
+      { en: "What do you feel like eating?", ja: "何食べたい気分?" },
+      { en: "I feel like going for a walk.", ja: "散歩に行きたい気分。" },
+    ],
+  },
+  {
+    id: 17,
+    section: "初級",
+    pattern: "文 as soon as 文",
+    meaning: "文するとすぐに文",
+    examples: [
+      { en: "Give me a call as soon as you get here.", ja: "ここに着いたらすぐ電話して。" },
+      { en: "I'll send it to you as soon as I finish.", ja: "終わったらすぐに送るよ。" },
+      { en: "Text me as soon as you arrive.", ja: "着いたらすぐメッセージして。" },
+      { en: "I'll let you know as soon as I hear back.", ja: "返事が来たらすぐ知らせる。" },
+      { en: "She left as soon as the meeting ended.", ja: "ミーティングが終わるとすぐ彼女は帰った。" },
+      { en: "I fell asleep as soon as I got home.", ja: "家に着くとすぐ寝てしまった。" },
+      { en: "Come over as soon as you can.", ja: "できるだけ早く来て。" },
+      { en: "He started crying as soon as he saw me.", ja: "彼は私を見るとすぐに泣き出した。" },
+      { en: "I'll call you as soon as I land.", ja: "着陸したらすぐ電話する。" },
+      { en: "We left as soon as it stopped raining.", ja: "雨が止むとすぐ出発した。" },
+      { en: "Tell me as soon as you find out.", ja: "わかったらすぐ教えて。" },
+      { en: "She replied as soon as she saw the message.", ja: "メッセージを見るとすぐ彼女は返信した。" },
+    ],
+  },
+  {
+    id: 18,
+    section: "初級",
+    pattern: "I don't know if 文",
+    meaning: "文かどうかわからない",
+    examples: [
+      { en: "I don't know if he's coming.", ja: "彼が来るかわからない。" },
+      { en: "I don't know if they have Wi-Fi.", ja: "そこにWi-Fiがあるかわからない。" },
+      { en: "I don't know if this is right.", ja: "これが正しいかわからない。" },
+      { en: "I don't know if she'll like it.", ja: "彼女が気に入るかわからない。" },
+      { en: "I don't know if I can make it.", ja: "間に合うかわからない。" },
+      { en: "I didn't know if it was open.", ja: "開いてるかわからなかった。" },
+      { en: "She doesn't know if she wants to go.", ja: "彼女は行きたいかわからない。" },
+      { en: "Do you know if the store is open?", ja: "店が開いてるか知ってる?" },
+      { en: "I don't know if it's a good idea.", ja: "良いアイデアかどうかわからない。" },
+      { en: "I don't know if I should tell him.", ja: "彼に言うべきかわからない。" },
+      { en: "We don't know if we'll make it on time.", ja: "時間に間に合うかわからない。" },
+      { en: "I don't know if you remember me.", ja: "私のこと覚えているかわからないけど。" },
+    ],
+  },
+  {
+    id: 19,
+    section: "初級",
+    pattern: "I wonder if 文",
+    meaning: "文かどうかなと思う",
+    examples: [
+      { en: "I wonder if he's coming.", ja: "彼は来るのかな。" },
+      { en: "I wonder if they have Wi-Fi.", ja: "あの店、Wi-Fiあるのかな。" },
+      { en: "I wonder if she likes me.", ja: "彼女、私のこと好きなのかな。" },
+      { en: "I wonder if it'll rain tomorrow.", ja: "明日雨降るかな。" },
+      { en: "I wonder if I should call him.", ja: "彼に電話した方がいいかな。" },
+      { en: "I wonder if she got my message.", ja: "彼女、私のメッセージ受け取ったかな。" },
+      { en: "I was wondering if you could help me.", ja: "手伝ってもらえるかなと思って。" },
+      { en: "I wonder if it's too late to apologize.", ja: "謝るには遅すぎるかな。" },
+      { en: "I wonder if he remembers my name.", ja: "彼、私の名前覚えてるかな。" },
+      { en: "I wonder if this is the right way.", ja: "これで合ってるかな。" },
+      { en: "I wondered if she'd noticed.", ja: "彼女、気づいたかなと思った。" },
+      { en: "I wonder if there's a better way.", ja: "もっと良い方法あるかな。" },
+    ],
+  },
+  {
+    id: 20,
+    section: "初級",
+    pattern: "It's been 時間 since 文",
+    meaning: "文してから時間が経っている",
+    examples: [
+      { en: "It's been 2 years since I last saw him.", ja: "彼に最後に会ってから2年になる。" },
+      { en: "It's been a while.", ja: "久しぶりだね。" },
+      { en: "It's been a long time.", ja: "久しぶり。" },
+      { en: "It's been 6 months since I moved here.", ja: "ここに引っ越してから半年経つ。" },
+      { en: "It's been ages since we last talked.", ja: "前に話してからすごく経った。" },
+      { en: "It's been 3 days since I slept properly.", ja: "ちゃんと眠れてから3日経つ。" },
+      { en: "How long has it been since you started?", ja: "始めてからどれくらい経つ?" },
+      { en: "It's been a week since I went out.", ja: "出かけてから一週間経った。" },
+      { en: "It's been forever since we hung out.", ja: "遊んでからすごく久しぶり。" },
+      { en: "It's been about an hour since he left.", ja: "彼が出てから約1時間経つ。" },
+      { en: "It's been years since I read a book.", ja: "本を読んでから何年も経つ。" },
+      { en: "It hasn't been long since we met.", ja: "出会ってからまだそんなに経ってない。" },
+    ],
+  },
+  {
+    id: 21,
+    section: "初級",
+    pattern: "It takes 時間 to do",
+    meaning: "〜するのに時間がかかる",
+    examples: [
+      { en: "It takes about 40 minutes to get there.", ja: "そこに行くのに40分くらいかかる。" },
+      { en: "How long did it take?", ja: "どれくらい時間かかった?" },
+      { en: "It took about 40 minutes.", ja: "40分くらいかかった。" },
+      { en: "It took me about 40 minutes.", ja: "私には40分くらいかかった。" },
+      { en: "It took him about 40 minutes.", ja: "彼は40分くらいかかった。" },
+      { en: "It takes time to learn a new language.", ja: "新しい言語を学ぶには時間がかかる。" },
+      { en: "How long does it take to drive there?", ja: "そこまで運転でどれくらいかかる?" },
+      { en: "It doesn't take long.", ja: "そんなに時間はかからない。" },
+      { en: "It took us 3 hours to finish.", ja: "終わるのに3時間かかった。" },
+      { en: "It won't take more than 5 minutes.", ja: "5分以上はかからないよ。" },
+      { en: "It takes practice to get good at it.", ja: "上手くなるには練習が必要だ。" },
+      { en: "How long will it take to fix?", ja: "直すのにどれくらいかかる?" },
+    ],
+  },
+  {
+    id: 22,
+    section: "初級",
+    pattern: "How about + 文",
+    meaning: "文はどう?",
+    examples: [
+      { en: "How about you do it?", ja: "あなたがやるのはどう?" },
+      { en: "How about we host a party?", ja: "パーティーを開くのはどう?" },
+      { en: "How about we do it together?", ja: "一緒にやるのはどう?" },
+      { en: "How about Italian for dinner?", ja: "夕食はイタリアンはどう?" },
+      { en: "How about we meet at 6?", ja: "6時に会うのはどう?" },
+      { en: "How about you?", ja: "あなたはどう?" },
+      { en: "How about going for a walk?", ja: "散歩に行くのはどう?" },
+      { en: "How about tomorrow instead?", ja: "代わりに明日はどう?" },
+      { en: "How about we split the bill?", ja: "割り勘にするのはどう?" },
+      { en: "How about a quick coffee?", ja: "ちょっとコーヒーでもどう?" },
+      { en: "How about we ask him first?", ja: "まず彼に聞いてみるのはどう?" },
+      { en: "How about ordering pizza?", ja: "ピザ頼むのはどう?" },
+    ],
+  },
+  {
+    id: 23,
+    section: "初級",
+    pattern: "have X do (使役)",
+    meaning: "Xに〜(どうにかして)させる",
+    examples: [
+      { en: "I'll have Taka do it.", ja: "それはタカにやってもらうよ。" },
+      { en: "I'll have my assistant call you back.", ja: "アシスタントから折り返し電話させます。" },
+      { en: "Have him send me the file.", ja: "彼にファイルを送ってもらって。" },
+      { en: "I had the mechanic check my car.", ja: "整備士に車を見てもらった。" },
+      { en: "Let's have her explain it.", ja: "彼女に説明してもらおう。" },
+      { en: "I'll have someone pick you up.", ja: "誰かに迎えに行かせるよ。" },
+      { en: "Can you have him call me?", ja: "彼に電話させてもらえる?" },
+      { en: "We had the room cleaned yesterday.", ja: "昨日部屋を掃除してもらった。" },
+      { en: "I'll have the staff bring you a menu.", ja: "スタッフにメニューを持ってこさせます。" },
+      { en: "Did you have him fix it?", ja: "彼に直してもらった?" },
+      { en: "I'll have the package delivered tomorrow.", ja: "荷物を明日配達してもらうよ。" },
+      { en: "Have your sister help you.", ja: "お姉さんに手伝ってもらいなさい。" },
+    ],
+  },
+  {
+    id: 24,
+    section: "初級",
+    pattern: "get X to do (使役)",
+    meaning: "Xに〜(どうにかして)させる",
+    examples: [
+      { en: "I'll get Taka to do it.", ja: "それはタカにやってもらうよ。" },
+      { en: "I got him to apologize.", ja: "彼に謝らせた。" },
+      { en: "Can you get her to call me?", ja: "彼女に電話させてくれる?" },
+      { en: "I couldn't get him to listen.", ja: "彼に話を聞かせられなかった。" },
+      { en: "She got me to try it.", ja: "彼女がそれを試させてくれた。" },
+      { en: "How did you get them to agree?", ja: "どうやって彼らを賛成させたの?" },
+      { en: "I'll get someone to help you.", ja: "誰かに手伝わせるよ。" },
+      { en: "I can't get my kids to eat vegetables.", ja: "子供たちに野菜を食べさせられない。" },
+      { en: "We got the dog to sit.", ja: "犬を座らせた。" },
+      { en: "I'll try to get him to come.", ja: "彼を来させるようにしてみる。" },
+      { en: "Did you get her to change her mind?", ja: "彼女の気を変えさせた?" },
+      { en: "I got my brother to drive me there.", ja: "兄にそこまで運転させた。" },
+    ],
+  },
+  {
+    id: 25,
+    section: "初級",
+    pattern: "make X do (使役)",
+    meaning: "Xに〜(強制的に)させる",
+    examples: [
+      { en: "I'll make Taka do it.", ja: "それはタカにやらせるよ。" },
+      { en: "It made me think.", ja: "考えさせられた。" },
+      { en: "What made you come to Japan?", ja: "なぜ日本に来たんですか?" },
+      { en: "The movie made me cry.", ja: "その映画で泣かされた。" },
+      { en: "Don't make me wait.", ja: "待たせないで。" },
+      { en: "She made him apologize.", ja: "彼女は彼に謝らせた。" },
+      { en: "The teacher made us redo it.", ja: "先生はやり直させた。" },
+      { en: "What made you laugh?", ja: "何が面白かったの?" },
+      { en: "He made me promise.", ja: "彼は私に約束させた。" },
+      { en: "It makes me happy.", ja: "それは私を幸せにする。" },
+      { en: "Don't make him do it if he doesn't want to.", ja: "やりたくないなら彼に強制しないで。" },
+      { en: "The smell made me hungry.", ja: "その匂いでお腹がすいた。" },
+    ],
+  },
+  {
+    id: 26,
+    section: "初級",
+    pattern: "let X do (使役)",
+    meaning: "Xに〜させてあげる",
+    examples: [
+      { en: "I'll let him do it.", ja: "彼にやらせてあげる。" },
+      { en: "I'll let you know when I figure it out.", ja: "わかったら知らせるね。" },
+      { en: "Let me help you.", ja: "手伝わせて。" },
+      { en: "Let me do it for you.", ja: "私にやらせて。" },
+      { en: "Don't let him drive.", ja: "彼に運転させないで。" },
+      { en: "Let me think about it.", ja: "考えさせて。" },
+      { en: "My parents won't let me go.", ja: "両親が行かせてくれない。" },
+      { en: "Let me know if you need help.", ja: "助けが必要なら教えて。" },
+      { en: "She let me borrow her car.", ja: "彼女が車を貸してくれた。" },
+      { en: "Let me try.", ja: "やらせて。" },
+      { en: "He let me stay at his place.", ja: "彼は私を泊めてくれた。" },
+      { en: "Let's let her decide.", ja: "彼女に決めさせよう。" },
+    ],
+  },
+  {
+    id: 27,
+    section: "初級",
+    pattern: "make X 形容詞",
+    meaning: "Xを形容詞にさせる",
+    examples: [
+      { en: "I want to make him happy.", ja: "彼を喜ばせたい。" },
+      { en: "I want to make the world a better place.", ja: "世界をもっと良くしたい。" },
+      { en: "That makes my life easier.", ja: "それで人生が楽になる。" },
+      { en: "It made me sad.", ja: "悲しい気持ちになった。" },
+      { en: "Coffee makes me nervous.", ja: "コーヒーを飲むと緊張する。" },
+      { en: "The news made everyone angry.", ja: "そのニュースで皆怒った。" },
+      { en: "Exercise makes me feel good.", ja: "運動すると気分が良くなる。" },
+      { en: "Does it make you uncomfortable?", ja: "それで居心地悪く感じる?" },
+      { en: "The compliment made her shy.", ja: "褒められて彼女は照れた。" },
+      { en: "What makes you so confident?", ja: "なんでそんなに自信があるの?" },
+      { en: "Don't make this difficult.", ja: "話を難しくしないで。" },
+      { en: "It made the trip more interesting.", ja: "それで旅行がより面白くなった。" },
+    ],
+  },
+  {
+    id: 28,
+    section: "初級",
+    pattern: "see X doing (知覚動詞)",
+    meaning: "Xが〜しているのを見る",
+    examples: [
+      { en: "I saw him singing yesterday.", ja: "昨日、彼が歌っているのを見た。" },
+      { en: "I saw a lot of people walking in the city.", ja: "街で多くの人が歩いているのを見た。" },
+      { en: "I saw her dancing at the party.", ja: "パーティーで彼女が踊っているのを見た。" },
+      { en: "Did you see them arguing?", ja: "彼らが口論しているのを見た?" },
+      { en: "I saw him crossing the street.", ja: "彼が道を渡っているのを見た。" },
+      { en: "She saw me talking to my ex.", ja: "彼女は私が元カレと話しているのを見た。" },
+      { en: "We saw the kids playing in the park.", ja: "子供たちが公園で遊んでいるのを見た。" },
+      { en: "I've never seen him working so hard.", ja: "彼がこんなに頑張って働いているのを見たことがない。" },
+      { en: "I saw her crying.", ja: "彼女が泣いているのを見た。" },
+      { en: "Have you ever seen a celebrity walking in the street?", ja: "有名人が街を歩いているのを見たことある?" },
+      { en: "I saw him taking pictures.", ja: "彼が写真を撮っているのを見た。" },
+      { en: "I didn't see anyone leaving.", ja: "誰かが出ていくのを見なかった。" },
+    ],
+  },
+  {
+    id: 29,
+    section: "初級",
+    pattern: "hear X doing (知覚動詞)",
+    meaning: "Xが〜しているのを聞く",
+    examples: [
+      { en: "I heard so many people talking about it.", ja: "たくさんの人がそれについて話しているのを聞いた。" },
+      { en: "I've never heard him speaking English.", ja: "彼が英語を話しているのを聞いたことがない。" },
+      { en: "I heard her singing in the shower.", ja: "彼女がシャワーで歌っているのを聞いた。" },
+      { en: "Did you hear the dog barking?", ja: "犬が吠えてたの聞いた?" },
+      { en: "I heard them arguing last night.", ja: "昨夜彼らが言い争っているのを聞いた。" },
+      { en: "I can hear someone knocking.", ja: "誰かがノックしているのが聞こえる。" },
+      { en: "We heard music playing next door.", ja: "隣で音楽が流れているのを聞いた。" },
+      { en: "I heard you talking about me.", ja: "私のことを話しているのを聞いたよ。" },
+      { en: "Have you heard him playing the piano?", ja: "彼がピアノを弾いているのを聞いたことある?" },
+      { en: "I heard the baby crying.", ja: "赤ちゃんが泣いているのを聞いた。" },
+      { en: "I didn't hear you coming in.", ja: "あなたが入ってきたのに気づかなかった。" },
+      { en: "I heard people laughing in the next room.", ja: "隣の部屋で人が笑っているのを聞いた。" },
+    ],
+  },
+  {
+    id: 30,
+    section: "初級",
+    pattern: "what 主語 動詞",
+    meaning: "主語が動詞すること",
+    examples: [
+      { en: "What I like about it is this.", ja: "私が好きなのはここだ。" },
+      { en: "That's not what I mean.", ja: "そういう意味じゃないよ。" },
+      { en: "That's exactly what I want.", ja: "まさにそれが欲しい。" },
+      { en: "Tell me what you think.", ja: "あなたが思うことを教えて。" },
+      { en: "I don't know what he said.", ja: "彼が言ったことがわからない。" },
+      { en: "What she did was amazing.", ja: "彼女がしたことは素晴らしかった。" },
+      { en: "Do what you want.", ja: "あなたがやりたいことをやって。" },
+      { en: "What I need is some sleep.", ja: "私に必要なのは睡眠だ。" },
+      { en: "Show me what you have.", ja: "あなたが持っているものを見せて。" },
+      { en: "That's not what I expected.", ja: "そういうのを期待してなかった。" },
+      { en: "What he said made sense.", ja: "彼の言ったことは納得できる。" },
+      { en: "I get what you mean.", ja: "言いたいことわかるよ。" },
+    ],
+  },
+  // ===== 中・上級編 (31-60) =====
+  {
+    id: 31,
+    section: "中・上級",
+    pattern: "you know how 文?",
+    meaning: "ほら、文じゃん?",
+    examples: [
+      { en: "You know how he seems really happy?", ja: "ほら、彼っていつも幸せそうじゃん?" },
+      { en: "You know how I'm always complaining about this?", ja: "ほら、私いつもこれについて文句言ってるじゃん?" },
+      { en: "You know how I've been looking for a new jacket?", ja: "ほら、私ずっと新しいジャケット探してるって言ってたじゃん?" },
+      { en: "You know how she never replies on time?", ja: "ほら、彼女いつも時間通りに返信しないじゃん?" },
+      { en: "You know how Tokyo gets crazy hot in summer?", ja: "ほら、東京の夏ってめちゃくちゃ暑くなるじゃん?" },
+      { en: "You know how my brother loves anime?", ja: "ほら、うちの兄ってアニメ大好きじゃん?" },
+      { en: "You know how I hate Monday mornings?", ja: "ほら、私月曜の朝嫌いじゃん?" },
+      { en: "You know how he's always late?", ja: "ほら、彼っていつも遅刻するじゃん?" },
+      { en: "You know how we talked about going to Kyoto?", ja: "ほら、京都行く話してたじゃん?" },
+      { en: "You know how the new café opened last week?", ja: "ほら、先週新しいカフェがオープンしたじゃん?" },
+      { en: "You know how my boss never listens?", ja: "ほら、うちの上司全然聞いてくれないじゃん?" },
+      { en: "You know how she always orders the same thing?", ja: "ほら、彼女いつも同じもの頼むじゃん?" },
+    ],
+  },
+  {
+    id: 32,
+    section: "中・上級",
+    pattern: "If you could do, that would be 形容詞",
+    meaning: "もし〜してくれたら、形容詞だ",
+    examples: [
+      { en: "If you could finish the report by today, that would be great.", ja: "もし今日中にレポートを終えてくれたら、最高だよ。" },
+      { en: "If you could come, that would be awesome.", ja: "もし来れるなら、めちゃくちゃ嬉しい。" },
+      { en: "If you could do that, that would be impressive.", ja: "もしそれできたら、めちゃくちゃすごいよ。" },
+      { en: "If you could send it tonight, that would be perfect.", ja: "今夜送ってくれたら、完璧だよ。" },
+      { en: "If you could help me with this, that would be amazing.", ja: "これ手伝ってくれたら、ありがたいよ。" },
+      { en: "If you could pick me up, that would be a huge help.", ja: "迎えに来てくれたら、すごく助かる。" },
+      { en: "If you could review it once more, that would be appreciated.", ja: "もう一度見直してくれたら、ありがたいです。" },
+      { en: "If you could let me know by tomorrow, that would be ideal.", ja: "明日までに知らせてくれたら、理想的。" },
+      { en: "If you could share your notes, that would be super helpful.", ja: "ノート共有してくれたら、めちゃくちゃ助かる。" },
+      { en: "If you could come a bit earlier, that would be nice.", ja: "もう少し早く来てくれたら、嬉しい。" },
+      { en: "If you could speak more slowly, that would be helpful.", ja: "もう少しゆっくり話してくれたら、助かる。" },
+      { en: "If you could keep this between us, that would be great.", ja: "ここだけの話にしてくれたら、ありがたい。" },
+    ],
+  },
+  {
+    id: 33,
+    section: "中・上級",
+    pattern: "for the first time in 時間",
+    meaning: "時間ぶりに",
+    examples: [
+      { en: "I played tennis for the first time in 5 years.", ja: "5年ぶりにテニスをした。" },
+      { en: "I came to Osaka for the first time in 10 years.", ja: "10年ぶりに大阪に来た。" },
+      { en: "I bought a new jacket for the first time in ages.", ja: "久しぶりに新しいジャケットを買った。" },
+      { en: "I came here for the first time in ages.", ja: "久しぶりにここに来た。" },
+      { en: "I saw my old friend for the first time in years.", ja: "何年ぶりかに昔の友達に会った。" },
+      { en: "I went to the beach for the first time in a decade.", ja: "10年ぶりにビーチに行った。" },
+      { en: "She visited her hometown for the first time in 8 years.", ja: "彼女は8年ぶりに故郷を訪れた。" },
+      { en: "I ate at this restaurant for the first time in months.", ja: "数ヶ月ぶりにこのレストランで食べた。" },
+      { en: "He laughed for the first time in weeks.", ja: "彼は数週間ぶりに笑った。" },
+      { en: "I went on a date for the first time in forever.", ja: "ものすごく久しぶりにデートに行った。" },
+      { en: "We met for the first time in a long while.", ja: "久しぶりに会った。" },
+      { en: "I cooked at home for the first time in a month.", ja: "1ヶ月ぶりに家で料理した。" },
+    ],
+  },
+  {
+    id: 34,
+    section: "中・上級",
+    pattern: "what if 文?",
+    meaning: "もし文ならどうする?",
+    examples: [
+      { en: "What if it rains tomorrow?", ja: "明日雨が降ったらどうする?" },
+      { en: "What if they don't like it?", ja: "もし好きじゃなかったらどうする?" },
+      { en: "What if the profit is zero?", ja: "もし利益がゼロだったらどうする?" },
+      { en: "What if the profit was zero?", ja: "もし利益がゼロだったらどうする? (仮定)" },
+      { en: "What if he doesn't show up?", ja: "もし彼が現れなかったらどうする?" },
+      { en: "What if we miss the flight?", ja: "もし飛行機に乗り遅れたらどうする?" },
+      { en: "What if I told you I quit my job?", ja: "もし仕事辞めたって言ったらどう思う?" },
+      { en: "What if she finds out?", ja: "もし彼女にバレたらどうする?" },
+      { en: "What if we tried a different approach?", ja: "違うやり方を試してみたらどう?" },
+      { en: "What if you're wrong?", ja: "もし君が間違ってたらどうする?" },
+      { en: "What if I had stayed?", ja: "もし残っていたらどうなってたかな?" },
+      { en: "What if this doesn't work?", ja: "もしこれが上手くいかなかったらどうする?" },
+    ],
+  },
+  {
+    id: 35,
+    section: "中・上級",
+    pattern: "That's why 文",
+    meaning: "だから文だ",
+    examples: [
+      { en: "That's why I don't like it.", ja: "だからそれ嫌いなんだよ。" },
+      { en: "That's why I really hate that café.", ja: "だからあのカフェめっちゃ嫌いなんだよ。" },
+      { en: "That's why it's important to study English now.", ja: "だから今英語を勉強するのが大事なんだよ。" },
+      { en: "That's why I never trust him.", ja: "だから彼を信用しないんだよ。" },
+      { en: "That's why I always carry an umbrella.", ja: "だからいつも傘を持ち歩くんだよ。" },
+      { en: "That's why he was so quiet.", ja: "だから彼あんなに静かだったんだ。" },
+      { en: "That's why I'm exhausted today.", ja: "だから今日めちゃくちゃ疲れてるんだよ。" },
+      { en: "That's why she didn't come.", ja: "だから彼女来なかったんだ。" },
+      { en: "That's why I love living here.", ja: "だからここに住むのが好きなんだ。" },
+      { en: "That's why we need to leave now.", ja: "だから今出なきゃいけないんだよ。" },
+      { en: "That's why nobody trusts politicians.", ja: "だから誰も政治家を信用しないんだよ。" },
+      { en: "Is that why you didn't call?", ja: "だから電話しなかったの?" },
+    ],
+  },
+  {
+    id: 36,
+    section: "中・上級",
+    pattern: "It feels like 文",
+    meaning: "文な気がする",
+    examples: [
+      { en: "It feels like something's going to happen.", ja: "何か起こりそうな気がする。" },
+      { en: "It feels like it's going to rain.", ja: "雨が降りそうな気がする。" },
+      { en: "It feels like something is off about this presentation.", ja: "このプレゼン、なんか違和感がある気がする。" },
+      { en: "It feels like he's been slacking off lately.", ja: "彼、最近ダラダラしてる気がする。" },
+      { en: "It feels like I've been here before.", ja: "ここに前に来たことがある気がする。" },
+      { en: "It feels like time is flying by.", ja: "時間が飛んでいくみたいな気がする。" },
+      { en: "It feels like everyone is staring at me.", ja: "みんなが私を見てる気がする。" },
+      { en: "It feels like I forgot something important.", ja: "何か大事なこと忘れてる気がする。" },
+      { en: "It feels like we just had this conversation.", ja: "つい最近もこの話した気がする。" },
+      { en: "It felt like a dream.", ja: "夢みたいな気がした。" },
+      { en: "It feels like Monday already.", ja: "もう月曜みたいな気がする。" },
+      { en: "It doesn't feel like winter anymore.", ja: "もう冬って感じがしない。" },
+    ],
+  },
+  {
+    id: 37,
+    section: "中・上級",
+    pattern: "There's no way 文",
+    meaning: "文なんてありえない",
+    examples: [
+      { en: "There's no way she's 50. She looks so young.", ja: "彼女が50歳なんてありえない。すごく若く見える。" },
+      { en: "There's no way he said that.", ja: "彼がそんなこと言ったなんてありえない。" },
+      { en: "There's no way it's already 2 AM.", ja: "もう午前2時なんてありえない。" },
+      { en: "There's no way I'm doing that.", ja: "私がそんなことするわけがない。" },
+      { en: "There's no way they'll agree.", ja: "彼らが賛成するなんてありえない。" },
+      { en: "There's no way I'm waking up at 5.", ja: "5時に起きるなんて絶対無理。" },
+      { en: "There's no way this is true.", ja: "これが本当なんてありえない。" },
+      { en: "There's no way we can finish in time.", ja: "時間内に終わるなんて無理。" },
+      { en: "There's no way she meant that.", ja: "彼女がそういう意味で言ったわけがない。" },
+      { en: "There's no way I forgot the keys again.", ja: "また鍵忘れるなんてありえない。" },
+      { en: "There's no way he's still single.", ja: "彼がまだ独身なんてありえない。" },
+      { en: "There's no way you ate all that.", ja: "それ全部食べたなんてありえない。" },
+    ],
+  },
+  {
+    id: 38,
+    section: "中・上級",
+    pattern: "I'm not sure if 文",
+    meaning: "文かどうか分からない",
+    examples: [
+      { en: "I'm not sure if he is coming.", ja: "彼が来るかどうか分からない。" },
+      { en: "I'm not sure if it's true.", ja: "本当かどうか分からない。" },
+      { en: "Sorry, I'm not sure if I can make it.", ja: "ごめん、間に合うか分からない。" },
+      { en: "I'm not sure if this is the right way.", ja: "これで合ってるか分からない。" },
+      { en: "I'm not sure if she got my message.", ja: "彼女がメッセージを受け取ったか分からない。" },
+      { en: "I'm not sure if we have time.", ja: "時間あるか分からない。" },
+      { en: "I'm not sure if I should tell him.", ja: "彼に言うべきか分からない。" },
+      { en: "I'm not sure if it's worth it.", ja: "やる価値があるか分からない。" },
+      { en: "I'm not sure if I locked the door.", ja: "ドアの鍵かけたか分からない。" },
+      { en: "I wasn't sure if you'd come.", ja: "あなたが来るか分からなかった。" },
+      { en: "I'm not sure if this fits.", ja: "これサイズ合うか分からない。" },
+      { en: "I'm not sure if they're still open.", ja: "まだ営業してるか分からない。" },
+    ],
+  },
+  {
+    id: 39,
+    section: "中・上級",
+    pattern: "What's the point of doing?",
+    meaning: "〜することに何の意味があるの?",
+    examples: [
+      { en: "What's the point of doing that?", ja: "それやって何の意味があるの?" },
+      { en: "What's the point of working out?", ja: "筋トレすることに何の意味があるの?" },
+      { en: "What's the point of studying English?", ja: "英語を勉強することに何の意味があるの?" },
+      { en: "What's the point of arguing?", ja: "言い争って何の意味があるの?" },
+      { en: "What's the point of going there?", ja: "そこに行く意味あるの?" },
+      { en: "What's the point of saving money if you never spend it?", ja: "使わないなら貯金する意味あるの?" },
+      { en: "What's the point of complaining?", ja: "文句言って何の意味があるの?" },
+      { en: "What's the point of asking?", ja: "聞いて何の意味があるの?" },
+      { en: "I don't see the point of waiting.", ja: "待つ意味が分からない。" },
+      { en: "What's the point of trying if it won't work?", ja: "どうせ無理なら試す意味あるの?" },
+      { en: "What's the point of having rules if no one follows them?", ja: "誰も守らないならルールある意味は?" },
+      { en: "What's the point of pretending?", ja: "ふりをして何の意味があるの?" },
+    ],
+  },
+  {
+    id: 40,
+    section: "中・上級",
+    pattern: "It's 形容詞 how 文",
+    meaning: "文は形容詞だ",
+    examples: [
+      { en: "It's interesting how life changes so quickly.", ja: "人生ってこんなに早く変わるの、面白いよね。" },
+      { en: "It's strange how we never met before.", ja: "私たち一度も会わなかったなんて、変な感じだね。" },
+      { en: "Isn't it interesting how we haven't done this before?", ja: "これ前にやってないって面白くない?" },
+      { en: "It's amazing how fast he learned.", ja: "彼があんなに早く覚えたのはすごい。" },
+      { en: "It's funny how things turn out.", ja: "物事がどうなるか分からないって面白いよね。" },
+      { en: "It's crazy how much time has passed.", ja: "こんなに時間が経ったなんてクレイジー。" },
+      { en: "It's surprising how cheap it was.", ja: "あんなに安かったなんて驚き。" },
+      { en: "It's amazing how much you can do in a day.", ja: "1日でこんなにできるなんてすごい。" },
+      { en: "It's sad how few people care.", ja: "気にする人がこんなに少ないなんて悲しい。" },
+      { en: "It's weird how quiet it is today.", ja: "今日こんなに静かなのは変だ。" },
+      { en: "It's incredible how good she is at this.", ja: "彼女がこれを上手いのは信じられない。" },
+      { en: "It's frustrating how slow this is.", ja: "これがこんなに遅いのはイライラする。" },
+    ],
+  },
+  {
+    id: 41,
+    section: "中・上級",
+    pattern: "be supposed to do",
+    meaning: "本来であれば〜することになっている",
+    examples: [
+      { en: "I'm supposed to be on a diet.", ja: "ダイエットしてるはずなんだけどな。" },
+      { en: "I'm supposed to be on a diet, but these cakes are amazing.", ja: "ダイエットしてるはずなんだけど、このケーキ美味しすぎる。" },
+      { en: "What am I supposed to be doing here?", ja: "私はここで何をすべきなの?" },
+      { en: "You're supposed to knock first.", ja: "先にノックするはずだよ。" },
+      { en: "We're supposed to meet at 6.", ja: "6時に会うことになってる。" },
+      { en: "He was supposed to call yesterday.", ja: "彼は昨日電話するはずだった。" },
+      { en: "Aren't you supposed to be at work?", ja: "仕事行ってるはずじゃないの?" },
+      { en: "The package was supposed to arrive today.", ja: "荷物は今日着くはずだった。" },
+      { en: "I'm not supposed to tell you this.", ja: "本当は言っちゃいけないんだけど。" },
+      { en: "What is this supposed to mean?", ja: "これってどういう意味のつもり?" },
+      { en: "It was supposed to be easy.", ja: "簡単なはずだったんだけど。" },
+      { en: "You're supposed to be the expert here.", ja: "あなたがここの専門家のはずでしょ。" },
+    ],
+  },
+  {
+    id: 42,
+    section: "中・上級",
+    pattern: "The reason I do X is...",
+    meaning: "〜するのは〜だからだ",
+    examples: [
+      { en: "The reason I study English is to communicate with people.", ja: "英語を勉強するのは人とコミュニケーションを取るためだ。" },
+      { en: "The reason I like her is because she's intelligent.", ja: "彼女が好きなのは知的だからだ。" },
+      { en: "The reason I moved was to be closer to family.", ja: "引っ越したのは家族の近くにいるためだ。" },
+      { en: "The reason he quit is that he wanted a change.", ja: "彼が辞めたのは変化が欲しかったからだ。" },
+      { en: "The reason I'm asking is curiosity.", ja: "聞いてるのはただ気になるから。" },
+      { en: "The reason I'm late is the traffic.", ja: "遅れたのは渋滞のせいだ。" },
+      { en: "The reason we chose this place is the view.", ja: "ここを選んだのは景色のためだ。" },
+      { en: "The reason I called is to thank you.", ja: "電話したのはお礼を言うためです。" },
+      { en: "The reason it failed is poor planning.", ja: "失敗した理由は計画不足だ。" },
+      { en: "The reason she's so good is years of practice.", ja: "彼女が上手いのは何年もの練習のおかげだ。" },
+      { en: "The reason I do this is because I love it.", ja: "これをやるのは好きだからだ。" },
+      { en: "The reason I came here is to talk to you.", ja: "ここに来たのはあなたと話すためだ。" },
+    ],
+  },
+  {
+    id: 43,
+    section: "中・上級",
+    pattern: "the more 文, the more 文",
+    meaning: "文すればするほど文になる",
+    examples: [
+      { en: "The more you listen, the more you learn.", ja: "聞けば聞くほど、学べる。" },
+      { en: "The more you practice, the better you get.", ja: "練習すればするほど上手くなる。" },
+      { en: "The more you learn, the better you get.", ja: "学べば学ぶほど上達する。" },
+      { en: "The more, the better.", ja: "多ければ多いほど良い。" },
+      { en: "The more, the merrier.", ja: "大勢の方が楽しい。" },
+      { en: "The more I think about it, the more I worry.", ja: "考えれば考えるほど心配になる。" },
+      { en: "The more you read, the more you know.", ja: "読めば読むほど知識が増える。" },
+      { en: "The more he talks, the less I trust him.", ja: "彼が話せば話すほど信用できなくなる。" },
+      { en: "The more sleep you get, the better you feel.", ja: "寝れば寝るほど気分が良くなる。" },
+      { en: "The more expensive it is, the better the quality.", ja: "高ければ高いほど品質が良い。" },
+      { en: "The more I see her, the more I like her.", ja: "彼女に会えば会うほど好きになる。" },
+      { en: "The harder you work, the luckier you get.", ja: "頑張れば頑張るほど運も巡ってくる。" },
+    ],
+  },
+  {
+    id: 44,
+    section: "中・上級",
+    pattern: "It's just that 文",
+    meaning: "ただ文なだけ",
+    examples: [
+      { en: "It's just that I'm tired.", ja: "ただ疲れてるだけだよ。" },
+      { en: "It's just that I was busy.", ja: "ただ忙しかっただけだよ。" },
+      { en: "It's just that I don't want to talk about it.", ja: "ただその話したくないだけ。" },
+      { en: "It's just that I forgot.", ja: "ただ忘れただけ。" },
+      { en: "It's just that I'm not in the mood today.", ja: "ただ今日その気分じゃないだけ。" },
+      { en: "It's just that I need some time alone.", ja: "ただ一人の時間が必要なだけ。" },
+      { en: "It's just that I disagree with the approach.", ja: "ただそのやり方に賛成じゃないだけ。" },
+      { en: "It's just that I don't feel well.", ja: "ただ体調が良くないだけ。" },
+      { en: "It's just that he reminds me of someone.", ja: "ただ彼が誰かに似てるだけ。" },
+      { en: "It's just that I have a lot on my plate.", ja: "ただ抱えてるものが多いだけ。" },
+      { en: "It's just that I wasn't expecting it.", ja: "ただ予想してなかっただけ。" },
+      { en: "It's just that this isn't really my thing.", ja: "ただこれが私の趣味じゃないだけ。" },
+    ],
+  },
+  {
+    id: 45,
+    section: "中・上級",
+    pattern: "I'll probably do",
+    meaning: "きっと〜するだろう",
+    examples: [
+      { en: "I'll probably be able to make it.", ja: "きっと間に合うと思う。" },
+      { en: "I'll probably just stay at home and chill.", ja: "多分家でゆっくりする。" },
+      { en: "I'll probably just go to the supermarket.", ja: "多分スーパーに行くくらい。" },
+      { en: "I'll probably grab some coffee on the way.", ja: "途中で多分コーヒー買う。" },
+      { en: "I'll probably regret this later.", ja: "多分あとで後悔する。" },
+      { en: "I'll probably need an hour or so.", ja: "多分1時間くらいかかる。" },
+      { en: "I'll probably skip the gym today.", ja: "多分今日ジムはサボる。" },
+      { en: "She'll probably say no.", ja: "彼女多分ノーって言うよ。" },
+      { en: "He'll probably forget about it.", ja: "彼多分忘れちゃうよ。" },
+      { en: "It'll probably take longer than expected.", ja: "多分思ってるより時間かかる。" },
+      { en: "I'll probably just order in.", ja: "多分デリバリーにする。" },
+      { en: "I'll probably see you next week.", ja: "多分来週会えるよ。" },
+    ],
+  },
+  {
+    id: 46,
+    section: "中・上級",
+    pattern: "It's not that 文",
+    meaning: "文という訳ではない",
+    examples: [
+      { en: "It's not that I hate studying.", ja: "勉強が嫌いという訳じゃない。" },
+      { en: "It's not that I hate studying. I just didn't want to today.", ja: "勉強嫌いって訳じゃないんだ。今日はただやりたくなかっただけ。" },
+      { en: "It's not that I don't drink coffee. I just wanted tea today.", ja: "コーヒー飲まないわけじゃない。今日はお茶が飲みたかっただけ。" },
+      { en: "It's not that I'm allergic. I just don't like the smell.", ja: "アレルギーって訳じゃないんだけど、匂いが好きじゃない。" },
+      { en: "It's not that I don't like him.", ja: "彼が嫌いって訳じゃない。" },
+      { en: "It's not that it's hard. It just takes time.", ja: "難しいって訳じゃない。時間がかかるだけ。" },
+      { en: "It's not that I don't trust you.", ja: "信用してないって訳じゃない。" },
+      { en: "It's not that I'm not interested.", ja: "興味がないって訳じゃない。" },
+      { en: "It's not that I don't want to go.", ja: "行きたくないって訳じゃない。" },
+      { en: "It's not that the food was bad.", ja: "料理がまずかった訳じゃない。" },
+      { en: "It's not that I forgot. I just got busy.", ja: "忘れたんじゃない。ただ忙しかった。" },
+      { en: "It's not that we don't care.", ja: "私たちが気にしてないって訳じゃない。" },
+    ],
+  },
+  {
+    id: 47,
+    section: "中・上級",
+    pattern: "without doing",
+    meaning: "〜することなしで",
+    examples: [
+      { en: "He's funny without even trying.", ja: "彼って笑わせようとしてなくても面白いよね。" },
+      { en: "I can't start my day without drinking coffee.", ja: "コーヒーを飲まずに1日を始められない。" },
+      { en: "My brain won't function without coffee.", ja: "コーヒーなしじゃ脳が動かない。" },
+      { en: "He left without saying goodbye.", ja: "さよならを言わずに彼は行ってしまった。" },
+      { en: "She walked past without noticing me.", ja: "彼女は私に気づかずに通り過ぎた。" },
+      { en: "Don't leave without paying.", ja: "払わずに帰らないで。" },
+      { en: "I can't sleep without my pillow.", ja: "枕がないと眠れない。" },
+      { en: "He passed the test without studying.", ja: "彼は勉強せずに試験に合格した。" },
+      { en: "Don't make decisions without thinking.", ja: "考えずに決断しないで。" },
+      { en: "I finished the project without any help.", ja: "誰の助けもなくプロジェクトを終えた。" },
+      { en: "She left without a word.", ja: "何も言わずに彼女は去った。" },
+      { en: "You can't succeed without trying.", ja: "挑戦しなければ成功できない。" },
+    ],
+  },
+  {
+    id: 48,
+    section: "中・上級",
+    pattern: "It's said that 文",
+    meaning: "文と言われる",
+    examples: [
+      { en: "It's said that everything happens for a reason.", ja: "全てのことは理由があって起こると言われている。" },
+      { en: "It's said that Atsueigo is the best channel.", ja: "Atsueigoが一番のチャンネルだと言われている。" },
+      { en: "It's said that the early bird catches the worm.", ja: "早起きは三文の徳と言われる。" },
+      { en: "It's said that he was a great leader.", ja: "彼は偉大なリーダーだったと言われている。" },
+      { en: "It's said that this temple is over 1000 years old.", ja: "この寺は1000年以上前のものだと言われている。" },
+      { en: "It's said that practice makes perfect.", ja: "練習が完璧を作ると言われる。" },
+      { en: "It's said that money can't buy happiness.", ja: "お金では幸せは買えないと言われる。" },
+      { en: "It's said that the food here is amazing.", ja: "ここの料理は素晴らしいと言われている。" },
+      { en: "It's said that he speaks seven languages.", ja: "彼は7ヶ国語話すと言われている。" },
+      { en: "It was said that she would become a star.", ja: "彼女はスターになると言われていた。" },
+      { en: "It's said that change is the only constant.", ja: "変化だけが唯一の常だと言われる。" },
+      { en: "It's said that time heals all wounds.", ja: "時間が全ての傷を癒すと言われる。" },
+    ],
+  },
+  {
+    id: 49,
+    section: "中・上級",
+    pattern: "If I were to do, I would do",
+    meaning: "仮に〜するとしたら、〜するだろう",
+    examples: [
+      { en: "If I were to travel this year, I would go to Paris.", ja: "もし今年旅行するとしたら、パリに行く。" },
+      { en: "If I were to study abroad, it would be for two years.", ja: "もし留学するとしたら、2年間だろう。" },
+      { en: "If I were to start over, I'd do things differently.", ja: "もしやり直すなら、違うやり方をするだろう。" },
+      { en: "If I were to win the lottery, I'd buy a house.", ja: "もし宝くじが当たったら、家を買う。" },
+      { en: "If you were to ask me, I'd say yes.", ja: "もし聞かれたら、イエスと答える。" },
+      { en: "If he were to leave, the team would fall apart.", ja: "もし彼が辞めたら、チームは崩壊する。" },
+      { en: "If I were to give advice, it would be to be patient.", ja: "もしアドバイスするなら、辛抱強くと言う。" },
+      { en: "If we were to expand, we'd need more staff.", ja: "もし拡大するなら、もっとスタッフが必要だ。" },
+      { en: "If I were to move abroad, where should I go?", ja: "もし海外に引っ越すならどこがいいかな?" },
+      { en: "If she were to call, I'd answer immediately.", ja: "もし彼女が電話してきたら、すぐ出る。" },
+      { en: "If I were to choose one, I'd pick this one.", ja: "もし一つ選ぶとしたら、これにする。" },
+      { en: "If they were to find out, we'd be in trouble.", ja: "もし彼らにバレたら、まずいことになる。" },
+    ],
+  },
+  {
+    id: 50,
+    section: "中・上級",
+    pattern: "It's such a 形容詞 名詞 that 文",
+    meaning: "ものすごく形容詞な名詞だったので文だった",
+    examples: [
+      { en: "It was such a hot day that we couldn't go outside.", ja: "めちゃくちゃ暑い日だったから外に出られなかった。" },
+      { en: "It was such a cozy café that I could spend hours there.", ja: "めちゃくちゃ居心地良いカフェで何時間でも過ごせる。" },
+      { en: "It was such a good movie that I watched it twice.", ja: "とても良い映画だったから2回観た。" },
+      { en: "She's such a kind person that everyone loves her.", ja: "彼女はとても親切な人だから皆に好かれている。" },
+      { en: "It was such a long flight that I slept the whole time.", ja: "めちゃくちゃ長いフライトでずっと寝てた。" },
+      { en: "He's such a fast learner that he caught up quickly.", ja: "彼はとても飲み込みが早いからすぐ追いついた。" },
+      { en: "It was such a busy day that I forgot to eat.", ja: "あまりに忙しい日で食べるのを忘れた。" },
+      { en: "It was such a small room that we could barely fit.", ja: "あまりに小さい部屋でほとんど入れなかった。" },
+      { en: "He's such a good cook that he could open a restaurant.", ja: "彼は料理が上手すぎてレストラン開けるくらい。" },
+      { en: "It was such a difficult exam that nobody passed.", ja: "あまりに難しい試験で誰も合格しなかった。" },
+      { en: "She's such a talented singer that she went pro.", ja: "彼女は才能があるシンガーでプロになった。" },
+      { en: "It's such a beautiful view that I want to stay forever.", ja: "あまりに綺麗な景色でずっといたい。" },
+    ],
+  },
+  {
+    id: 51,
+    section: "中・上級",
+    pattern: "I'm at the stage where 文",
+    meaning: "文の段階にある",
+    examples: [
+      { en: "I'm at the stage where I need to think more carefully about life.", ja: "もう少し人生について慎重に考えないといけない段階だ。" },
+      { en: "I'm at the stage where I need to gain more experience.", ja: "もっと経験を積まないといけない段階だ。" },
+      { en: "I'm at the stage where I need to study English more seriously.", ja: "もっと真面目に英語を学ばないといけない段階だ。" },
+      { en: "I'm at the stage where I'm thinking about settling down.", ja: "落ち着くことを考えている段階だ。" },
+      { en: "We're at the stage where we need to make a decision.", ja: "決断しないといけない段階だ。" },
+      { en: "I'm at the stage where I want stability.", ja: "安定が欲しい段階にいる。" },
+      { en: "He's at the stage where he's questioning everything.", ja: "彼は何もかも疑問に思っている段階だ。" },
+      { en: "I'm at the stage where I can't ignore my health anymore.", ja: "もう健康を無視できない段階だ。" },
+      { en: "She's at the stage where she's looking for a new job.", ja: "彼女は新しい仕事を探している段階だ。" },
+      { en: "The project is at the stage where we need feedback.", ja: "プロジェクトはフィードバックが必要な段階だ。" },
+      { en: "I'm at the stage where I want to start saving seriously.", ja: "本格的に貯金を始めたい段階だ。" },
+      { en: "We're at the stage where we're scaling up.", ja: "私たちは拡大している段階だ。" },
+    ],
+  },
+  {
+    id: 52,
+    section: "中・上級",
+    pattern: "X is worth doing",
+    meaning: "Xは〜する価値がある",
+    examples: [
+      { en: "This book is worth reading.", ja: "この本は読む価値がある。" },
+      { en: "This video is worth watching.", ja: "この動画は観る価値がある。" },
+      { en: "It's worth watching this video.", ja: "この動画は観る価値がある。" },
+      { en: "Tokyo is worth visiting at least once.", ja: "東京は少なくとも一度は訪れる価値がある。" },
+      { en: "It's worth a try.", ja: "試す価値はある。" },
+      { en: "Some risks are worth taking.", ja: "取る価値のあるリスクもある。" },
+      { en: "Was it worth the wait?", ja: "待った価値はあった?" },
+      { en: "The restaurant is worth the hype.", ja: "そのレストランは噂通りの価値がある。" },
+      { en: "Is it worth the money?", ja: "そのお金を出す価値ある?" },
+      { en: "His advice is worth listening to.", ja: "彼のアドバイスは聞く価値がある。" },
+      { en: "It's not worth getting upset over.", ja: "怒る価値もない。" },
+      { en: "The view from the top is worth the climb.", ja: "頂上からの景色は登る価値がある。" },
+    ],
+  },
+  {
+    id: 53,
+    section: "中・上級",
+    pattern: "What I like about X is Y",
+    meaning: "Xに関して好きなところはYだ",
+    examples: [
+      { en: "What I like about Japan is its beautiful culture.", ja: "日本の好きなところは美しい文化だ。" },
+      { en: "What I like about this channel is that I can learn things.", ja: "このチャンネルの好きなところは色々学べるところ。" },
+      { en: "What I like about him is his honesty.", ja: "彼の好きなところは正直なところ。" },
+      { en: "What I don't like about this is the noise.", ja: "ここの嫌なところは騒音だ。" },
+      { en: "What I love about cooking is the creativity.", ja: "料理の好きなところは創造性だ。" },
+      { en: "What I appreciate about her is her patience.", ja: "彼女について感謝してるのは忍耐強さだ。" },
+      { en: "What I like about this city is the food.", ja: "この街の好きなところは食事だ。" },
+      { en: "What I love about Sundays is sleeping in.", ja: "日曜日の好きなところはゆっくり寝られるところ。" },
+      { en: "What I like most is the simplicity.", ja: "一番好きなのはシンプルさだ。" },
+      { en: "What I admire about her is her courage.", ja: "彼女について尊敬するのは勇気だ。" },
+      { en: "What I dislike about winter is the cold.", ja: "冬の嫌なところは寒さだ。" },
+      { en: "What I enjoy about traveling is meeting new people.", ja: "旅行の楽しみは新しい人に出会うことだ。" },
+    ],
+  },
+  {
+    id: 54,
+    section: "中・上級",
+    pattern: "X is/was like, \"文\"",
+    meaning: "文と言った/思った",
+    examples: [
+      { en: "He was like, \"Why do you complain so much?\"", ja: "「なんでそんなに文句言うの?」って彼は言ってた。" },
+      { en: "I was like, \"Why wouldn't he shut his mouth?\"", ja: "「なんで彼は黙らないんだよ」って感じだった。" },
+      { en: "I was like, \"Just do whatever you want.\"", ja: "「もう好きにすれば?」って感じだった。" },
+      { en: "She was like, \"I don't care anymore.\"", ja: "「もうどうでもいい」って彼女は言ってた。" },
+      { en: "He was like, \"Are you serious?\"", ja: "「マジで?」って彼は言ってた。" },
+      { en: "I was like, \"No way.\"", ja: "「ありえない」って感じだった。" },
+      { en: "They were like, \"Let's go now.\"", ja: "「今行こう」って彼らは言ってた。" },
+      { en: "She was like, \"This is amazing!\"", ja: "「これすごい!」って彼女は言ってた。" },
+      { en: "My boss was like, \"Get this done by Friday.\"", ja: "「金曜までに終わらせて」って上司は言ってた。" },
+      { en: "I was like, \"Wait, what?\"", ja: "「ちょっと待って、何?」って感じだった。" },
+      { en: "He was like, \"I never said that.\"", ja: "「そんなこと言ってない」って彼は言ってた。" },
+      { en: "She was like, \"I'm done with this.\"", ja: "「もうこれはやめた」って彼女は言ってた。" },
+    ],
+  },
+  {
+    id: 55,
+    section: "中・上級",
+    pattern: "in which case 文",
+    meaning: "もしそうなったら文",
+    examples: [
+      { en: "I might be late, in which case I'll send you a message.", ja: "遅れるかもしれないから、その場合連絡するね。" },
+      { en: "He might be on vacation, in which case contact John.", ja: "彼は休暇中かもしれないから、その場合ジョンに連絡して。" },
+      { en: "It might rain, in which case we'll stay inside.", ja: "雨が降るかもしれないから、その場合中にいる。" },
+      { en: "She might say no, in which case we'll find someone else.", ja: "彼女は断るかもしれないから、その場合別の人を探す。" },
+      { en: "The flight might be delayed, in which case I'll text you.", ja: "便が遅れるかもしれないから、その時はメッセージ送る。" },
+      { en: "The store might be closed, in which case we'll go elsewhere.", ja: "店が閉まってるかもしれないから、その場合他に行く。" },
+      { en: "He might forget, in which case remind him gently.", ja: "彼忘れるかもしれないから、その時はやんわり思い出させて。" },
+      { en: "Traffic might be bad, in which case leave early.", ja: "渋滞かもしれないから、その場合早めに出て。" },
+      { en: "The meeting might run late, in which case I'll skip lunch.", ja: "会議が長引くかも、その場合ランチは抜く。" },
+      { en: "You might disagree, in which case let me know.", ja: "賛成しないかもしれないから、その場合言って。" },
+      { en: "It might be sold out, in which case we'll try tomorrow.", ja: "売り切れてるかも、その場合は明日また来る。" },
+      { en: "She might not call, in which case I'll reach out first.", ja: "彼女が電話しないかも、その場合は私から連絡する。" },
+    ],
+  },
+  {
+    id: 56,
+    section: "中・上級",
+    pattern: "when it comes to 名詞/動名詞",
+    meaning: "名詞/動名詞のことになると",
+    examples: [
+      { en: "When it comes to coffee, he's an expert.", ja: "コーヒーのことになると彼はエキスパートだ。" },
+      { en: "When it comes to traffic in this city, it's a nightmare.", ja: "この街の交通量に関しては悪夢だ。" },
+      { en: "When it comes to studying, consistency is key.", ja: "勉強に関しては、継続が鍵だ。" },
+      { en: "When it comes to food, I'm pretty picky.", ja: "食べ物のことになると、結構好き嫌いがある。" },
+      { en: "When it comes to sports, he knows everything.", ja: "スポーツのことになると彼は何でも知ってる。" },
+      { en: "When it comes to money, she's very careful.", ja: "お金のことになると彼女はとても慎重だ。" },
+      { en: "When it comes to fashion, Paris is unbeatable.", ja: "ファッションのことになると、パリには敵わない。" },
+      { en: "When it comes to driving, I prefer manual cars.", ja: "運転に関しては、マニュアル車の方が好きだ。" },
+      { en: "When it comes to work, he's super focused.", ja: "仕事のことになると彼は集中力がすごい。" },
+      { en: "When it comes to cooking, my mom is the best.", ja: "料理に関しては、うちの母が一番だ。" },
+      { en: "When it comes to dating, I'm a bit old-fashioned.", ja: "恋愛のことになると、私は少し古風だ。" },
+      { en: "When it comes to tech, she's way ahead.", ja: "テクノロジーに関しては、彼女はずっと先を行ってる。" },
+    ],
+  },
+  {
+    id: 57,
+    section: "中・上級",
+    pattern: "with 名詞 状態",
+    meaning: "名詞が状態の状態で",
+    examples: [
+      { en: "I can even do this with my eyes closed.", ja: "目を閉じてもこれできるよ。" },
+      { en: "My dog was sleeping with his tongue hanging out.", ja: "うちの犬は舌を出した状態で寝てた。" },
+      { en: "It's so hard to type with my hands shaking.", ja: "手が震えてる状態でタイピングするのは難しい。" },
+      { en: "She walked into the room with her arms crossed.", ja: "彼女は腕を組んだまま部屋に入ってきた。" },
+      { en: "He sat there with his head down.", ja: "彼は頭を下げた状態で座っていた。" },
+      { en: "Don't talk with your mouth full.", ja: "口に物を入れたまま話さないで。" },
+      { en: "I fell asleep with the TV on.", ja: "テレビをつけたまま寝てしまった。" },
+      { en: "She left with tears in her eyes.", ja: "彼女は目に涙を浮かべて去って行った。" },
+      { en: "He arrived with a smile on his face.", ja: "彼は笑顔で到着した。" },
+      { en: "I can't sleep with the light on.", ja: "電気つけたまま寝られない。" },
+      { en: "She was standing there with her hands in her pockets.", ja: "彼女はポケットに手を入れて立っていた。" },
+      { en: "He spoke with his eyes fixed on me.", ja: "彼は私から目を離さずに話した。" },
+    ],
+  },
+  {
+    id: 58,
+    section: "中・上級",
+    pattern: "動詞 how 形容詞 名詞 is",
+    meaning: "名詞がどれだけ形容詞なのか動詞",
+    examples: [
+      { en: "Look how beautiful this city is.", ja: "この街、どれだけ美しいか見てよ。" },
+      { en: "Look how beautiful she is.", ja: "彼女、どれだけ美しいか見てよ。" },
+      { en: "Do you remember how crazy the party was?", ja: "あのパーティーどれだけやばかったか覚えてる?" },
+      { en: "You wouldn't believe how cheap it was.", ja: "どれだけ安かったか信じられないよ。" },
+      { en: "I can't believe how fast he is.", ja: "彼がどれだけ速いか信じられない。" },
+      { en: "See how easy that was?", ja: "ほら、どれだけ簡単だったか分かるでしょ?" },
+      { en: "Tell me how good it was.", ja: "どれだけ良かったか教えて。" },
+      { en: "Look how big he's gotten.", ja: "彼どれだけ大きくなったか見て。" },
+      { en: "Notice how quiet it is.", ja: "どれだけ静かか気づいて。" },
+      { en: "Imagine how tired she must be.", ja: "彼女がどれだけ疲れてるか想像してみて。" },
+      { en: "You should see how happy he was.", ja: "彼がどれだけ嬉しそうだったか見るべきだったよ。" },
+      { en: "Remember how amazing that meal was?", ja: "あの食事どれだけ美味しかったか覚えてる?" },
+    ],
+  },
+  {
+    id: 59,
+    section: "中・上級",
+    pattern: "get to do",
+    meaning: "〜する機会がある、〜することができる",
+    examples: [
+      { en: "This morning, I got to drive a new car.", ja: "今朝、新車を運転できた。" },
+      { en: "Because of work, I don't get to work out much.", ja: "仕事のせいで、あまり筋トレできない。" },
+      { en: "Yesterday, I got to talk with a famous actor.", ja: "昨日、有名な俳優と話す機会があった。" },
+      { en: "I don't often get to see my family.", ja: "あまり家族に会う機会がない。" },
+      { en: "We got to try the new menu.", ja: "新メニューを試す機会があった。" },
+      { en: "Did you get to meet him?", ja: "彼に会えた?" },
+      { en: "I finally got to use my new camera.", ja: "やっと新しいカメラを使えた。" },
+      { en: "She got to travel to Italy last year.", ja: "彼女は去年イタリアに行く機会があった。" },
+      { en: "I never get to sleep in on weekends.", ja: "週末にゆっくり寝る機会がない。" },
+      { en: "We didn't get to finish the movie.", ja: "映画を最後まで観られなかった。" },
+      { en: "I'm so glad I got to see you.", ja: "あなたに会えて本当に嬉しい。" },
+      { en: "Do I get to choose?", ja: "私が選べるの?" },
+    ],
+  },
+  {
+    id: 60,
+    section: "中・上級",
+    pattern: "be going to have to do",
+    meaning: "残念ながら〜しないといけない",
+    examples: [
+      { en: "Unfortunately, you're going to have to leave now.", ja: "残念ながら、もう出てもらわないといけない。" },
+      { en: "Yeah, probably, you're going to have to pay for it.", ja: "うん、多分それ払わないといけないだろうね。" },
+      { en: "Probably, I'm going to have to knuckle down and study.", ja: "多分本気出して勉強しないといけないだろうな。" },
+      { en: "I'm going to have to cancel.", ja: "残念ながらキャンセルしなきゃいけない。" },
+      { en: "You're going to have to wait a bit.", ja: "ちょっと待ってもらわないといけない。" },
+      { en: "We're going to have to reschedule.", ja: "予定を変更しないといけない。" },
+      { en: "I'm going to have to skip dinner.", ja: "夕食は抜かないといけない。" },
+      { en: "He's going to have to apologize.", ja: "彼は謝らないといけないだろうね。" },
+      { en: "We're going to have to work overtime.", ja: "残業しないといけないだろう。" },
+      { en: "I'm going to have to disappoint you.", ja: "残念だけどがっかりさせちゃうことになる。" },
+      { en: "You're going to have to make a choice.", ja: "選ばないといけなくなるよ。" },
+      { en: "I'm going to have to think about it.", ja: "考えないといけないな。" },
+    ],
+  },
+  // ===== ATSU表現 Part 1 (61-80) =====
+  {
+    id: 61,
+    section: "ATSU表現 Part 1",
+    pattern: "It's 形容詞 how 文",
+    meaning: "文は形容詞だ (会話的)",
+    examples: [
+      { en: "It's interesting how you said that.", ja: "そんなこと言うなんて面白いね。" },
+      { en: "It's amazing how you did that.", ja: "そんなことしたなんてすごいね。" },
+      { en: "It's amazing how we can work on this project.", ja: "このプロジェクトに取り組めるなんてすごいね。" },
+      { en: "It's strange how time flies when we're having fun.", ja: "楽しんでる時、時間が早く感じるのって変だよね。" },
+      { en: "It's funny how he always shows up late.", ja: "彼っていつも遅れて来るの、笑えるよね。" },
+      { en: "It's crazy how cheap food is here.", ja: "ここの食べ物の安さ、ヤバいよね。" },
+      { en: "It's wild how much things have changed.", ja: "ここまで変わったなんて信じられないね。" },
+      { en: "It's interesting how you noticed that.", ja: "それに気づくなんて、面白いね。" },
+      { en: "It's surprising how quiet the city is at night.", ja: "夜の街がこんなに静かなのって驚きだよね。" },
+      { en: "It's amazing how good this coffee is.", ja: "このコーヒー、めっちゃ美味いよね。" },
+      { en: "It's weird how nobody's talking about it.", ja: "誰もそのこと話してないの、変だよね。" },
+      { en: "It's cool how everyone helps each other here.", ja: "ここでは皆が助け合うのって、いいよね。" },
+    ],
+  },
+  {
+    id: 62,
+    section: "ATSU表現 Part 1",
+    pattern: "at the end of the day",
+    meaning: "結局は",
+    examples: [
+      { en: "At the end of the day, this is not that important.", ja: "結局、これってそんなに重要じゃないよね。" },
+      { en: "At the end of the day, what I'm saying doesn't really matter because the choice is yours.", ja: "結局、選ぶのは君だから私が言ってることは関係ないよ。" },
+      { en: "At the end of the day, you don't have to think about it because you're not going to do it.", ja: "結局やらないんだから考えなくていいよ。" },
+      { en: "At the end of the day, it's your decision.", ja: "結局、決めるのは君だ。" },
+      { en: "At the end of the day, money isn't everything.", ja: "結局、お金が全てじゃない。" },
+      { en: "At the end of the day, family comes first.", ja: "結局、家族が一番だ。" },
+      { en: "At the end of the day, we all want to be happy.", ja: "結局、みんな幸せになりたいんだ。" },
+      { en: "At the end of the day, it's just a game.", ja: "結局はただのゲームだよ。" },
+      { en: "At the end of the day, you have to do what works for you.", ja: "結局、自分に合うことをやるしかない。" },
+      { en: "At the end of the day, talent matters less than effort.", ja: "結局、才能より努力が大事だ。" },
+      { en: "At the end of the day, nobody cares as much as you do.", ja: "結局、自分ほど気にしてる人はいない。" },
+      { en: "At the end of the day, we did our best.", ja: "結局、私たちはベストを尽くした。" },
+    ],
+  },
+  {
+    id: 63,
+    section: "ATSU表現 Part 1",
+    pattern: "if that makes sense",
+    meaning: "言ってること分かる?",
+    examples: [
+      { en: "It sounded a bit British, maybe a bit Australian, if that makes sense.", ja: "イギリス英語とオーストラリア英語が混ざった感じ、言ってること分かる?" },
+      { en: "I want something cold, but kind of warmish, if that makes sense.", ja: "冷たいけど温かいみたいなのが欲しい、言ってること分かる?" },
+      { en: "It's not bad, but not great either, if that makes sense.", ja: "悪くないけど良くもない、伝わる?" },
+      { en: "I love him as a friend, but not romantically, if that makes sense.", ja: "友達としては好きだけど恋愛じゃない、分かる?" },
+      { en: "It's like jazz but with a hip-hop feel, if that makes sense.", ja: "ジャズだけどヒップホップっぽい、言ってる意味分かる?" },
+      { en: "It's the same color but a different shade, if that makes sense.", ja: "同じ色だけど違うトーン、伝わる?" },
+      { en: "I'm tired but I can't sleep, if that makes sense.", ja: "疲れてるのに眠れない、分かる?" },
+      { en: "It tastes good but smells weird, if that makes sense.", ja: "味は美味いけど匂いが変、分かる?" },
+      { en: "He's funny but kind of mean too, if that makes sense.", ja: "面白いけどちょっと意地悪、伝わる?" },
+      { en: "I miss it but I don't want to go back, if that makes sense.", ja: "懐かしいけど戻りたくない、分かる?" },
+      { en: "I trust him but I don't fully believe him, if that makes sense.", ja: "彼を信用してるけど完全には信じてない、伝わる?" },
+      { en: "It's busy but in a good way, if that makes sense.", ja: "忙しいけど良い意味で、分かる?" },
+    ],
+  },
+  {
+    id: 64,
+    section: "ATSU表現 Part 1",
+    pattern: "if you think about it",
+    meaning: "考え方によれば、よく考えると",
+    examples: [
+      { en: "We're just tiny specks in the universe if you think about it.", ja: "考え方によれば、私たちなんて宇宙のちっぽけな存在だ。" },
+      { en: "It's crazy how we can communicate like this if you think about it.", ja: "考えてみると、こんなにやり取りできるってすごいよね。" },
+      { en: "If you think about it, we spend most of our lives working.", ja: "よく考えると、人生のほとんどを仕事に費やしてる。" },
+      { en: "If you think about it, it's actually a good deal.", ja: "考えてみると、結構いい取引だよ。" },
+      { en: "It's amazing how fast technology evolves, if you think about it.", ja: "考えてみると、技術の進化はすごく早いよね。" },
+      { en: "If you think about it, he's actually right.", ja: "よく考えると、彼の言うことは正しい。" },
+      { en: "If you think about it, time really is the most valuable thing.", ja: "考えてみると、時間って本当に一番貴重だよね。" },
+      { en: "If you think about it, we've come a long way.", ja: "よく考えると、私たちはずいぶん遠くまで来た。" },
+      { en: "If you think about it, that's a lot of money.", ja: "考えてみると、それって大金だよね。" },
+      { en: "If you think about it, life is really short.", ja: "考えてみると、人生って本当に短い。" },
+      { en: "If you think about it, you've changed a lot.", ja: "よく考えると、あなたも結構変わったよね。" },
+      { en: "If you think about it, that's exactly what she warned us about.", ja: "考えてみると、まさに彼女が警告してたことだ。" },
+    ],
+  },
+  {
+    id: 65,
+    section: "ATSU表現 Part 1",
+    pattern: "you know what I mean?",
+    meaning: "言ってること分かる?",
+    examples: [
+      { en: "I think YouTube is getting more and more competitive, you know what I mean?", ja: "YouTubeって競争が激しくなってるよね、分かる?" },
+      { en: "At the end of the day, it's completely up to you. You know what I mean?", ja: "結局、君次第なんだよ。言ってる意味分かる?" },
+      { en: "I just want to chill tonight, you know what I mean?", ja: "今夜はゆっくりしたい、分かるでしょ?" },
+      { en: "Sometimes you just need a break, you know what I mean?", ja: "たまには休みが必要だよね、分かる?" },
+      { en: "It's not that I'm angry, just disappointed, you know what I mean?", ja: "怒ってるんじゃなくて、がっかりしてるんだよ、伝わる?" },
+      { en: "He talks a lot but says nothing, you know what I mean?", ja: "彼、たくさん話すけど中身がない、分かるでしょ?" },
+      { en: "Some things you just have to experience, you know what I mean?", ja: "体験しないと分からないことってあるよね、伝わる?" },
+      { en: "The vibe was off the whole night, you know what I mean?", ja: "一晩中なんか変な雰囲気だった、分かる?" },
+      { en: "It's a small thing but it bothers me, you know what I mean?", ja: "小さなことだけど気になるんだよ、伝わる?" },
+      { en: "I want to grow but stay grounded, you know what I mean?", ja: "成長したいけど地に足をつけたい、分かる?" },
+      { en: "She's nice but kind of distant, you know what I mean?", ja: "彼女、優しいけどちょっと距離がある、分かるでしょ?" },
+      { en: "I've been thinking about life lately, you know what I mean?", ja: "最近人生について考えてるんだよ、分かる?" },
+    ],
+  },
+  {
+    id: 66,
+    section: "ATSU表現 Part 1",
+    pattern: "or so",
+    meaning: "〜とかその辺、大体",
+    examples: [
+      { en: "I think it's going to start in 10 minutes or so.", ja: "大体あと10分くらいで始まると思う。" },
+      { en: "It's 20 dollars or so.", ja: "大体20ドルくらい。" },
+      { en: "It's going to cost probably 20 dollars or so.", ja: "大体20ドルくらいかかるよ。" },
+      { en: "I'll be there in an hour or so.", ja: "1時間くらいで着くよ。" },
+      { en: "She lives 5 miles or so from here.", ja: "彼女はここから5マイルくらいのところに住んでる。" },
+      { en: "We've been waiting for 30 minutes or so.", ja: "30分くらい待ってる。" },
+      { en: "I drink two cups of coffee or so a day.", ja: "1日2杯くらいコーヒーを飲む。" },
+      { en: "He's 40 years old or so.", ja: "彼、40歳くらいだと思う。" },
+      { en: "It happened a week ago or so.", ja: "1週間くらい前に起こった。" },
+      { en: "I have $50 or so in my wallet.", ja: "財布に50ドルくらいある。" },
+      { en: "The trip takes 3 hours or so.", ja: "旅は3時間くらいかかる。" },
+      { en: "I read 100 pages or so yesterday.", ja: "昨日100ページくらい読んだ。" },
+    ],
+  },
+  {
+    id: 67,
+    section: "ATSU表現 Part 1",
+    pattern: "and stuff",
+    meaning: "〜とか",
+    examples: [
+      { en: "We've got to do editing and stuff.", ja: "編集とかしないといけない。" },
+      { en: "We've got to do editing and stuff. It'll probably cost 20 dollars or so.", ja: "編集とかしないといけないから、20ドルくらいかかるよ。" },
+      { en: "I bought some snacks and drinks and stuff.", ja: "スナックとか飲み物とか買った。" },
+      { en: "He plays guitar and piano and stuff.", ja: "彼、ギターとかピアノとか弾くよ。" },
+      { en: "I need to do laundry and stuff this weekend.", ja: "今週末は洗濯とかしないと。" },
+      { en: "We talked about work and stuff.", ja: "仕事とかについて話した。" },
+      { en: "She likes hiking and camping and stuff.", ja: "彼女、ハイキングとかキャンプとか好きなんだよ。" },
+      { en: "I've been busy with meetings and stuff.", ja: "ミーティングとかで忙しい。" },
+      { en: "He brought chips and dip and stuff.", ja: "彼、チップスとかディップとか持ってきた。" },
+      { en: "Let's grab dinner and drinks and stuff.", ja: "夕食とかドリンクとか行こう。" },
+      { en: "I've been studying English and stuff.", ja: "英語とか勉強してる。" },
+      { en: "We need pens, paper, and stuff for the trip.", ja: "旅行にはペンとか紙とかが必要。" },
+    ],
+  },
+  {
+    id: 68,
+    section: "ATSU表現 Part 1",
+    pattern: "or something like that",
+    meaning: "〜とかなんとか",
+    examples: [
+      { en: "He said he was going to study English or something like that.", ja: "英語を勉強するとかなんとか言ってた。" },
+      { en: "I think he's learning Spanish or something like that.", ja: "彼、スペイン語かなんかを勉強してると思う。" },
+      { en: "I think he's learning Spanish or something like that, if that makes sense.", ja: "彼、スペイン語かなんか勉強してると思う、伝わる?" },
+      { en: "She mentioned a meeting at 3 or something like that.", ja: "3時とかなんとかミーティングって言ってた。" },
+      { en: "He's a designer or something like that.", ja: "彼、デザイナーとかそんなんだよ。" },
+      { en: "I'll have a sandwich or something like that.", ja: "サンドイッチとかにする。" },
+      { en: "We need eggs or something like that.", ja: "卵とかなんとか必要だ。" },
+      { en: "He bought a new car or something like that.", ja: "彼、新車とか買ったらしい。" },
+      { en: "She lives in Brooklyn or something like that.", ja: "彼女、ブルックリンとかその辺に住んでる。" },
+      { en: "His name is Mike or something like that.", ja: "彼の名前はマイクとかなんとか。" },
+      { en: "It costs $200 or something like that.", ja: "200ドルとかなんとかかかる。" },
+      { en: "She works at a startup or something like that.", ja: "スタートアップとかそんなところで働いてる。" },
+    ],
+  },
+  {
+    id: 69,
+    section: "ATSU表現 Part 1",
+    pattern: "pretty much",
+    meaning: "ほぼ",
+    examples: [
+      { en: "This is pretty much done.", ja: "これはほぼ終わってる。" },
+      { en: "This is pretty much the same as that one.", ja: "あれとほぼ同じだね。" },
+      { en: "I've pretty much made up my mind.", ja: "ほぼ決心してる。" },
+      { en: "He's pretty much the same as before.", ja: "彼はほぼ前と変わらない。" },
+      { en: "I've pretty much finished the report.", ja: "レポートはほぼ終わってる。" },
+      { en: "We're pretty much ready to go.", ja: "ほぼ出発の準備できてる。" },
+      { en: "That's pretty much what I expected.", ja: "ほぼ予想通りだった。" },
+      { en: "I eat pretty much anything.", ja: "ほぼ何でも食べる。" },
+      { en: "She's pretty much the boss now.", ja: "彼女はもうほぼボスだ。" },
+      { en: "It's pretty much sold out.", ja: "ほぼ売り切れてる。" },
+      { en: "He's pretty much always late.", ja: "彼はほぼいつも遅刻する。" },
+      { en: "I've been pretty much working non-stop.", ja: "ほぼずっと働きっぱなしだ。" },
+    ],
+  },
+  {
+    id: 70,
+    section: "ATSU表現 Part 1",
+    pattern: "or not really?",
+    meaning: "ちょっと違う?",
+    examples: [
+      { en: "Do you like this kind of music, or not really?", ja: "こういう感じの音楽好き? それともちょっと違う?" },
+      { en: "Is this what you're looking for, or not really?", ja: "これ君が探してるもの? それともちょっと違う?" },
+      { en: "Is this the kind of thing you wanted, or not really?", ja: "これ、君がしたかった感じのこと? それともちょっと違う?" },
+      { en: "Are you into spicy food, or not really?", ja: "辛い物好き? それともちょっと違う?" },
+      { en: "Is this what you meant, or not really?", ja: "こういう意味? それともちょっと違う?" },
+      { en: "Do you want to go out, or not really?", ja: "出かけたい? それともちょっと違う?" },
+      { en: "Are you a morning person, or not really?", ja: "朝型? それともちょっと違う?" },
+      { en: "Is that your style, or not really?", ja: "君のスタイル? それともちょっと違う?" },
+      { en: "Did you enjoy the movie, or not really?", ja: "映画楽しめた? それともちょっと違う?" },
+      { en: "Are you in the mood for sushi, or not really?", ja: "寿司の気分? それともちょっと違う?" },
+      { en: "Is this what you had in mind, or not really?", ja: "こういうの考えてた? それともちょっと違う?" },
+      { en: "Are you ready to leave, or not really?", ja: "もう出る準備できた? それともちょっと違う?" },
+    ],
+  },
+  {
+    id: 71,
+    section: "ATSU表現 Part 1",
+    pattern: "I have a feeling 文",
+    meaning: "〜という気がする",
+    examples: [
+      { en: "I have a feeling that it's going to be a great event.", ja: "めっちゃ良いイベントになる気がする。" },
+      { en: "I have a feeling that we're going to win.", ja: "勝つ気がする。" },
+      { en: "I have a feeling that there's more to it.", ja: "もっと何かある気がする。" },
+      { en: "Do you have a feeling that we're going to win, or not really?", ja: "勝つ気がする? それともそうでもない?" },
+      { en: "I have a feeling he's not telling the truth.", ja: "彼、本当のこと言ってない気がする。" },
+      { en: "I have a feeling it's going to rain.", ja: "雨が降る気がする。" },
+      { en: "I have a feeling we've met before.", ja: "前に会ったことがある気がする。" },
+      { en: "I had a feeling you'd say that.", ja: "そう言うだろうって気がしてた。" },
+      { en: "I have a feeling she likes him.", ja: "彼女、彼のこと好きな気がする。" },
+      { en: "I have a feeling something is wrong.", ja: "何かおかしい気がする。" },
+      { en: "I have a feeling this is going to be a long day.", ja: "今日は長い1日になる気がする。" },
+      { en: "I have a feeling he'll be late.", ja: "彼、遅れる気がする。" },
+    ],
+  },
+  {
+    id: 72,
+    section: "ATSU表現 Part 1",
+    pattern: "I know, right?",
+    meaning: "ほんとそれ",
+    examples: [
+      { en: "— This is delicious. — I know, right?", ja: "— これ美味しすぎる。 — ほんとそれ。" },
+      { en: "— She is gorgeous. — I know, right?", ja: "— あの人めっちゃ綺麗だね。 — ほんとそれ。" },
+      { en: "— He did a great job. — I know, right?", ja: "— 彼めっちゃ良い仕事したね。 — ほんとそれ。" },
+      { en: "— This is beautiful. — I know, right?", ja: "— これ綺麗だね。 — ほんとそれ。" },
+      { en: "— That movie was so good. — I know, right?", ja: "— あの映画めっちゃ良かった。 — ほんとそれ。" },
+      { en: "— It's so cold today. — I know, right?", ja: "— 今日めっちゃ寒い。 — ほんとそれ。" },
+      { en: "— He's such a great singer. — I know, right?", ja: "— 彼、すごく歌が上手いよね。 — ほんとそれ。" },
+      { en: "— Mondays are the worst. — I know, right?", ja: "— 月曜って最悪だよね。 — ほんとそれ。" },
+      { en: "— Time flies. — I know, right?", ja: "— 時間が経つの早い。 — ほんとそれ。" },
+      { en: "— This café is so cozy. — I know, right?", ja: "— このカフェめっちゃ落ち着く。 — ほんとそれ。" },
+      { en: "— He talks too much. — I know, right?", ja: "— 彼、話しすぎ。 — ほんとそれ。" },
+      { en: "— Tokyo is amazing in spring. — I know, right?", ja: "— 春の東京最高だね。 — ほんとそれ。" },
+    ],
+  },
+  {
+    id: 73,
+    section: "ATSU表現 Part 1",
+    pattern: "kind of thing",
+    meaning: "〜みたいなもの",
+    examples: [
+      { en: "I was trying to create something like my original anime kind of thing.", ja: "オリジナルのアニメみたいなものを作ろうとしてた。" },
+      { en: "This is a flip phone kind of thing but a bit different.", ja: "ガラケーみたいなものなんだけどちょっと違う。" },
+      { en: "I'm trying to create a YouTube channel kind of thing on a different platform.", ja: "別のプラットフォームでYouTubeチャンネルみたいなものを作ろうとしてる。" },
+      { en: "It's a coffee shop kind of thing, but they also sell books.", ja: "カフェみたいな感じだけど本も売ってる。" },
+      { en: "He's a teacher kind of thing — more like a mentor.", ja: "先生みたいな存在、というかメンターに近い。" },
+      { en: "It's a game kind of thing, but for learning languages.", ja: "ゲームみたいなものだけど、語学学習用。" },
+      { en: "She made some pancake kind of thing for breakfast.", ja: "朝食にパンケーキみたいなのを作ってくれた。" },
+      { en: "It's a meeting kind of thing, but more casual.", ja: "ミーティングみたいなものだけど、もっとカジュアル。" },
+      { en: "He's running a startup kind of thing.", ja: "スタートアップみたいなのをやってる。" },
+      { en: "I bought a watch kind of thing, but it tracks fitness.", ja: "時計みたいなのを買ったんだけど、フィットネス機能つき。" },
+      { en: "It's a workshop kind of thing — pretty hands-on.", ja: "ワークショップみたいなもので、結構手を動かす感じ。" },
+      { en: "She's like a co-founder kind of thing.", ja: "彼女は共同創業者みたいな立場。" },
+    ],
+  },
+  {
+    id: 74,
+    section: "ATSU表現 Part 1",
+    pattern: "in which case (短縮形)",
+    meaning: "その場合",
+    examples: [
+      { en: "The data might not be available tomorrow, in which case, you've got to do it.", ja: "明日データが使えないかもしれない、その場合は君がやって。" },
+      { en: "The museum might be closed tomorrow, in which case, we can go to the café.", ja: "明日美術館が閉まってるかも、その場合はカフェに行こう。" },
+      { en: "He might cancel, in which case, I'll let you know.", ja: "彼キャンセルするかも、その場合は連絡する。" },
+      { en: "It might rain, in which case, bring an umbrella.", ja: "雨かも、その場合は傘持ってきて。" },
+      { en: "She might not call back, in which case, just text her.", ja: "彼女折り返さないかも、その場合はメッセージ送って。" },
+      { en: "We might run out of time, in which case, we'll finish next week.", ja: "時間が足りないかも、その場合は来週続ける。" },
+      { en: "The store might be closed, in which case, we'll go to the next one.", ja: "店閉まってるかも、その場合は次に行こう。" },
+      { en: "He might say no, in which case, I'll ask someone else.", ja: "彼断るかも、その場合は他の人に頼む。" },
+      { en: "Traffic might be heavy, in which case, take the train.", ja: "渋滞かも、その場合は電車にして。" },
+      { en: "She might forget, in which case, I'll remind her.", ja: "彼女忘れるかも、その場合は思い出させる。" },
+      { en: "The flight might be delayed, in which case, I'll text you.", ja: "便が遅れるかも、その場合はメッセージするね。" },
+      { en: "It might sell out, in which case, we'll wait for the next batch.", ja: "売り切れるかも、その場合は次の入荷を待つ。" },
+    ],
+  },
+  {
+    id: 75,
+    section: "ATSU表現 Part 1",
+    pattern: "even if",
+    meaning: "たとえ〜だったとしても",
+    examples: [
+      { en: "Even if it rains, we've got to do it.", ja: "たとえ雨でも、やらないといけない。" },
+      { en: "I have a feeling that even if it rains, he's going to try.", ja: "たとえ雨でも、彼はやろうとする気がする。" },
+      { en: "I think he was pretty much saying that even if it rains, we've got to do it.", ja: "彼は、たとえ雨でもやらないといけないと大体言ってた。" },
+      { en: "Even if I had more time, I wouldn't do it.", ja: "たとえもっと時間があっても、やらない。" },
+      { en: "Even if you apologize, I won't forgive you.", ja: "たとえ謝っても、許さない。" },
+      { en: "Even if he tries, he'll never beat her.", ja: "たとえ彼が頑張っても、彼女には勝てない。" },
+      { en: "Even if it's expensive, I want to buy it.", ja: "たとえ高くても、買いたい。" },
+      { en: "Even if you're tired, you should finish.", ja: "たとえ疲れてても、終わらせるべきだ。" },
+      { en: "Even if she calls, don't answer.", ja: "たとえ彼女が電話しても、出ないで。" },
+      { en: "Even if you don't agree, you have to follow the rules.", ja: "たとえ賛成しなくても、ルールには従わないと。" },
+      { en: "Even if I won the lottery, I'd keep working.", ja: "たとえ宝くじに当たっても、働き続ける。" },
+      { en: "Even if you're nervous, just be yourself.", ja: "たとえ緊張しても、自分らしくいれば良い。" },
+    ],
+  },
+  {
+    id: 76,
+    section: "ATSU表現 Part 1",
+    pattern: "simply put",
+    meaning: "簡単に言えば",
+    examples: [
+      { en: "Simply put, he doesn't like sports.", ja: "簡単に言えば、彼はスポーツが好きじゃない。" },
+      { en: "Simply put, I'm not interested.", ja: "簡単に言えば、興味がない。" },
+      { en: "— How was the event? — Simply put, it was a disaster.", ja: "— イベントどうだった? — 簡単に言えば、最悪だったよ。" },
+      { en: "Simply put, this isn't working.", ja: "簡単に言えば、これはうまくいってない。" },
+      { en: "Simply put, we need more time.", ja: "簡単に言えば、もっと時間が必要だ。" },
+      { en: "Simply put, the plan needs to change.", ja: "簡単に言えば、計画を変えないといけない。" },
+      { en: "Simply put, he's the best player on the team.", ja: "簡単に言えば、彼はチームで一番のプレーヤーだ。" },
+      { en: "Simply put, I don't agree.", ja: "簡単に言えば、賛成しない。" },
+      { en: "Simply put, this is too expensive.", ja: "簡単に言えば、これは高すぎる。" },
+      { en: "Simply put, we won.", ja: "簡単に言えば、私たちが勝った。" },
+      { en: "Simply put, he's a genius.", ja: "簡単に言えば、彼は天才だ。" },
+      { en: "Simply put, the food was incredible.", ja: "簡単に言えば、料理は最高だった。" },
+    ],
+  },
+  {
+    id: 77,
+    section: "ATSU表現 Part 1",
+    pattern: "let's say",
+    meaning: "仮に〜としよう",
+    examples: [
+      { en: "Let's say I invest a hundred dollars now, how much will I make in a year?", ja: "仮に今100ドル投資したとしたら、1年でいくら稼げる?" },
+      { en: "Let's say you were given the chance.", ja: "仮に君にチャンスが回ってきたとしよう。" },
+      { en: "Let's say it costs $50. Is that reasonable?", ja: "仮に50ドルだとしたら、それは妥当?" },
+      { en: "Let's say we leave at 6, would that work?", ja: "仮に6時に出るとしたら、どう?" },
+      { en: "Let's say you had a million dollars. What would you do?", ja: "仮に100万ドル持ってたら、何する?" },
+      { en: "Let's say he doesn't show up, then what?", ja: "仮に彼が来なかったら、どうする?" },
+      { en: "Let's say I agreed. What's the next step?", ja: "仮に賛成したとして、次は何?" },
+      { en: "Let's say we finish early. What then?", ja: "仮に早く終わったら、次は?" },
+      { en: "Let's say the deal falls through. Do we have a backup?", ja: "仮に取引が成立しなかったら、代替案ある?" },
+      { en: "Let's say you could go anywhere. Where would you choose?", ja: "仮にどこでも行けるとしたら、どこにする?" },
+      { en: "Let's say it rains tomorrow. We can still meet, right?", ja: "仮に明日雨でも会えるよね?" },
+      { en: "Let's say I make it by 7. Is that too late?", ja: "仮に7時に着くとしたら、遅すぎる?" },
+    ],
+  },
+  {
+    id: 78,
+    section: "ATSU表現 Part 1",
+    pattern: "That's true",
+    meaning: "確かにそうだね",
+    examples: [
+      { en: "— I think we've got to look at it from a different angle. — Yeah, that's true.", ja: "— 違う角度から見ないと。 — 確かにそうだね。" },
+      { en: "— Don't you think? — Yeah, that's true.", ja: "— そう思わない? — 確かにそうだね。" },
+      { en: "— Practice makes perfect. — That's true.", ja: "— 練習が完璧を作る。 — 確かにね。" },
+      { en: "— You can't please everyone. — That's true.", ja: "— みんなを満足させることはできない。 — 確かに。" },
+      { en: "— Time is money. — That's true.", ja: "— 時は金なり。 — 確かにそうだね。" },
+      { en: "— He's been working really hard. — That's true.", ja: "— 彼、すごく頑張ってるよ。 — 確かに。" },
+      { en: "— This place gets busy in summer. — That's true.", ja: "— ここ夏は混むんだよね。 — 確かに。" },
+      { en: "— You learn more by doing. — That's true.", ja: "— やることで学ぶ。 — 確かにね。" },
+      { en: "— Sleep is so important. — That's true.", ja: "— 睡眠ってすごく大事。 — 確かにそう。" },
+      { en: "— Tokyo is really safe. — That's true.", ja: "— 東京って本当に安全。 — 確かに。" },
+      { en: "— She's always punctual. — That's true.", ja: "— 彼女、いつも時間通り。 — 確かに。" },
+      { en: "— Money isn't everything. — That's true.", ja: "— お金が全てじゃない。 — 確かにね。" },
+    ],
+  },
+  {
+    id: 79,
+    section: "ATSU表現 Part 1",
+    pattern: "instead of",
+    meaning: "〜じゃなくて",
+    examples: [
+      { en: "Instead of trying to make a killing in the first year, we should focus on quality.", ja: "1年目から大儲けしようとするんじゃなくて、まずはクオリティに専念すべきだ。" },
+      { en: "We decided to chill at home instead of going out.", ja: "出かけるんじゃなくて家でゆっくりすることにした。" },
+      { en: "Instead of complaining, why don't you do something?", ja: "文句言うんじゃなくて、何かしたら?" },
+      { en: "She drinks tea instead of coffee.", ja: "彼女はコーヒーじゃなくてお茶を飲む。" },
+      { en: "Let's walk instead of taking a taxi.", ja: "タクシーじゃなくて歩こう。" },
+      { en: "Instead of buying a new one, fix the old one.", ja: "新しいの買うんじゃなくて、古いの直して。" },
+      { en: "He went to the gym instead of the office.", ja: "彼はオフィスじゃなくてジムに行った。" },
+      { en: "Instead of worrying, take action.", ja: "心配するんじゃなくて、行動しよう。" },
+      { en: "I'll have water instead of soda.", ja: "炭酸じゃなくて水にする。" },
+      { en: "Instead of arguing, let's find a solution.", ja: "言い争うんじゃなくて、解決策を見つけよう。" },
+      { en: "She studies in the morning instead of at night.", ja: "彼女は夜じゃなくて朝に勉強する。" },
+      { en: "Instead of giving up, keep trying.", ja: "諦めるんじゃなくて、続けて。" },
+    ],
+  },
+  {
+    id: 80,
+    section: "ATSU表現 Part 1",
+    pattern: "rather than",
+    meaning: "〜よりもむしろ",
+    examples: [
+      { en: "You should study pronunciation first rather than spending too much time on vocabulary.", ja: "単語学習に時間を使いすぎるよりも、むしろまず発音を勉強した方が良い。" },
+      { en: "Repair your old one rather than wasting money on a new one.", ja: "新しいものを買ってお金を無駄遣いするより、むしろ古いものを直した方が良い。" },
+      { en: "I'd rather stay in than go out tonight.", ja: "今夜は出かけるより家にいたい。" },
+      { en: "Take action rather than just talking about it.", ja: "話すだけよりも、むしろ行動して。" },
+      { en: "Rather than wait, let's just do it now.", ja: "待つよりも、今やっちゃおう。" },
+      { en: "She prefers tea rather than coffee.", ja: "彼女はコーヒーよりむしろお茶を好む。" },
+      { en: "Rather than complain, try to fix it.", ja: "文句言うよりも、むしろ直そう。" },
+      { en: "I'd rather walk than drive in this traffic.", ja: "この渋滞なら、運転より歩く方がマシ。" },
+      { en: "Rather than guessing, just ask.", ja: "推測するよりも、聞いた方が早い。" },
+      { en: "He learns by doing rather than by reading.", ja: "彼は読むよりむしろ実践で学ぶ。" },
+      { en: "Rather than push him, give him space.", ja: "押し付けるより、距離を置いた方がいい。" },
+      { en: "I want quality rather than quantity.", ja: "量よりも質が欲しい。" },
+    ],
+  },
+  // ===== ATSU表現 Part 2 (81-100) =====
+  {
+    id: 81,
+    section: "ATSU表現 Part 2",
+    pattern: "the reason being",
+    meaning: "理由は",
+    examples: [
+      { en: "I decided not to join the program. The reason being I wasn't ready yet.", ja: "プログラムに参加しないことにした。理由は、まだ準備ができてなかったから。" },
+      { en: "I turned down the offer. The reason being the timing wasn't right.", ja: "オファーを断った。理由は、タイミングが合わなかったから。" },
+      { en: "I quit my job. The reason being I wanted a change.", ja: "仕事を辞めた。理由は、変化が欲しかったから。" },
+      { en: "I'm taking a break. The reason being I'm exhausted.", ja: "休憩を取る。理由は、疲れ果てたから。" },
+      { en: "I'm moving abroad. The reason being I want new experiences.", ja: "海外に引っ越す。理由は、新しい経験がしたいから。" },
+      { en: "I sold my car. The reason being I rarely drive anymore.", ja: "車を売った。理由は、ほとんど運転しないから。" },
+      { en: "I cancelled the trip. The reason being something came up.", ja: "旅行をキャンセルした。理由は、用事ができたから。" },
+      { en: "I'm switching jobs. The reason being I want more growth.", ja: "転職する。理由は、もっと成長したいから。" },
+      { en: "I'm not going. The reason being I'm not feeling well.", ja: "行かない。理由は、体調が悪いから。" },
+      { en: "We changed the plan. The reason being it wasn't working.", ja: "計画を変えた。理由は、上手くいってなかったから。" },
+      { en: "I stopped drinking coffee. The reason being it was affecting my sleep.", ja: "コーヒーをやめた。理由は、睡眠に影響していたから。" },
+      { en: "I'm going to bed early tonight. The reason being I have an early start.", ja: "今夜は早く寝る。理由は、朝早いから。" },
+    ],
+  },
+  {
+    id: 82,
+    section: "ATSU表現 Part 2",
+    pattern: "as to",
+    meaning: "〜に関して",
+    examples: [
+      { en: "I want to make a decision as to which university I want to attend.", ja: "どの大学に進学するか決めたい。" },
+      { en: "I want to have a discussion as to what we need to do.", ja: "何をすべきか議論したい。" },
+      { en: "I want to have a discussion as to which university is the best.", ja: "どの大学がベストなのか議論したい。" },
+      { en: "There are many opinions as to how we should proceed.", ja: "どう進めるべきかについて、色々な意見がある。" },
+      { en: "I have no clue as to what to do next.", ja: "次に何をすべきか全く分からない。" },
+      { en: "Let's discuss as to whether we should hire him.", ja: "彼を雇うかどうか議論しよう。" },
+      { en: "I'm uncertain as to when she's arriving.", ja: "彼女がいつ着くか分からない。" },
+      { en: "There's no consensus as to the best approach.", ja: "ベストな方法について合意がない。" },
+      { en: "Can you give me details as to the schedule?", ja: "スケジュールに関して詳細を教えてくれる?" },
+      { en: "There's been a lot of debate as to the cause.", ja: "原因について多くの議論があった。" },
+      { en: "I haven't decided as to where to go for vacation.", ja: "休暇でどこに行くかまだ決めてない。" },
+      { en: "I have my doubts as to whether he's telling the truth.", ja: "彼が本当のことを言ってるか疑わしい。" },
+    ],
+  },
+  {
+    id: 83,
+    section: "ATSU表現 Part 2",
+    pattern: "whereas",
+    meaning: "一方で",
+    examples: [
+      { en: "I think communication skill is important, whereas some people say it isn't.", ja: "コミュニケーションスキルは重要だと思うけど、一方で重要じゃないと言う人もいる。" },
+      { en: "He likes learning from textbooks, whereas I like learning on the job.", ja: "彼は座学が好きだけど、一方で私は仕事で学ぶ方が好き。" },
+      { en: "He's an early riser, whereas I'm a night owl.", ja: "彼は早起きだけど、一方で私は夜型。" },
+      { en: "Tokyo is busy, whereas Kyoto is calm.", ja: "東京は賑やかだけど、一方で京都は落ち着いてる。" },
+      { en: "She prefers tea, whereas he prefers coffee.", ja: "彼女はお茶が好きだけど、一方で彼はコーヒーが好き。" },
+      { en: "I work remotely, whereas my colleagues come to the office.", ja: "私はリモート勤務だけど、一方で同僚はオフィスに来てる。" },
+      { en: "He saves his money, whereas she likes to spend.", ja: "彼は貯金するけど、一方で彼女は使うのが好き。" },
+      { en: "The first part was easy, whereas the second part was hard.", ja: "前半は簡単だったけど、一方で後半は難しかった。" },
+      { en: "She's confident, whereas I get nervous easily.", ja: "彼女は自信があるけど、一方で私はすぐ緊張する。" },
+      { en: "Some prefer cities, whereas others love the countryside.", ja: "都会が好きな人もいれば、一方で田舎好きな人もいる。" },
+      { en: "I take my time, whereas he rushes through everything.", ja: "私はゆっくりやるけど、一方で彼は全部急いでやる。" },
+      { en: "He's quiet at work, whereas he's loud with friends.", ja: "彼は仕事では静かだけど、一方で友達といる時はうるさい。" },
+    ],
+  },
+  {
+    id: 84,
+    section: "ATSU表現 Part 2",
+    pattern: "whether or not",
+    meaning: "〜かどうか",
+    examples: [
+      { en: "Whether or not you like it doesn't matter because he calls the shots.", ja: "結局彼に決定権があるから、君が好きかどうかはどうでもいい。" },
+      { en: "Whether or not we go depends on the weather.", ja: "行くかどうかは天気次第。" },
+      { en: "I don't know whether or not she's coming.", ja: "彼女が来るかどうか分からない。" },
+      { en: "Whether or not it's true, we need to investigate.", ja: "本当かどうかにかかわらず、調査が必要だ。" },
+      { en: "I haven't decided whether or not to accept.", ja: "受けるかどうかまだ決めてない。" },
+      { en: "Whether or not you agree, the rule stands.", ja: "賛成するかしないかに関わらず、ルールは変わらない。" },
+      { en: "Let me know whether or not you can make it.", ja: "来られるかどうか教えて。" },
+      { en: "It depends on whether or not she's available.", ja: "彼女が空いてるかどうか次第。" },
+      { en: "Whether or not it works, we have to try.", ja: "上手くいくかどうかに関わらず、試さないと。" },
+      { en: "Tell me whether or not you want to join.", ja: "参加したいかどうか教えて。" },
+      { en: "It doesn't matter whether or not he comes.", ja: "彼が来るかどうかは関係ない。" },
+      { en: "Whether or not you believe me is up to you.", ja: "私を信じるかどうかは君次第。" },
+    ],
+  },
+  {
+    id: 85,
+    section: "ATSU表現 Part 2",
+    pattern: "what's it called",
+    meaning: "なんていうんだっけ",
+    examples: [
+      { en: "He was talking about this book, what's it called, Distinction.", ja: "彼は本の話をしてたけど、なんて名前だっけ、Distinctionだ。" },
+      { en: "I was reading this book... What's it called?", ja: "本を読んでたんだけど、なんていう名前だっけ。" },
+      { en: "What's it called? Oh, Atsueigo! Yeah, that's the one.", ja: "なんていうんだっけ。あ、Atsueigo! それだ。" },
+      { en: "I went to that café, what's it called, on the corner.", ja: "あのカフェ行ったよ、なんて名前だっけ、角のやつ。" },
+      { en: "He uses that app, what's it called, for productivity.", ja: "彼そのアプリ使ってるよ、なんていうんだっけ、生産性のやつ。" },
+      { en: "I saw this movie, what's it called, with the time travel.", ja: "あの映画見た、なんていうんだっけ、タイムトラベルのやつ。" },
+      { en: "She lives in that area, what's it called, near the station.", ja: "彼女、あのエリアに住んでる、なんていうんだっけ、駅の近く。" },
+      { en: "Try that dish, what's it called, with the spicy sauce.", ja: "あの料理食べてみて、なんていうんだっけ、辛いソースのやつ。" },
+      { en: "What's it called when you forget a word like this?", ja: "こうやって言葉が出てこない時、なんていうんだっけ?" },
+      { en: "I read about that company, what's it called, the AI startup.", ja: "あの会社について読んだよ、なんていうんだっけ、AIのスタートアップ。" },
+      { en: "He plays that game, what's it called, the strategy one.", ja: "彼そのゲームやってる、なんていうんだっけ、戦略のやつ。" },
+      { en: "I want to try that bar, what's it called, with the rooftop.", ja: "あのバー行きたい、なんていうんだっけ、屋上の。" },
+    ],
+  },
+  {
+    id: 86,
+    section: "ATSU表現 Part 2",
+    pattern: "what's the point of doing (深掘り)",
+    meaning: "〜の目的は何",
+    examples: [
+      { en: "I was like, what's the point of doing this? What are we getting out of this?", ja: "これの目的って何? これから何が得られるの? って感じだった。" },
+      { en: "What's the point of doing this? I wanted a reason but nobody seemed to care.", ja: "これの目的は何? 理由を知りたかったけど、誰も気にしてなかった。" },
+      { en: "What's the point of doing all this work if no one will see it?", ja: "誰も見ないのにこの作業を全部やる意味は?" },
+      { en: "What's the point of doing things you don't enjoy?", ja: "楽しくないことをやる意味って何?" },
+      { en: "What's the point of doing exercise without proper rest?", ja: "ちゃんと休まないで運動する意味は?" },
+      { en: "What's the point of doing this meeting if no decisions are made?", ja: "何も決まらないなら、このミーティングをやる意味は?" },
+      { en: "What's the point of doing it now? Let's wait.", ja: "今やる意味ある? 待とう。" },
+      { en: "What's the point of doing things halfway?", ja: "中途半端にやる意味は?" },
+      { en: "What's the point of doing this in secret?", ja: "これをコソコソやる意味って何?" },
+      { en: "What's the point of doing what everyone else does?", ja: "他の人と同じことをやる意味は何?" },
+      { en: "What's the point of doing this if you don't believe in it?", ja: "信じてないのにやる意味は?" },
+      { en: "What's the point of doing it again?", ja: "もう一回やる意味は?" },
+    ],
+  },
+  {
+    id: 87,
+    section: "ATSU表現 Part 2",
+    pattern: "That's a fair point",
+    meaning: "確かにそうだね",
+    examples: [
+      { en: "— We've got to consider this as well. — Oh, that's a fair point.", ja: "— これも考慮しないと。 — あ、確かにそうだね。" },
+      { en: "— We've got to do this as well. — Yeah, that's a fair point.", ja: "— これもやらないと。 — あ、確かにそうだね。" },
+      { en: "— This is very important too. — Yeah, that's a fair point. That's true.", ja: "— これもすごく大事だよ。 — あ、そうだね。確かに確かに。" },
+      { en: "— We need more budget. — That's a fair point.", ja: "— もっと予算が必要だ。 — 確かに。" },
+      { en: "— The schedule is too tight. — That's a fair point.", ja: "— スケジュールがきつすぎる。 — 確かにそうだね。" },
+      { en: "— He needs more training. — Yeah, that's a fair point.", ja: "— 彼にはもっと訓練が必要。 — 確かに。" },
+      { en: "— We should listen to the team. — That's a fair point.", ja: "— チームの意見を聞くべきだ。 — 確かに。" },
+      { en: "— Quality matters more than speed. — That's a fair point.", ja: "— スピードより品質が大事。 — 確かにそうだね。" },
+      { en: "— We can't ignore the feedback. — That's a fair point.", ja: "— フィードバックは無視できない。 — 確かに。" },
+      { en: "— She needs more support. — That's a fair point.", ja: "— 彼女にはもっとサポートが必要。 — 確かに。" },
+      { en: "— The plan needs refinement. — That's a fair point.", ja: "— 計画には改良が必要。 — 確かにそうだね。" },
+      { en: "— Communication has been weak. — That's a fair point.", ja: "— 連携が弱かった。 — 確かに。" },
+    ],
+  },
+  {
+    id: 88,
+    section: "ATSU表現 Part 2",
+    pattern: "come across",
+    meaning: "〜に出会う、見つける",
+    examples: [
+      { en: "I came across this book at the bookstore.", ja: "本屋でこの本に出会った。" },
+      { en: "I came across an old friend on the street.", ja: "道で昔の友達に偶然会った。" },
+      { en: "I came across this information on the internet.", ja: "ネットでこの情報を見つけた。" },
+      { en: "I came across a great café yesterday.", ja: "昨日いいカフェに偶然出会った。" },
+      { en: "Have you ever come across this problem before?", ja: "前にこの問題に遭遇したことある?" },
+      { en: "I came across her name in an article.", ja: "記事で彼女の名前を見つけた。" },
+      { en: "I came across some interesting data.", ja: "面白いデータに出くわした。" },
+      { en: "He comes across as confident, but he's actually shy.", ja: "彼は自信ありげに見えるけど、実はシャイ。" },
+      { en: "I came across this video on YouTube.", ja: "YouTubeでこの動画を見つけた。" },
+      { en: "She came across as a bit cold at first.", ja: "彼女、最初は少し冷たく見えた。" },
+      { en: "I came across an old photo of us.", ja: "私たちの古い写真を見つけた。" },
+      { en: "If you come across any issues, let me know.", ja: "何か問題に遭遇したら、教えて。" },
+    ],
+  },
+  {
+    id: 89,
+    section: "ATSU表現 Part 2",
+    pattern: "going back to",
+    meaning: "〜に戻ると",
+    examples: [
+      { en: "Going back to your question, my answer is no.", ja: "さっきの質問に戻ると、答えはノーだ。" },
+      { en: "Going back to your question, my answer is simply put no.", ja: "さっきの質問に戻ると、簡単に言えば答えはノーだ。" },
+      { en: "Going back to the main topic, we need a decision today.", ja: "メインの話題に戻ると、今日中に決断が必要。" },
+      { en: "Going back to what you said earlier, I agree.", ja: "さっき君が言ったことに戻るけど、賛成だよ。" },
+      { en: "Going back to the budget, we need to cut costs.", ja: "予算の話に戻ると、コスト削減が必要だ。" },
+      { en: "Going back to the schedule, we need to push it.", ja: "スケジュールに戻ると、後ろ倒しが必要。" },
+      { en: "Going back to your previous point, that's a fair concern.", ja: "さっきの君の意見に戻るけど、それは妥当な懸念だ。" },
+      { en: "Going back to the meeting, we covered everything.", ja: "ミーティングの話に戻ると、全部カバーした。" },
+      { en: "Going back to the issue, we still don't have a solution.", ja: "問題に戻ると、まだ解決策がない。" },
+      { en: "Going back to your idea, let's explore it more.", ja: "君のアイデアに戻ると、もう少し探ってみよう。" },
+      { en: "Going back to the proposal, what do you think?", ja: "提案に戻るけど、どう思う?" },
+      { en: "Going back to her question, I'd say yes.", ja: "彼女の質問に戻ると、イエスと言うよ。" },
+    ],
+  },
+  {
+    id: 90,
+    section: "ATSU表現 Part 2",
+    pattern: "in this case",
+    meaning: "この場合は",
+    examples: [
+      { en: "In this case, I think we need a different approach.", ja: "この場合、別のアプローチが必要だと思う。" },
+      { en: "That's a fair point. But in this case, I think we should change.", ja: "確かにそうだね。でもこの場合は、変えるべきだと思う。" },
+      { en: "That's true, but in this case, it doesn't matter because...", ja: "確かに。でもこの場合は関係ない。だって…" },
+      { en: "In this case, it doesn't matter. The reason being...", ja: "この場合は関係ないと思う。理由は…" },
+      { en: "In this case, we should wait.", ja: "この場合は、待つべきだ。" },
+      { en: "In this case, the rule doesn't apply.", ja: "この場合、そのルールは当てはまらない。" },
+      { en: "In this case, you should ask the manager.", ja: "この場合、マネージャーに聞いた方がいい。" },
+      { en: "In this case, I'd recommend a refund.", ja: "この場合、返金をおすすめします。" },
+      { en: "In this case, we have no choice.", ja: "この場合、選択肢がない。" },
+      { en: "In this case, the deadline is flexible.", ja: "この場合、締切は融通が利く。" },
+      { en: "In this case, you don't need approval.", ja: "この場合、承認は不要だ。" },
+      { en: "In this case, the answer depends on you.", ja: "この場合、答えは君次第。" },
+    ],
+  },
+  {
+    id: 91,
+    section: "ATSU表現 Part 2",
+    pattern: "more about",
+    meaning: "〜の方がもっと重要だ",
+    examples: [
+      { en: "The first stage is more about understanding the concept.", ja: "最初の段階では概念を理解する方が重要だ。" },
+      { en: "The first stage is more about the concept than the mechanism.", ja: "最初の段階では仕組みより概念を理解する方が重要だ。" },
+      { en: "This web page is more about its aesthetics that's important.", ja: "このウェブページは、美しさの方が重要だ。" },
+      { en: "This web page is more about aesthetics than content.", ja: "このウェブページは、内容より美しさの方が重要だ。" },
+      { en: "This is more about quality than quantity.", ja: "これは量より質の方が重要だ。" },
+      { en: "Learning is more about consistency than intensity.", ja: "学習は強度より継続性の方が重要だ。" },
+      { en: "Success is more about effort than talent.", ja: "成功は才能より努力の方が重要だ。" },
+      { en: "This job is more about people skills than technical knowledge.", ja: "この仕事は技術より対人スキルの方が重要だ。" },
+      { en: "This trip is more about relaxation than sightseeing.", ja: "この旅行は観光よりリラックスが目的だ。" },
+      { en: "Cooking is more about timing than ingredients.", ja: "料理は材料よりタイミングの方が重要だ。" },
+      { en: "Writing is more about clarity than vocabulary.", ja: "文章は語彙より明確さの方が重要だ。" },
+      { en: "Leadership is more about listening than talking.", ja: "リーダーシップは話すより聞く方が重要だ。" },
+    ],
+  },
+  {
+    id: 92,
+    section: "ATSU表現 Part 2",
+    pattern: "for the sake of",
+    meaning: "〜のために",
+    examples: [
+      { en: "I don't understand why we've got to do this for the sake of a dollar.", ja: "たった1ドルのために、なんでこんなことしないといけないのか分からない。" },
+      { en: "For the sake of clarity, let me explain again.", ja: "明確にするために、もう一度説明させて。" },
+      { en: "I started feeling like I was doing it for the sake of doing it.", ja: "それをやること自体が目的になってる感じがしてきた。" },
+      { en: "For the sake of the team, we need to compromise.", ja: "チームのために、妥協する必要がある。" },
+      { en: "For the sake of argument, let's say it's true.", ja: "議論のために、それが本当だとしよう。" },
+      { en: "For the sake of your health, get more sleep.", ja: "健康のために、もっと寝て。" },
+      { en: "Don't argue for the sake of arguing.", ja: "議論するために議論しないで。" },
+      { en: "For the sake of the children, they stayed together.", ja: "子供たちのために、彼らは一緒にいた。" },
+      { en: "For the sake of efficiency, let's streamline this.", ja: "効率のために、これを簡素化しよう。" },
+      { en: "For the sake of fairness, let everyone speak.", ja: "公平のために、皆に発言させよう。" },
+      { en: "We did it for the sake of tradition.", ja: "伝統のためにやった。" },
+      { en: "For the sake of your career, take the risk.", ja: "キャリアのために、リスクを取って。" },
+    ],
+  },
+  {
+    id: 93,
+    section: "ATSU表現 Part 2",
+    pattern: "like you said",
+    meaning: "あなたが言ったように",
+    examples: [
+      { en: "Like you said, this is one of the biggest problems.", ja: "君が言ったように、これは一番大きな問題の一つだ。" },
+      { en: "Going back to the topic, like you said, this is a big issue.", ja: "さっきの話に戻ると、君が言ったように、これは大きな問題。" },
+      { en: "Like you said, we need to take action now.", ja: "君が言った通り、今行動を起こさないと。" },
+      { en: "Like you said, time is the most valuable resource.", ja: "君が言ったように、時間が一番貴重だ。" },
+      { en: "Like you said, consistency beats intensity.", ja: "君が言った通り、継続性が強度に勝つ。" },
+      { en: "Like you said, the market is changing rapidly.", ja: "君が言ったように、市場は急速に変わってる。" },
+      { en: "Like you said, we should focus on quality.", ja: "君が言った通り、品質に集中すべきだ。" },
+      { en: "Like you said, communication is everything.", ja: "君が言ったように、連携が全てだ。" },
+      { en: "Like you said, this isn't going to be easy.", ja: "君が言った通り、これは簡単じゃない。" },
+      { en: "Like you said, we need to be patient.", ja: "君が言ったように、辛抱強くいる必要がある。" },
+      { en: "Like you said, it all comes down to mindset.", ja: "君が言った通り、全てはマインドセットに行き着く。" },
+      { en: "Like you said, the team has potential.", ja: "君が言ったように、チームには可能性がある。" },
+    ],
+  },
+  {
+    id: 94,
+    section: "ATSU表現 Part 2",
+    pattern: "this might be just me, but",
+    meaning: "これは私だけかもしれないけど",
+    examples: [
+      { en: "This might be just me, but don't you think this is too expensive?", ja: "私だけかもしれないけど、これちょっと高すぎじゃない?" },
+      { en: "This might be just me, but don't you think this is too bright?", ja: "私だけかもしれないけど、これちょっと明るすぎじゃない?" },
+      { en: "This might be just me, but I don't find it interesting.", ja: "私だけかもしれないけど、面白いと思わない。" },
+      { en: "This might be just me, but this video is just not interesting.", ja: "私だけかもしれないけど、この動画あまり面白くない。" },
+      { en: "This might be just me, but I find it really funny.", ja: "私だけかもしれないけど、すごく面白いと思った。" },
+      { en: "This might be just me, but the music here is too loud.", ja: "私だけかもしれないけど、ここの音楽うるさすぎる。" },
+      { en: "This might be just me, but I think we should slow down.", ja: "私だけかもしれないけど、もう少しゆっくりすべきだと思う。" },
+      { en: "This might be just me, but he seems off today.", ja: "私だけかもしれないけど、彼今日なんか変。" },
+      { en: "This might be just me, but the design feels outdated.", ja: "私だけかもしれないけど、デザインが古く感じる。" },
+      { en: "This might be just me, but doesn't this taste weird?", ja: "私だけかもしれないけど、これ変な味しない?" },
+      { en: "This might be just me, but the schedule seems too packed.", ja: "私だけかもしれないけど、スケジュールが詰まりすぎてる。" },
+      { en: "This might be just me, but I prefer the old version.", ja: "私だけかもしれないけど、前のバージョンの方が好き。" },
+    ],
+  },
+  {
+    id: 95,
+    section: "ATSU表現 Part 2",
+    pattern: "get to the point",
+    meaning: "要点を言う",
+    examples: [
+      { en: "I wish this guy would just get to the point.", ja: "この人、早く要点を言ってくれればいいのに。" },
+      { en: "Just get straight to the point.", ja: "もう端的に要点を言って。" },
+      { en: "Let me get to the point. We need more time.", ja: "要点を言うね。もっと時間が必要だ。" },
+      { en: "Can you get to the point already?", ja: "もう要点に入ってくれない?" },
+      { en: "Let's get to the point. We have 10 minutes left.", ja: "要点に入ろう。残り10分しかない。" },
+      { en: "He never gets to the point in meetings.", ja: "彼、会議で全然要点を言わない。" },
+      { en: "I'll get straight to the point. You're hired.", ja: "単刀直入に言う。採用です。" },
+      { en: "Stop beating around the bush and get to the point.", ja: "遠回しに言うのやめて、要点を言って。" },
+      { en: "Just get to the point — do you want to come or not?", ja: "要点を言って — 来たいの来たくないの?" },
+      { en: "She always gets straight to the point.", ja: "彼女はいつも単刀直入だ。" },
+      { en: "Let me get to the point quickly.", ja: "手早く要点を言うね。" },
+      { en: "I appreciate when people get to the point.", ja: "要点を言ってくれる人が好きだ。" },
+    ],
+  },
+  {
+    id: 96,
+    section: "ATSU表現 Part 2",
+    pattern: "end up doing",
+    meaning: "最終的に〜することになる",
+    examples: [
+      { en: "I was such a couch potato in uni, but I ended up regretting it.", ja: "大学時代めちゃくちゃダラダラしてたけど、結局後悔した。" },
+      { en: "I didn't want to go to the party, but I ended up having fun.", ja: "パーティー行きたくなかったけど、結局めっちゃ楽しんだ。" },
+      { en: "We ended up staying home.", ja: "結局家にいることになった。" },
+      { en: "I ended up paying more than I expected.", ja: "結局思ったより多く払うことになった。" },
+      { en: "He ended up missing the flight.", ja: "彼、結局飛行機に乗り遅れた。" },
+      { en: "We ended up walking the whole way.", ja: "結局ずっと歩くことになった。" },
+      { en: "I ended up loving the movie.", ja: "結局その映画大好きになった。" },
+      { en: "She ended up taking the job.", ja: "結局彼女はその仕事を受けた。" },
+      { en: "I ended up sleeping for 12 hours.", ja: "結局12時間も寝てしまった。" },
+      { en: "We ended up at the same restaurant again.", ja: "結局また同じレストランに行った。" },
+      { en: "He ended up apologizing.", ja: "彼、結局謝った。" },
+      { en: "Don't end up like him.", ja: "彼みたいな結末にならないで。" },
+    ],
+  },
+  {
+    id: 97,
+    section: "ATSU表現 Part 2",
+    pattern: "it is what it is",
+    meaning: "仕方がない",
+    examples: [
+      { en: "There's nothing I can do about it, so it is what it is.", ja: "どうすることもできないから、仕方ない。" },
+      { en: "We lost the deal, but it is what it is.", ja: "契約は失ったけど、仕方ない。" },
+      { en: "He's late again. It is what it is.", ja: "彼また遅刻。まあ仕方ない。" },
+      { en: "I tried my best. It is what it is.", ja: "ベストを尽くした。あとは仕方ない。" },
+      { en: "The weather ruined our plans. It is what it is.", ja: "天気で予定が台無しになった。仕方ない。" },
+      { en: "She doesn't want to talk. It is what it is.", ja: "彼女、話したくないって。仕方ない。" },
+      { en: "We didn't get the offer. It is what it is.", ja: "オファーはもらえなかった。仕方ない。" },
+      { en: "I can't change the past. It is what it is.", ja: "過去は変えられない。仕方ない。" },
+      { en: "Things didn't go as planned. It is what it is.", ja: "予定通りにいかなかった。仕方ない。" },
+      { en: "He chose to leave. It is what it is.", ja: "彼は去ることを選んだ。仕方ない。" },
+      { en: "The market crashed. It is what it is.", ja: "市場が暴落した。仕方ない。" },
+      { en: "Some things you just can't control. It is what it is.", ja: "コントロールできないこともある。仕方ない。" },
+    ],
+  },
+  {
+    id: 98,
+    section: "ATSU表現 Part 2",
+    pattern: "in general",
+    meaning: "全体的に、一般に",
+    examples: [
+      { en: "What did you think about this in general?", ja: "全体的にどう思った?" },
+      { en: "In general, I'm happy with the result.", ja: "全体的に、結果には満足してる。" },
+      { en: "How was the trip in general?", ja: "旅行全体的にはどうだった?" },
+      { en: "In general, Tokyo is a safe city.", ja: "一般的に、東京は安全な街だ。" },
+      { en: "He's a nice guy in general.", ja: "彼は全体的にいい人。" },
+      { en: "In general, I avoid fast food.", ja: "基本的に、ファストフードは避けてる。" },
+      { en: "In general, people work too much.", ja: "一般的に、みんな働きすぎだ。" },
+      { en: "The food was good in general.", ja: "料理は全体的に良かった。" },
+      { en: "In general, this approach works.", ja: "一般的に、このやり方は上手くいく。" },
+      { en: "I love sushi in general, but not this one.", ja: "寿司は全体的に好きだけど、これは違う。" },
+      { en: "In general, it's been a productive year.", ja: "全体的に、生産的な一年だった。" },
+      { en: "The team performed well in general.", ja: "チームは全体的に良い成績だった。" },
+    ],
+  },
+  {
+    id: 99,
+    section: "ATSU表現 Part 2",
+    pattern: "at all (疑問文/if節)",
+    meaning: "ちょっとでも",
+    examples: [
+      { en: "Did you like it at all?", ja: "ちょっとでも良いと思った?" },
+      { en: "If you like this video at all, please hit the like button.", ja: "この動画ちょっとでも気に入ってくれたら、高評価お願いします。" },
+      { en: "Do you remember him at all?", ja: "彼のこと、ちょっとでも覚えてる?" },
+      { en: "If you have time at all, give me a call.", ja: "ちょっとでも時間あったら、電話して。" },
+      { en: "Did he say anything at all?", ja: "彼、ちょっとでも何か言った?" },
+      { en: "If you're interested at all, let me know.", ja: "ちょっとでも興味あったら、教えて。" },
+      { en: "Have you slept at all tonight?", ja: "今夜ちょっとでも寝た?" },
+      { en: "If it bothers you at all, please tell me.", ja: "ちょっとでも気になるなら、言って。" },
+      { en: "Do you understand at all?", ja: "ちょっとでも分かる?" },
+      { en: "If you're free at all this week, let's meet.", ja: "今週ちょっとでも空いてたら、会おう。" },
+      { en: "Are you nervous at all?", ja: "ちょっとでも緊張してる?" },
+      { en: "Did it help at all?", ja: "ちょっとでも役に立った?" },
+    ],
+  },
+  {
+    id: 100,
+    section: "ATSU表現 Part 2",
+    pattern: "if that's the case",
+    meaning: "もしそうなら",
+    examples: [
+      { en: "Did he prepare all the slides? If that's the case, you don't have to do anything.", ja: "彼がスライド全部作ったの? もしそうなら、君は何もしなくていい。" },
+      { en: "Did he prepare all the slides? If that's the case, I don't have to do anything, right?", ja: "彼がスライド全部作ったの? もしそうなら、私は何もしなくていいよね。" },
+      { en: "If that's the case, we should reschedule.", ja: "もしそうなら、予定を変更すべきだ。" },
+      { en: "If that's the case, why didn't you tell me earlier?", ja: "もしそうなら、なんでもっと早く言ってくれなかったの?" },
+      { en: "If that's the case, count me in.", ja: "もしそうなら、私も参加する。" },
+      { en: "If that's the case, the budget is approved.", ja: "もしそうなら、予算は承認だ。" },
+      { en: "If that's the case, we don't need a meeting.", ja: "もしそうなら、ミーティングは不要だ。" },
+      { en: "If that's the case, you're off the hook.", ja: "もしそうなら、君は責任なしだよ。" },
+      { en: "If that's the case, I'll handle it.", ja: "もしそうなら、私が対応する。" },
+      { en: "If that's the case, we should celebrate.", ja: "もしそうなら、お祝いしよう。" },
+      { en: "If that's the case, I owe you an apology.", ja: "もしそうなら、謝らないといけない。" },
+      { en: "If that's the case, the deal is off.", ja: "もしそうなら、取引はナシだ。" },
+    ],
+  },
+  // ===== ATSU表現 Part 3 (101-120) =====
+  {
+    id: 101,
+    section: "ATSU表現 Part 3",
+    pattern: "I'd say",
+    meaning: "私の意見では",
+    examples: [
+      { en: "I'd say the price is pretty fair.", ja: "値段はかなり妥当だと思います。" },
+      { en: "I'd say it was a great experience, but not everyone would agree.", ja: "素晴らしい経験だったと思いますが、みんなが同感するとは思いません。" },
+      { en: "I'd say it's worth trying at least once.", ja: "少なくとも一度は試す価値があると思います。" },
+      { en: "I'd say he's the best in the team.", ja: "彼はチームで一番だと思います。" },
+      { en: "I'd say we need at least two more weeks.", ja: "あと最低2週間は必要だと思います。" },
+      { en: "I'd say the food was just okay.", ja: "料理はまあまあだったかな。" },
+      { en: "I'd say it depends on the situation.", ja: "状況によると思います。" },
+      { en: "I'd say overall it was a success.", ja: "全体的には成功だったと思います。" },
+      { en: "I'd say she has a lot of potential.", ja: "彼女にはたくさんの可能性があると思います。" },
+      { en: "I'd say it's a bit overpriced.", ja: "ちょっと高すぎる気がします。" },
+      { en: "I'd say this is the best option.", ja: "これが一番良い選択肢だと思います。" },
+      { en: "I'd say we made the right choice.", ja: "私たちは正しい選択をしたと思います。" },
+    ],
+  },
+  {
+    id: 102,
+    section: "ATSU表現 Part 3",
+    pattern: "in the process of",
+    meaning: "〜の過程にある",
+    examples: [
+      { en: "We're in the process of trying to figure out what caused the issue.", ja: "問題の原因を解明している過程です。" },
+      { en: "I'm in the process of learning English.", ja: "英語学習の過程にあります。" },
+      { en: "We're in the process of hiring new staff.", ja: "新しいスタッフを採用中です。" },
+      { en: "She's in the process of writing her thesis.", ja: "彼女は論文を書いている最中です。" },
+      { en: "I'm in the process of moving to a new apartment.", ja: "新しいアパートに引っ越し中です。" },
+      { en: "We're in the process of redesigning the website.", ja: "ウェブサイトを再設計している過程です。" },
+      { en: "He's in the process of recovering.", ja: "彼は回復に向かっている過程です。" },
+      { en: "The team is in the process of finalizing the report.", ja: "チームはレポートを仕上げている最中です。" },
+      { en: "I'm in the process of switching careers.", ja: "キャリアチェンジの最中です。" },
+      { en: "We're in the process of evaluating the offers.", ja: "オファーを評価している最中です。" },
+      { en: "She's in the process of starting her own business.", ja: "彼女は自分のビジネスを始めようとしています。" },
+      { en: "I'm in the process of learning to play the guitar.", ja: "ギターを習っている過程です。" },
+    ],
+  },
+  {
+    id: 103,
+    section: "ATSU表現 Part 3",
+    pattern: "it's more like",
+    meaning: "むしろ〜のようだ",
+    examples: [
+      { en: "I wouldn't say it's work. It's more like my hobby.", ja: "仕事というより、趣味のようなものです。" },
+      { en: "It's not exactly a party; it's more like a social gathering.", ja: "厳密にはパーティーじゃなくて、社交的な集まりです。" },
+      { en: "He's not a friend; it's more like a colleague.", ja: "友達というより、同僚みたいな感じです。" },
+      { en: "It's not a meeting; it's more like a casual chat.", ja: "ミーティングというより、カジュアルな雑談です。" },
+      { en: "I'm not angry; it's more like disappointed.", ja: "怒ってるというより、がっかりしてる感じです。" },
+      { en: "It's not a workout; it's more like a stretch session.", ja: "ワークアウトというより、ストレッチセッションです。" },
+      { en: "She's not strict; it's more like demanding.", ja: "厳しいというより、要求が高い感じです。" },
+      { en: "It's not a coffee shop; it's more like a co-working space.", ja: "カフェというより、コワーキングスペースです。" },
+      { en: "It's not a vacation; it's more like a business trip.", ja: "休暇というより、出張みたいなものです。" },
+      { en: "He's not shy; it's more like reserved.", ja: "シャイというより、控えめな感じです。" },
+      { en: "It's not pain; it's more like discomfort.", ja: "痛みというより、不快感です。" },
+      { en: "It's not a job; it's more like a calling.", ja: "仕事というより、使命みたいなものです。" },
+    ],
+  },
+  {
+    id: 104,
+    section: "ATSU表現 Part 3",
+    pattern: "from that point of view",
+    meaning: "その観点から見ると",
+    examples: [
+      { en: "I think it makes sense from that point of view.", ja: "その観点からは理解できます。" },
+      { en: "I don't think I made the right decision from that point of view.", ja: "その観点から見ると、正しい判断ではなかったと思います。" },
+      { en: "From that point of view, the project was a success.", ja: "その観点から見れば、プロジェクトは成功でした。" },
+      { en: "From that point of view, we should reconsider.", ja: "その観点から、考え直すべきです。" },
+      { en: "His behavior is understandable from that point of view.", ja: "その観点から見れば、彼の行動は理解できます。" },
+      { en: "From that point of view, the cost is reasonable.", ja: "その観点から見れば、コストは妥当です。" },
+      { en: "From that point of view, it's a big risk.", ja: "その観点から見れば、大きなリスクです。" },
+      { en: "From that point of view, she's actually right.", ja: "その観点から見れば、彼女は正しいです。" },
+      { en: "From that point of view, we need to act fast.", ja: "その観点から、迅速に動く必要があります。" },
+      { en: "From that point of view, the design works well.", ja: "その観点から、デザインは良く機能しています。" },
+      { en: "From that point of view, the plan needs revision.", ja: "その観点から、計画には修正が必要です。" },
+      { en: "From that point of view, it's worth investing.", ja: "その観点から、投資する価値があります。" },
+    ],
+  },
+  {
+    id: 105,
+    section: "ATSU表現 Part 3",
+    pattern: "if that works for you",
+    meaning: "それが都合がいいなら",
+    examples: [
+      { en: "Can we do a Zoom call on Wednesday, if that works for you?", ja: "ご都合が良ければ、水曜にZoomで会議できますか?" },
+      { en: "I can send it tomorrow, if that works for you.", ja: "もしそれで良ければ、明日送ります。" },
+      { en: "Let's meet at 3 PM, if that works for you.", ja: "ご都合が良ければ、午後3時に会いましょう。" },
+      { en: "I'll bring the materials, if that works for you.", ja: "もしよろしければ、資料を持っていきます。" },
+      { en: "We can reschedule to Friday, if that works for you.", ja: "ご都合が良ければ、金曜に変更できます。" },
+      { en: "I'll call you at 9, if that works for you.", ja: "ご都合が良ければ、9時に電話します。" },
+      { en: "Let's meet at the café, if that works for you.", ja: "ご都合が良ければ、そのカフェで会いましょう。" },
+      { en: "We can split the bill, if that works for you.", ja: "もしよければ、割り勘にしませんか。" },
+      { en: "I'll send the draft today, if that works for you.", ja: "ご都合が良ければ、今日下書きを送ります。" },
+      { en: "Let's review it next week, if that works for you.", ja: "ご都合が良ければ、来週レビューしましょう。" },
+      { en: "I can pick you up at 7, if that works for you.", ja: "ご都合が良ければ、7時に迎えに行きます。" },
+      { en: "We can do the meeting online, if that works for you.", ja: "ご都合が良ければ、オンラインでミーティングできます。" },
+    ],
+  },
+  {
+    id: 106,
+    section: "ATSU表現 Part 3",
+    pattern: "just out of curiosity",
+    meaning: "単なる好奇心から",
+    examples: [
+      { en: "Just out of curiosity, why did you come to Japan?", ja: "単なる好奇心からですが、なぜ日本に来たんですか?" },
+      { en: "Just asking out of curiosity, so feel free not to answer.", ja: "単なる好奇心から聞いてるだけなので、答えなくても大丈夫です。" },
+      { en: "Just out of curiosity, how old are you?", ja: "単なる好奇心ですが、おいくつですか?" },
+      { en: "Just out of curiosity, what do you do for a living?", ja: "単なる好奇心ですが、お仕事は何ですか?" },
+      { en: "Just out of curiosity, how did you two meet?", ja: "単なる好奇心ですが、お二人はどうやって出会ったんですか?" },
+      { en: "Just out of curiosity, how much did it cost?", ja: "単なる好奇心ですが、いくらしました?" },
+      { en: "Just out of curiosity, are you planning to move?", ja: "単なる好奇心ですが、引っ越す予定ですか?" },
+      { en: "Just out of curiosity, what made you choose this?", ja: "単なる好奇心ですが、なぜこれを選んだんですか?" },
+      { en: "Just out of curiosity, have you ever lived abroad?", ja: "単なる好奇心ですが、海外に住んだことはありますか?" },
+      { en: "Just out of curiosity, who recommended this place?", ja: "単なる好奇心ですが、誰がここを勧めたんですか?" },
+      { en: "Just out of curiosity, do you speak any other languages?", ja: "単なる好奇心ですが、他の言語も話しますか?" },
+      { en: "Just out of curiosity, what's your favorite book?", ja: "単なる好奇心ですが、好きな本は何ですか?" },
+    ],
+  },
+  {
+    id: 107,
+    section: "ATSU表現 Part 3",
+    pattern: "off-topic, but",
+    meaning: "話は変わりますが",
+    examples: [
+      { en: "Bit off-topic, but I just finished editing the video.", ja: "少し話は変わりますが、動画編集を終えました。" },
+      { en: "Off topic, but did you end up going to the café? How was it?", ja: "話は変わりますが、結局そのカフェ行きましたか? どうでした?" },
+      { en: "Off-topic, but have you tried the new restaurant downtown?", ja: "話は変わりますが、ダウンタウンの新しいレストラン試した?" },
+      { en: "Bit off-topic, but I heard you got a promotion. Congrats!", ja: "少し話は変わりますが、昇進したって聞きました。おめでとう!" },
+      { en: "Off-topic, but I love your shoes.", ja: "話は変わりますが、その靴いいですね。" },
+      { en: "Off-topic, but how was your weekend?", ja: "話は変わりますが、週末はどうでした?" },
+      { en: "Bit off-topic, but I'm planning a trip to Japan.", ja: "少し話は変わりますが、日本旅行を計画しています。" },
+      { en: "Off-topic, but did you see the news this morning?", ja: "話は変わりますが、今朝のニュース見ました?" },
+      { en: "Off-topic, but I just remembered I owe you a coffee.", ja: "話は変わりますが、コーヒーおごるって約束してたの思い出した。" },
+      { en: "Bit off-topic, but the weather has been amazing lately.", ja: "少し話は変わりますが、最近天気いいですよね。" },
+      { en: "Off-topic, but have you finished that book I lent you?", ja: "話は変わりますが、貸した本もう読み終わった?" },
+      { en: "Off-topic, but I'm thinking of getting a dog.", ja: "話は変わりますが、犬を飼おうかと考えています。" },
+    ],
+  },
+  {
+    id: 108,
+    section: "ATSU表現 Part 3",
+    pattern: "out of the blue",
+    meaning: "突然に",
+    examples: [
+      { en: "Everyone started talking about it out of the blue.", ja: "みんな、突然その話を始めました。" },
+      { en: "Out of the blue, she brought up the topic and I was like, \"What?\"", ja: "突然、彼女がその話題を持ち出して、「何?」と思いました。" },
+      { en: "He called me out of the blue last night.", ja: "彼は昨夜、突然電話してきました。" },
+      { en: "She quit her job out of the blue.", ja: "彼女は突然仕事を辞めました。" },
+      { en: "Out of the blue, the power went out.", ja: "突然、停電になりました。" },
+      { en: "He proposed out of the blue.", ja: "彼は突然プロポーズしました。" },
+      { en: "Out of the blue, my old friend texted me.", ja: "突然、昔の友達からメッセージが来ました。" },
+      { en: "The company announced layoffs out of the blue.", ja: "会社は突然リストラを発表しました。" },
+      { en: "Out of the blue, it started snowing.", ja: "突然、雪が降り始めました。" },
+      { en: "She showed up at my place out of the blue.", ja: "彼女は突然うちに来ました。" },
+      { en: "The decision came out of the blue.", ja: "その決定は突然のものでした。" },
+      { en: "Out of the blue, he asked me to marry him.", ja: "突然、彼は結婚を申し込みました。" },
+    ],
+  },
+  {
+    id: 109,
+    section: "ATSU表現 Part 3",
+    pattern: "off the top of my head",
+    meaning: "思いつくままに",
+    examples: [
+      { en: "Off the top of my head, I think it's wrong.", ja: "思いつくままに言うと、それは間違っていると思います。" },
+      { en: "I can't remember all the details off the top of my head.", ja: "詳細はすぐには思い出せませんが、後で送ります。" },
+      { en: "Off the top of my head, I'd say it costs around 50 dollars.", ja: "ぱっと思いつく感じでは、50ドルくらいです。" },
+      { en: "I don't know off the top of my head.", ja: "とっさには分かりません。" },
+      { en: "Off the top of my head, three names come to mind.", ja: "ぱっと思いつくのは、3人の名前です。" },
+      { en: "I can't think of any off the top of my head.", ja: "ぱっと思いつかないです。" },
+      { en: "Off the top of my head, the deadline is Friday.", ja: "とっさに思い出すと、締切は金曜です。" },
+      { en: "Off the top of my head, I'd recommend the pasta.", ja: "ぱっと思いつくのは、パスタをおすすめします。" },
+      { en: "I have a few ideas off the top of my head.", ja: "ぱっと思いつくアイデアがいくつかあります。" },
+      { en: "Off the top of my head, I'd say yes.", ja: "ぱっと判断すると、イエスです。" },
+      { en: "I can't give you exact numbers off the top of my head.", ja: "正確な数字はすぐには言えません。" },
+      { en: "Off the top of my head, that doesn't sound right.", ja: "ぱっと聞いた感じ、それは合ってない気がします。" },
+    ],
+  },
+  {
+    id: 110,
+    section: "ATSU表現 Part 3",
+    pattern: "but at the same time",
+    meaning: "しかし同時に",
+    examples: [
+      { en: "He's intelligent, but at the same time, he's a little bit stupid in a way.", ja: "彼は賢いですが、同時に少し愚かな面もあります。" },
+      { en: "I wanna have fun, but at the same time, I want some learning.", ja: "楽しみたいですが、同時に学びも得たいです。" },
+      { en: "She's strict, but at the same time, very caring.", ja: "彼女は厳しいですが、同時にとても思いやりがあります。" },
+      { en: "It's exciting, but at the same time, a bit scary.", ja: "ワクワクしますが、同時に少し怖いです。" },
+      { en: "I'm tired, but at the same time, I can't sleep.", ja: "疲れてますが、同時に眠れません。" },
+      { en: "It's expensive, but at the same time, worth it.", ja: "高いですが、同時に価値があります。" },
+      { en: "He's young, but at the same time, very mature.", ja: "彼は若いですが、同時にとても大人です。" },
+      { en: "I love the city, but at the same time, I miss the countryside.", ja: "都会は好きですが、同時に田舎が恋しいです。" },
+      { en: "It's challenging, but at the same time, rewarding.", ja: "大変ですが、同時にやりがいがあります。" },
+      { en: "She's confident, but at the same time, humble.", ja: "彼女は自信がありますが、同時に謙虚です。" },
+      { en: "I want to relax, but at the same time, I have so much to do.", ja: "リラックスしたいですが、同時にやることが山ほどあります。" },
+      { en: "It's a big risk, but at the same time, a huge opportunity.", ja: "大きなリスクですが、同時に大きなチャンスです。" },
+    ],
+  },
+  {
+    id: 111,
+    section: "ATSU表現 Part 3",
+    pattern: "the flip side of it is",
+    meaning: "それの裏側は…/その反面",
+    examples: [
+      { en: "It makes you look good, but the flip side of it is you're making so much effort.", ja: "良く見えますが、反面、多くの努力を要します。" },
+      { en: "This approach is efficient, but the flip side of it is it costs more.", ja: "この方法は効率的ですが、反面、費用がかかります。" },
+      { en: "Working from home is convenient, but the flip side of it is loneliness.", ja: "在宅勤務は便利ですが、反面、孤独感があります。" },
+      { en: "Being famous is exciting, but the flip side of it is no privacy.", ja: "有名なのは楽しいですが、反面、プライバシーがありません。" },
+      { en: "Living in Tokyo is fun, but the flip side of it is the high cost.", ja: "東京に住むのは楽しいですが、反面、コストが高いです。" },
+      { en: "Eating out a lot is easy, but the flip side of it is poor health.", ja: "外食ばかりは楽ですが、反面、健康に悪いです。" },
+      { en: "Being free is great, but the flip side of it is uncertainty.", ja: "自由なのは素敵ですが、反面、不確実です。" },
+      { en: "He's very talented, but the flip side of it is he's arrogant.", ja: "彼は才能がありますが、反面、傲慢です。" },
+      { en: "This job pays well, but the flip side of it is long hours.", ja: "この仕事は給料が良いですが、反面、長時間労働です。" },
+      { en: "Having lots of friends is great, but the flip side of it is less personal time.", ja: "友達が多いのは良いですが、反面、自分の時間が減ります。" },
+      { en: "Owning a house is nice, but the flip side of it is maintenance.", ja: "家を持つのは素敵ですが、反面、メンテナンスがあります。" },
+      { en: "Being your own boss is freeing, but the flip side of it is no stable income.", ja: "独立は自由ですが、反面、安定収入がありません。" },
+    ],
+  },
+  {
+    id: 112,
+    section: "ATSU表現 Part 3",
+    pattern: "from the perspective of",
+    meaning: "〜の観点から",
+    examples: [
+      { en: "Making complaints doesn't give you anything from the perspective of solving the problem.", ja: "不満を言うことは、問題解決の観点からは何ももたらしません。" },
+      { en: "Being able to speak two languages is helpful from the perspective of having options.", ja: "選択肢を持つ観点から、2ヶ国語話せることはとても役立ちます。" },
+      { en: "From the perspective of customers, the price is too high.", ja: "顧客の観点から、価格は高すぎます。" },
+      { en: "From the perspective of safety, this needs improvement.", ja: "安全の観点から、これは改善が必要です。" },
+      { en: "From the perspective of design, the layout is excellent.", ja: "デザインの観点から、レイアウトは素晴らしいです。" },
+      { en: "From the perspective of investors, the risk is too high.", ja: "投資家の観点から、リスクは高すぎます。" },
+      { en: "From the perspective of efficiency, this is the best option.", ja: "効率の観点から、これがベストな選択肢です。" },
+      { en: "From the perspective of users, the interface is confusing.", ja: "ユーザーの観点から、インターフェースは分かりにくいです。" },
+      { en: "From the perspective of long-term growth, we should invest now.", ja: "長期成長の観点から、今投資すべきです。" },
+      { en: "From the perspective of mental health, taking breaks is essential.", ja: "メンタルヘルスの観点から、休憩を取ることは不可欠です。" },
+      { en: "From the perspective of learning, mistakes are valuable.", ja: "学習の観点から、ミスは価値があります。" },
+      { en: "From the perspective of cost, we need to optimize.", ja: "コストの観点から、最適化が必要です。" },
+    ],
+  },
+  {
+    id: 113,
+    section: "ATSU表現 Part 3",
+    pattern: "two sides of the same coin",
+    meaning: "表裏一体",
+    examples: [
+      { en: "I'd say risk and opportunity are two sides of the same coin.", ja: "リスクとチャンスは表裏一体だと言えます。" },
+      { en: "Pain and gain are two sides of the same coin.", ja: "苦痛と得るものは表裏一体です。" },
+      { en: "Freedom and responsibility are two sides of the same coin.", ja: "自由と責任は表裏一体です。" },
+      { en: "Success and failure are two sides of the same coin.", ja: "成功と失敗は表裏一体です。" },
+      { en: "Love and hate are two sides of the same coin.", ja: "愛と憎しみは表裏一体です。" },
+      { en: "Fear and excitement are two sides of the same coin.", ja: "恐怖と興奮は表裏一体です。" },
+      { en: "Confidence and arrogance are two sides of the same coin.", ja: "自信と傲慢は表裏一体です。" },
+      { en: "Innovation and risk are two sides of the same coin.", ja: "イノベーションとリスクは表裏一体です。" },
+      { en: "Beauty and pain are two sides of the same coin.", ja: "美しさと痛みは表裏一体です。" },
+      { en: "Growth and discomfort are two sides of the same coin.", ja: "成長と不快感は表裏一体です。" },
+      { en: "Talent and pressure are two sides of the same coin.", ja: "才能とプレッシャーは表裏一体です。" },
+      { en: "Privacy and connection are two sides of the same coin.", ja: "プライバシーとつながりは表裏一体です。" },
+    ],
+  },
+  {
+    id: 114,
+    section: "ATSU表現 Part 3",
+    pattern: "like I (you) said,",
+    meaning: "私(あなた)が言ったように",
+    examples: [
+      { en: "Like I said, it's completely up to you.", ja: "私が言ったように、それは完全にあなた次第です。" },
+      { en: "Like you said, balance between work and life is important.", ja: "あなたが言ったように、仕事と私生活のバランスは大事です。" },
+      { en: "Like I said earlier, the deadline is tight.", ja: "さっき言ったように、締切がきついです。" },
+      { en: "Like you said before, we need to focus.", ja: "前にあなたが言ったように、集中する必要があります。" },
+      { en: "Like I said, I'm not interested.", ja: "言ったように、興味がないです。" },
+      { en: "Like you said, this is the best approach.", ja: "あなたが言ったように、これが一番のアプローチです。" },
+      { en: "Like I said, let's just try it.", ja: "言ったように、とりあえず試しましょう。" },
+      { en: "Like you said, it's a fair point.", ja: "あなたが言ったように、もっともな意見です。" },
+      { en: "Like I said, we don't have much time.", ja: "言ったように、あまり時間がありません。" },
+      { en: "Like you said, the team needs more training.", ja: "あなたが言ったように、チームにはもっと研修が必要です。" },
+      { en: "Like I said, I'll handle it.", ja: "言ったように、私が対応します。" },
+      { en: "Like you said, communication is key.", ja: "あなたが言ったように、コミュニケーションが鍵です。" },
+    ],
+  },
+  {
+    id: 115,
+    section: "ATSU表現 Part 3",
+    pattern: "I'm more of a",
+    meaning: "私はむしろ〜タイプの人間です",
+    examples: [
+      { en: "I'm more of a minimalist so I don't like to own a lot of things.", ja: "私はミニマリストタイプなので、たくさんの物を持つのが好きではありません。" },
+      { en: "I'm more of a just go with the flow kind of person.", ja: "私は流れに任せるタイプなので、あまり気にしません。" },
+      { en: "I'm more of a night owl than an early bird.", ja: "私は朝型というより夜型です。" },
+      { en: "I'm more of a coffee person than a tea person.", ja: "私は紅茶より、コーヒー派です。" },
+      { en: "I'm more of an introvert.", ja: "私はどちらかというと内向的なタイプです。" },
+      { en: "I'm more of a city person.", ja: "私はどちらかというと都会派です。" },
+      { en: "I'm more of a listener than a talker.", ja: "私は話すより聞くタイプです。" },
+      { en: "I'm more of a visual learner.", ja: "私は視覚的に学ぶタイプです。" },
+      { en: "I'm more of a planner than a spontaneous person.", ja: "私は計画的なタイプで、衝動的ではないです。" },
+      { en: "I'm more of a dog person.", ja: "私はどちらかというと犬派です。" },
+      { en: "I'm more of an indoor person.", ja: "私はどちらかというとインドア派です。" },
+      { en: "I'm more of a savory person than a sweet tooth.", ja: "私は甘党よりしょっぱい物派です。" },
+    ],
+  },
+  {
+    id: 116,
+    section: "ATSU表現 Part 3",
+    pattern: "it's all about",
+    meaning: "すべては〜にかかっている",
+    examples: [
+      { en: "It's all about what you really wanna achieve.", ja: "すべてはあなたが本当に達成したいことにかかっています。" },
+      { en: "It's all about how you study.", ja: "すべてはあなたがどう勉強するかにかかっています。" },
+      { en: "It's all about timing.", ja: "すべてはタイミング次第です。" },
+      { en: "It's all about consistency.", ja: "すべては継続性です。" },
+      { en: "It's all about who you know.", ja: "すべては誰を知ってるかです。" },
+      { en: "It's all about mindset.", ja: "すべてはマインドセット次第です。" },
+      { en: "It's all about practice.", ja: "すべては練習にかかっています。" },
+      { en: "It's all about communication.", ja: "すべてはコミュニケーション次第です。" },
+      { en: "It's all about balance.", ja: "すべてはバランスです。" },
+      { en: "It's all about quality, not quantity.", ja: "すべては量より質です。" },
+      { en: "It's all about the small details.", ja: "すべては細かい部分にかかっています。" },
+      { en: "It's all about trust.", ja: "すべては信頼にかかっています。" },
+    ],
+  },
+  {
+    id: 117,
+    section: "ATSU表現 Part 3",
+    pattern: "given that",
+    meaning: "〜を考慮すると",
+    examples: [
+      { en: "I'd say I'm more of a minimalist, given that I only have a couple of things in my room.", ja: "部屋に物が少ないことを考慮すると、私はミニマリストだと言えます。" },
+      { en: "It makes sense that many people are leaving, given that the company has so many problems.", ja: "会社に問題が多いことを考慮すると、多くの人が辞めるのは理解できます。" },
+      { en: "Given that you're new, it's understandable.", ja: "新人だということを考慮すると、それは理解できます。" },
+      { en: "Given that it's late, let's call it a day.", ja: "もう遅いことを考慮して、今日は終わりにしましょう。" },
+      { en: "Given that we have a tight budget, we need to prioritize.", ja: "予算が厳しいことを考慮して、優先順位をつける必要があります。" },
+      { en: "Given that he just started, he's doing well.", ja: "始めたばかりであることを考慮すると、彼はよくやっています。" },
+      { en: "Given that the weather is bad, let's stay in.", ja: "天気が悪いことを考慮して、中にいましょう。" },
+      { en: "Given that you're tired, take a break.", ja: "疲れていることを考慮して、休憩して。" },
+      { en: "Given that the market is volatile, be cautious.", ja: "市場が不安定なことを考慮して、慎重に。" },
+      { en: "Given that we have so little time, we need to focus.", ja: "時間がないことを考慮して、集中しないと。" },
+      { en: "Given that it's her first time, she did well.", ja: "初めてだということを考慮すると、彼女はよくやりました。" },
+      { en: "Given that we agreed on this, let's move forward.", ja: "これで合意したことを考慮して、前に進みましょう。" },
+    ],
+  },
+  {
+    id: 118,
+    section: "ATSU表現 Part 3",
+    pattern: "I might be wrong, but",
+    meaning: "私が間違っているかもしれませんが",
+    examples: [
+      { en: "I might be wrong, but isn't this calculation incorrect?", ja: "間違っているかもしれませんが、この計算は違いませんか?" },
+      { en: "I might be wrong, but I think he's very intelligent.", ja: "間違っているかもしれませんが、彼はとても賢いと思います。" },
+      { en: "I might be wrong, but didn't you say you'd handle it?", ja: "間違ってるかもしれませんが、あなたが対応するって言ってませんでしたか?" },
+      { en: "I might be wrong, but the deadline was last Friday.", ja: "間違ってるかもしれませんが、締切は先週金曜でした。" },
+      { en: "I might be wrong, but I think we've met before.", ja: "間違ってるかもしれませんが、前にお会いしたことありませんか?" },
+      { en: "I might be wrong, but this approach won't work.", ja: "間違ってるかもしれませんが、このやり方は上手くいかないと思います。" },
+      { en: "I might be wrong, but she seems upset.", ja: "間違ってるかもしれませんが、彼女、怒ってる気がします。" },
+      { en: "I might be wrong, but I think the answer is 42.", ja: "間違ってるかもしれませんが、答えは42だと思います。" },
+      { en: "I might be wrong, but this looks like a typo.", ja: "間違ってるかもしれませんが、これタイプミスじゃないですか?" },
+      { en: "I might be wrong, but isn't the meeting tomorrow?", ja: "間違ってるかもしれませんが、ミーティングは明日じゃないですか?" },
+      { en: "I might be wrong, but I think we need to recheck.", ja: "間違ってるかもしれませんが、もう一度確認する必要があると思います。" },
+      { en: "I might be wrong, but he seemed unhappy with the result.", ja: "間違ってるかもしれませんが、彼は結果に不満そうでした。" },
+    ],
+  },
+  {
+    id: 119,
+    section: "ATSU表現 Part 3",
+    pattern: "in terms of",
+    meaning: "〜の点では",
+    examples: [
+      { en: "My English is okay in terms of vocabulary, but my pronunciation needs work.", ja: "語彙の点では英語は大丈夫ですが、発音は改善が必要です。" },
+      { en: "It's not great in terms of health, but it tastes so good.", ja: "健康の点では良くないですが、とても美味しいです。" },
+      { en: "In terms of cost, this is the best option.", ja: "コストの点では、これがベストな選択肢です。" },
+      { en: "In terms of design, the new model is better.", ja: "デザインの点では、新しいモデルの方が良いです。" },
+      { en: "In terms of performance, there's no comparison.", ja: "性能の点では、比較になりません。" },
+      { en: "In terms of value, it's worth every penny.", ja: "価値の点では、お金を払う価値があります。" },
+      { en: "In terms of location, it's perfect.", ja: "立地の点では、完璧です。" },
+      { en: "In terms of quality, this is top-notch.", ja: "品質の点では、最高クラスです。" },
+      { en: "In terms of time, it'll take about two weeks.", ja: "時間の点では、約2週間かかります。" },
+      { en: "In terms of skill, she's the best on the team.", ja: "スキルの点では、彼女はチームで一番です。" },
+      { en: "In terms of features, this app is amazing.", ja: "機能の点では、このアプリは素晴らしいです。" },
+      { en: "In terms of taste, this is unbeatable.", ja: "味の点では、これに敵うものはありません。" },
+    ],
+  },
+  {
+    id: 120,
+    section: "ATSU表現 Part 3",
+    pattern: "this is something that",
+    meaning: "これは〜というものだ",
+    examples: [
+      { en: "This is something that I've always wanted to do.", ja: "これは私がいつもやりたかったことです。" },
+      { en: "This is something that only I can do.", ja: "これは私にしかできないことです。" },
+      { en: "This is something that we should discuss.", ja: "これは私たちが話し合うべきことです。" },
+      { en: "This is something that takes time.", ja: "これは時間がかかるものです。" },
+      { en: "This is something that I'm passionate about.", ja: "これは私が情熱を注いでいることです。" },
+      { en: "This is something that everyone should try.", ja: "これは皆が試すべきものです。" },
+      { en: "This is something that changed my life.", ja: "これは私の人生を変えたものです。" },
+      { en: "This is something that I learned the hard way.", ja: "これは苦労して学んだことです。" },
+      { en: "This is something that requires practice.", ja: "これは練習が必要なものです。" },
+      { en: "This is something that I can't compromise on.", ja: "これは妥協できないことです。" },
+      { en: "This is something that you'll appreciate later.", ja: "これは後で価値が分かるものです。" },
+      { en: "This is something that defines us as a team.", ja: "これは私たちをチームとして定義するものです。" },
+    ],
+  },
+];
+
+const TOTAL_CONSTRUCTIONS = 120;
+
+// 全120構文すべて実装済みなので、プレースホルダー生成は不要
+// 念のため、もしどこかが欠けていたらここで埋める
+for (let i = CONSTRUCTIONS.length + 1; i <= TOTAL_CONSTRUCTIONS; i++) {
+  let section;
+  if (i <= 30) section = "初級";
+  else if (i <= 60) section = "中・上級";
+  else if (i <= 80) section = "ATSU表現 Part 1";
+  else if (i <= 100) section = "ATSU表現 Part 2";
+  else section = "ATSU表現 Part 3";
+
+  CONSTRUCTIONS.push({
+    id: i,
+    section,
+    pattern: `(構文 ${i} — 未実装)`,
+    meaning: "後日追加予定",
+    examples: [],
+    placeholder: true,
+  });
+}
+
+</script>
+<script>
+// ============================================================
+// ATSU 120選 シャドーイング・ドリル
+// ============================================================
+
+const state = {
+  currentId: 1,           // 現在選択中の構文ID
+  currentIdx: 0,          // 現在の例文インデックス (0-based)
+  isPlaying: false,       // 自動再生中か
+  shuffleOrder: null,     // シャッフル時の順序 (null = 通常順)
+  showJa: true,           // 日本語訳の表示
+  playToken: 0,           // 再生キャンセル用トークン
+};
+
+const el = {
+  list:        document.getElementById('constructionList'),
+  search:      document.getElementById('searchInput'),
+  patternNum:  document.getElementById('patternNum'),
+  patternText: document.getElementById('patternText'),
+  patternMeaning: document.getElementById('patternMeaning'),
+  stage:       document.getElementById('stage'),
+  card:        document.getElementById('exampleCard'),
+  progressRow: document.getElementById('progressRow'),
+  exCurrent:   document.getElementById('exCurrent'),
+  exTotal:     document.getElementById('exTotal'),
+  exampleEn:   document.getElementById('exampleEn'),
+  exampleJa:   document.getElementById('exampleJa'),
+  btnPrev:     document.getElementById('btnPrev'),
+  btnNext:     document.getElementById('btnNext'),
+  btnSpeak:    document.getElementById('btnSpeak'),
+  btnPlay:     document.getElementById('btnPlay'),
+  btnShuffle:  document.getElementById('btnShuffle'),
+  btnRandomC:  document.getElementById('btnRandomC'),
+  optMode:     document.getElementById('optMode'),
+  optRate:     document.getElementById('optRate'),
+  optRepeat:   document.getElementById('optRepeat'),
+  optGap:      document.getElementById('optGap'),
+  optFlow:     document.getElementById('optFlow'),
+  optShowJa:   document.getElementById('optShowJa'),
+  tabDrill:    document.getElementById('tabDrill'),
+  tabBrowse:   document.getElementById('tabBrowse'),
+  drillView:   document.getElementById('drillView'),
+  browseView:  document.getElementById('browseView'),
+};
+
+// ============================================================
+// SIDEBAR LIST
+// ============================================================
+function renderList(filter = '') {
+  el.list.innerHTML = '';
+  const filterLower = filter.toLowerCase();
+  let currentSection = null;
+
+  CONSTRUCTIONS.forEach(c => {
+    const matches = !filter ||
+      c.pattern.toLowerCase().includes(filterLower) ||
+      c.meaning.toLowerCase().includes(filterLower) ||
+      String(c.id).includes(filter);
+
+    if (!matches) return;
+
+    if (c.section !== currentSection) {
+      const label = document.createElement('div');
+      label.className = 'section-label';
+      label.textContent = c.section;
+      el.list.appendChild(label);
+      currentSection = c.section;
+    }
+
+    const item = document.createElement('div');
+    item.className = 'construction-item';
+    if (c.placeholder) item.classList.add('placeholder');
+    if (c.id === state.currentId) item.classList.add('active');
+    item.dataset.id = c.id;
+    item.innerHTML = `
+      <span class="item-num">${String(c.id).padStart(2, '0')}</span>
+      <span class="item-text">${escapeHtml(c.pattern)}</span>
+    `;
+    if (!c.placeholder) {
+      item.addEventListener('click', () => selectConstruction(c.id));
+    }
+    el.list.appendChild(item);
+  });
+}
+
+function escapeHtml(s) {
+  return s.replace(/[&<>"']/g, ch => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  }[ch]));
+}
+
+// ============================================================
+// BROWSE VIEW (full list of all examples)
+// ============================================================
+let browseRendered = false;
+
+function renderBrowseView() {
+  if (browseRendered) return; // render once, then cache
+  const sections = {};
+  CONSTRUCTIONS.forEach(c => {
+    if (c.placeholder || !c.examples.length) return;
+    if (!sections[c.section]) sections[c.section] = [];
+    sections[c.section].push(c);
+  });
+
+  const parts = [];
+  Object.keys(sections).forEach(sec => {
+    parts.push(`<div class="browse-section">`);
+    parts.push(`  <div class="browse-section-title">${escapeHtml(sec)}</div>`);
+    sections[sec].forEach(c => {
+      parts.push(`  <div class="browse-construction" data-id="${c.id}">`);
+      parts.push(`    <div class="browse-header">`);
+      parts.push(`      <span class="browse-num">${String(c.id).padStart(3, '0')}</span>`);
+      parts.push(`      <span class="browse-pattern">${escapeHtml(c.pattern)}</span>`);
+      parts.push(`      <button class="browse-jump" data-jump="${c.id}">ドリルで開く</button>`);
+      parts.push(`    </div>`);
+      parts.push(`    <div class="browse-meaning">${escapeHtml(c.meaning)}</div>`);
+      parts.push(`    <div class="browse-examples">`);
+      c.examples.forEach((ex, i) => {
+        parts.push(`      <div class="browse-ex">`);
+        parts.push(`        <div class="browse-ex-num">${String(i + 1).padStart(2, '0')}</div>`);
+        parts.push(`        <div class="browse-ex-text">`);
+        parts.push(`          <div class="browse-ex-en">${escapeHtml(ex.en)}</div>`);
+        parts.push(`          <div class="browse-ex-ja">${escapeHtml(ex.ja)}</div>`);
+        parts.push(`        </div>`);
+        parts.push(`      </div>`);
+      });
+      parts.push(`    </div>`);
+      parts.push(`  </div>`);
+    });
+    parts.push(`</div>`);
+  });
+
+  el.browseView.innerHTML = parts.join('\n');
+
+  // jump-to-drill buttons
+  el.browseView.querySelectorAll('.browse-jump').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const id = parseInt(btn.dataset.jump, 10);
+      selectConstruction(id);
+      switchView('drill');
+    });
+  });
+
+  browseRendered = true;
+}
+
+function switchView(view) {
+  if (view === 'browse') {
+    stopPlaying();
+    renderBrowseView();
+    el.drillView.classList.add('hidden');
+    el.browseView.classList.add('active');
+    el.tabDrill.classList.remove('active');
+    el.tabBrowse.classList.add('active');
+    el.browseView.scrollTop = 0;
+  } else {
+    el.drillView.classList.remove('hidden');
+    el.browseView.classList.remove('active');
+    el.tabDrill.classList.add('active');
+    el.tabBrowse.classList.remove('active');
+  }
+}
+
+
+function selectConstruction(id) {
+  stopPlaying();
+  state.currentId = id;
+  state.currentIdx = 0;
+  state.shuffleOrder = null;
+  renderList(el.search.value);
+  renderConstruction();
+}
+
+function currentConstruction() {
+  return CONSTRUCTIONS.find(c => c.id === state.currentId);
+}
+
+function examples() {
+  const c = currentConstruction();
+  if (!c) return [];
+  if (state.shuffleOrder) {
+    return state.shuffleOrder.map(i => c.examples[i]);
+  }
+  return c.examples;
+}
+
+function renderConstruction() {
+  const c = currentConstruction();
+  el.patternNum.textContent = String(c.id).padStart(2, '0');
+  el.patternText.textContent = c.pattern;
+  el.patternMeaning.textContent = c.meaning;
+
+  // placeholder?
+  if (c.placeholder || !c.examples.length) {
+    el.card.style.display = 'none';
+    el.progressRow.innerHTML = '';
+    let msg = el.stage.querySelector('.placeholder-message');
+    if (!msg) {
+      msg = document.createElement('div');
+      msg.className = 'placeholder-message';
+      el.stage.appendChild(msg);
+    }
+    msg.innerHTML = `
+      <strong>この構文はまだ追加されていません</strong>
+      Hiroが「構文 ${c.id} の例文を追加して」と頼むと、Claudeが12パターンを生成して data.js に追加します。
+    `;
+    [el.btnPrev, el.btnNext, el.btnSpeak, el.btnPlay, el.btnShuffle, el.btnRandomC].forEach(b => b.disabled = true);
+    return;
+  }
+
+  // normal
+  const msg = el.stage.querySelector('.placeholder-message');
+  if (msg) msg.remove();
+  el.card.style.display = '';
+  [el.btnPrev, el.btnNext, el.btnSpeak, el.btnPlay, el.btnShuffle, el.btnRandomC].forEach(b => b.disabled = false);
+
+  renderProgress();
+  renderExample();
+}
+
+function renderProgress() {
+  const exs = examples();
+  el.progressRow.innerHTML = exs.map((_, i) => {
+    let cls = 'progress-pip';
+    if (i < state.currentIdx) cls += ' done';
+    else if (i === state.currentIdx) cls += ' current';
+    return `<div class="${cls}"></div>`;
+  }).join('');
+}
+
+function renderExample() {
+  const exs = examples();
+  const ex = exs[state.currentIdx];
+  if (!ex) return;
+
+  el.exCurrent.textContent = state.currentIdx + 1;
+  el.exTotal.textContent = exs.length;
+  el.exampleEn.textContent = ex.en;
+  el.exampleJa.textContent = ex.ja;
+  el.exampleJa.classList.toggle('hidden', !state.showJa);
+  renderProgress();
+}
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+function goNext() {
+  stopPlaying();
+  const exs = examples();
+  if (state.currentIdx < exs.length - 1) {
+    state.currentIdx++;
+    renderExample();
+  }
+}
+function goPrev() {
+  stopPlaying();
+  if (state.currentIdx > 0) {
+    state.currentIdx--;
+    renderExample();
+  }
+}
+function shuffle() {
+  stopPlaying();
+  const c = currentConstruction();
+  if (!c || !c.examples.length) return;
+  const order = [...c.examples.keys()];
+  for (let i = order.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [order[i], order[j]] = [order[j], order[i]];
+  }
+  state.shuffleOrder = order;
+  state.currentIdx = 0;
+  renderExample();
+}
+
+// ============================================================
+// CONSTRUCTION-LEVEL NAVIGATION (for flow modes)
+// ============================================================
+
+// Get list of construction IDs that actually have examples
+function availableConstructionIds() {
+  return CONSTRUCTIONS.filter(c => !c.placeholder && c.examples.length > 0).map(c => c.id);
+}
+
+// Jump to a random construction (not the current one if possible)
+function jumpToRandomConstruction(autoPlay = false) {
+  const ids = availableConstructionIds();
+  if (ids.length === 0) return;
+  const others = ids.filter(id => id !== state.currentId);
+  const pool = others.length > 0 ? others : ids;
+  const nextId = pool[Math.floor(Math.random() * pool.length)];
+  const wasPlaying = state.isPlaying || autoPlay;
+  selectConstruction(nextId);
+  // If flow mode is shuffle-all, also shuffle examples
+  if (el.optFlow.value === 'shuffle-all') {
+    const c = currentConstruction();
+    const order = [...c.examples.keys()];
+    for (let i = order.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [order[i], order[j]] = [order[j], order[i]];
+    }
+    state.shuffleOrder = order;
+    state.currentIdx = 0;
+    renderExample();
+  }
+  if (wasPlaying) startPlaying();
+}
+
+// Move to the next construction in sequential order
+function jumpToNextSequentialConstruction(autoPlay = false) {
+  const ids = availableConstructionIds();
+  if (ids.length === 0) return;
+  const curIdx = ids.indexOf(state.currentId);
+  // wrap around
+  const nextIdx = (curIdx + 1) % ids.length;
+  const nextId = ids[nextIdx];
+  const wasPlaying = state.isPlaying || autoPlay;
+  selectConstruction(nextId);
+  if (wasPlaying) startPlaying();
+}
+
+// Called when auto-play finishes the last example of a construction
+function handleConstructionEnd(token) {
+  const flow = el.optFlow.value;
+  if (flow === 'single') return false; // stop
+  if (token !== state.playToken) return false;
+
+  if (flow === 'sequential') {
+    jumpToNextSequentialConstruction(true);
+    return true;
+  }
+  if (flow === 'shuffle-c' || flow === 'shuffle-all') {
+    jumpToRandomConstruction(true);
+    return true;
+  }
+  return false;
+}
+
+// ============================================================
+// TTS (Web Speech API)
+// ============================================================
+let voicesLoaded = false;
+let cachedEnVoice = null;
+let cachedJaVoice = null;
+
+function loadVoices() {
+  const voices = speechSynthesis.getVoices();
+  if (!voices.length) return false;
+  // prefer en-US/en-GB voices, then any en
+  cachedEnVoice =
+    voices.find(v => /en-US/i.test(v.lang)) ||
+    voices.find(v => /en-GB/i.test(v.lang)) ||
+    voices.find(v => /^en/i.test(v.lang)) ||
+    voices[0];
+  cachedJaVoice =
+    voices.find(v => /ja-JP/i.test(v.lang)) ||
+    voices.find(v => /^ja/i.test(v.lang)) ||
+    null;
+  voicesLoaded = true;
+  return true;
+}
+
+if ('speechSynthesis' in window) {
+  loadVoices();
+  speechSynthesis.onvoiceschanged = loadVoices;
+}
+
+function speak(text, lang = 'en') {
+  return new Promise((resolve) => {
+    if (!('speechSynthesis' in window)) {
+      resolve();
+      return;
+    }
+    if (!voicesLoaded) loadVoices();
+
+    const utter = new SpeechSynthesisUtterance(text);
+    utter.lang = lang === 'ja' ? 'ja-JP' : 'en-US';
+    utter.rate = parseFloat(el.optRate.value);
+    const voice = lang === 'ja' ? cachedJaVoice : cachedEnVoice;
+    if (voice) utter.voice = voice;
+
+    utter.onend = resolve;
+    utter.onerror = resolve;
+
+    speechSynthesis.speak(utter);
+  });
+}
+
+function stopSpeak() {
+  if ('speechSynthesis' in window) {
+    speechSynthesis.cancel();
+  }
+}
+
+// ============================================================
+// PLAYBACK
+// ============================================================
+function wait(seconds, token) {
+  return new Promise((resolve) => {
+    const start = Date.now();
+    const check = () => {
+      if (token !== state.playToken) return resolve(); // cancelled
+      if (Date.now() - start >= seconds * 1000) return resolve();
+      setTimeout(check, 50);
+    };
+    check();
+  });
+}
+
+async function speakCurrent() {
+  const exs = examples();
+  const ex = exs[state.currentIdx];
+  if (!ex) return;
+  el.exampleEn.classList.add('speaking');
+  const mode = el.optMode.value;
+  if (mode === 'ja-en') {
+    await speak(ex.ja, 'ja');
+    await wait(0.4, state.playToken);
+    await speak(ex.en, 'en');
+  } else if (mode === 'en-ja') {
+    await speak(ex.en, 'en');
+    await wait(0.4, state.playToken);
+    await speak(ex.ja, 'ja');
+  } else {
+    await speak(ex.en, 'en');
+  }
+  el.exampleEn.classList.remove('speaking');
+}
+
+async function startPlaying() {
+  if (state.isPlaying) return;
+  state.isPlaying = true;
+  state.playToken++;
+  const myToken = state.playToken;
+  el.btnPlay.classList.add('playing');
+
+  const repeat = parseInt(el.optRepeat.value, 10) || 1;
+  const gap = parseFloat(el.optGap.value) || 0;
+
+  while (state.isPlaying && myToken === state.playToken) {
+    const exs = examples();
+    if (state.currentIdx >= exs.length) break;
+
+    // Speak current example, repeat times
+    for (let r = 0; r < repeat; r++) {
+      if (myToken !== state.playToken) break;
+      await speakCurrent();
+      if (myToken !== state.playToken) break;
+      await wait(gap, myToken);
+    }
+    if (myToken !== state.playToken) break;
+
+    // Move to next example, or next construction
+    if (state.currentIdx < exs.length - 1) {
+      state.currentIdx++;
+      renderExample();
+      await wait(0.2, myToken);
+    } else {
+      // End of current construction — decide based on flow mode
+      const flow = el.optFlow.value;
+      if (flow === 'single') {
+        break; // stop here
+      }
+      // longer pause between constructions
+      await wait(Math.max(gap, 1.2), myToken);
+      if (myToken !== state.playToken) break;
+
+      if (flow === 'sequential') {
+        // jump to next construction (without recursive startPlaying)
+        const ids = availableConstructionIds();
+        if (ids.length === 0) break;
+        const curIdx = ids.indexOf(state.currentId);
+        const nextId = ids[(curIdx + 1) % ids.length];
+        state.currentId = nextId;
+        state.currentIdx = 0;
+        state.shuffleOrder = null;
+        renderList(el.search.value);
+        renderConstruction();
+      } else if (flow === 'shuffle-c' || flow === 'shuffle-all') {
+        const ids = availableConstructionIds();
+        if (ids.length === 0) break;
+        const others = ids.filter(id => id !== state.currentId);
+        const pool = others.length > 0 ? others : ids;
+        const nextId = pool[Math.floor(Math.random() * pool.length)];
+        state.currentId = nextId;
+        state.currentIdx = 0;
+        state.shuffleOrder = null;
+        if (flow === 'shuffle-all') {
+          const c = currentConstruction();
+          const order = [...c.examples.keys()];
+          for (let i = order.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [order[i], order[j]] = [order[j], order[i]];
+          }
+          state.shuffleOrder = order;
+        }
+        renderList(el.search.value);
+        renderConstruction();
+      }
+    }
+  }
+
+  if (myToken === state.playToken) {
+    stopPlaying();
+  }
+}
+
+function stopPlaying() {
+  state.isPlaying = false;
+  state.playToken++;
+  stopSpeak();
+  el.btnPlay.classList.remove('playing');
+  el.exampleEn.classList.remove('speaking');
+}
+
+function togglePlay() {
+  if (state.isPlaying) stopPlaying();
+  else startPlaying();
+}
+
+// ============================================================
+// EVENTS
+// ============================================================
+el.search.addEventListener('input', () => renderList(el.search.value));
+el.btnPrev.addEventListener('click', goPrev);
+el.btnNext.addEventListener('click', goNext);
+el.btnSpeak.addEventListener('click', async () => {
+  stopPlaying();
+  state.playToken++;
+  await speakCurrent();
+});
+el.btnPlay.addEventListener('click', togglePlay);
+el.btnShuffle.addEventListener('click', shuffle);
+el.btnRandomC.addEventListener('click', () => jumpToRandomConstruction());
+
+el.tabDrill.addEventListener('click', () => switchView('drill'));
+el.tabBrowse.addEventListener('click', () => switchView('browse'));
+
+el.optShowJa.addEventListener('click', () => {
+  state.showJa = !state.showJa;
+  el.optShowJa.classList.toggle('on', state.showJa);
+  el.exampleJa.classList.toggle('hidden', !state.showJa);
+});
+
+// keyboard shortcuts
+document.addEventListener('keydown', (e) => {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
+  switch (e.key) {
+    case 'ArrowRight':
+      e.preventDefault();
+      goNext();
+      break;
+    case 'ArrowLeft':
+      e.preventDefault();
+      goPrev();
+      break;
+    case ' ':
+      e.preventDefault();
+      stopPlaying();
+      state.playToken++;
+      speakCurrent();
+      break;
+    case 'j':
+    case 'J':
+      e.preventDefault();
+      el.optShowJa.click();
+      break;
+    case 'p':
+    case 'P':
+      e.preventDefault();
+      togglePlay();
+      break;
+    case 's':
+    case 'S':
+      e.preventDefault();
+      shuffle();
+      break;
+    case 'r':
+    case 'R':
+      e.preventDefault();
+      jumpToRandomConstruction();
+      break;
+  }
+});
+
+// stop TTS on page hide
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) stopPlaying();
+});
+
+// ============================================================
+// INIT
+// ============================================================
+renderList();
+renderConstruction();
+
+</script>
+</body>
+</html>
