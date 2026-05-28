@@ -501,10 +501,14 @@
     border-radius: 12px;
     padding: 18px 22px;
     margin-bottom: 14px;
-    transition: border-color 0.15s;
+    transition: border-color 0.2s, box-shadow 0.2s;
   }
   .browse-construction:hover {
     border-color: var(--accent-dim);
+  }
+  .browse-construction.current {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 1px var(--accent-soft), 0 0 24px rgba(122, 184, 255, 0.15);
   }
 
   .browse-header {
@@ -3331,6 +3335,15 @@ function renderBrowseView() {
   browseRendered = true;
 }
 
+function scrollBrowseTo(id) {
+  // Scroll the browse view so the given construction is at the top
+  const target = el.browseView.querySelector(`.browse-construction[data-id="${id}"]`);
+  if (!target) return;
+  // Use scrollIntoView with block:start; offset slightly so the section header is visible
+  const top = target.offsetTop - 16;
+  el.browseView.scrollTop = top;
+}
+
 function switchView(view) {
   if (view === 'browse') {
     stopPlaying();
@@ -3339,13 +3352,26 @@ function switchView(view) {
     el.browseView.classList.add('active');
     el.tabDrill.classList.remove('active');
     el.tabBrowse.classList.add('active');
-    el.browseView.scrollTop = 0;
+    // Jump to the current construction and highlight it
+    highlightBrowseCurrent();
+    requestAnimationFrame(() => scrollBrowseTo(state.currentId));
   } else {
     el.drillView.classList.remove('hidden');
     el.browseView.classList.remove('active');
     el.tabDrill.classList.add('active');
     el.tabBrowse.classList.remove('active');
   }
+}
+
+function isBrowseActive() {
+  return el.browseView.classList.contains('active');
+}
+
+function highlightBrowseCurrent() {
+  // remove previous
+  el.browseView.querySelectorAll('.browse-construction.current').forEach(n => n.classList.remove('current'));
+  const target = el.browseView.querySelector(`.browse-construction[data-id="${state.currentId}"]`);
+  if (target) target.classList.add('current');
 }
 
 
@@ -3356,6 +3382,11 @@ function selectConstruction(id) {
   state.shuffleOrder = null;
   renderList(el.search.value);
   renderConstruction();
+  // If browse view is open, scroll to the selected construction there too
+  if (isBrowseActive()) {
+    highlightBrowseCurrent();
+    scrollBrowseTo(id);
+  }
 }
 
 function currentConstruction() {
