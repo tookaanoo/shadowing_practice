@@ -299,6 +299,34 @@
     user-select: none;
   }
 
+  /* ----- Production mode (日→自分→英) ----- */
+  .example-en.prod-masked {
+    color: var(--text-3);
+    font-style: italic;
+    font-weight: 500;
+    opacity: 0.85;
+  }
+  .prod-hint {
+    margin-top: 18px;
+    font-size: 12px;
+    color: var(--text-3);
+    line-height: 1.7;
+    display: none;
+  }
+  .prod-hint.show { display: block; }
+  .prod-hint kbd {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    background: var(--bg-3);
+    color: var(--text-1);
+    padding: 1px 6px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    margin: 0 1px;
+  }
+  .option.hidden-opt,
+  .option-toggle.hidden-opt { display: none; }
+
   .placeholder-message {
     text-align: center;
     color: var(--text-3);
@@ -679,6 +707,7 @@
           </div>
           <div class="example-en" id="exampleEn"></div>
           <div class="example-ja" id="exampleJa"></div>
+          <div class="prod-hint" id="prodHint"></div>
         </div>
       </div>
 
@@ -712,6 +741,14 @@
             <option value="en">英のみ</option>
             <option value="ja-en">日→英</option>
             <option value="en-ja">英→日</option>
+            <option value="prod">日→自分→英</option>
+          </select>
+        </div>
+        <div class="option hidden-opt" id="optRevealWrap">
+          <label for="optReveal">めくり:</label>
+          <select id="optReveal">
+            <option value="manual" selected>手動</option>
+            <option value="auto">自動</option>
           </select>
         </div>
         <div class="option">
@@ -3197,6 +3234,7 @@ const state = {
   isPlaying: false,       // 自動再生中か
   shuffleOrder: null,     // シャッフル時の順序 (null = 通常順)
   showJa: true,           // 日本語訳の表示
+  prodRevealed: false,    // 日→自分→英モードで正解の英語を表示済みか
   playToken: 0,           // 再生キャンセル用トークン
 };
 
@@ -3220,6 +3258,9 @@ const el = {
   btnShuffle:  document.getElementById('btnShuffle'),
   btnRandomC:  document.getElementById('btnRandomC'),
   optMode:     document.getElementById('optMode'),
+  optReveal:   document.getElementById('optReveal'),
+  optRevealWrap: document.getElementById('optRevealWrap'),
+  prodHint:    document.getElementById('prodHint'),
   optRate:     document.getElementById('optRate'),
   optRepeat:   document.getElementById('optRepeat'),
   optGap:      document.getElementById('optGap'),
@@ -3454,12 +3495,91 @@ function renderExample() {
   const ex = exs[state.currentIdx];
   if (!ex) return;
 
+  // 新しい例文を表示するときは必ず「未公開」に戻す
+  state.prodRevealed = false;
+
   el.exCurrent.textContent = state.currentIdx + 1;
   el.exTotal.textContent = exs.length;
-  el.exampleEn.textContent = ex.en;
-  el.exampleJa.textContent = ex.ja;
-  el.exampleJa.classList.toggle('hidden', !state.showJa);
+  applyExampleVisibility();
   renderProgress();
+}
+
+// 現在のモード／公開状態に応じて英文・和文の表示を更新
+function applyExampleVisibility() {
+  const ex = examples()[state.currentIdx];
+  if (!ex) return;
+  const isProd = el.optMode.value === 'prod';
+
+  if (isProd) {
+    // 和文がプロンプトなので常に表示
+    el.exampleJa.textContent = ex.ja;
+    el.exampleJa.classList.remove('hidden');
+    if (state.prodRevealed) {
+      el.exampleEn.textContent = ex.en;
+      el.exampleEn.classList.remove('prod-masked');
+    } else {
+      el.exampleEn.textContent = '🗣 英語で言ってみよう';
+      el.exampleEn.classList.add('prod-masked');
+    }
+  } else {
+    el.exampleEn.textContent = ex.en;
+    el.exampleEn.classList.remove('prod-masked');
+    el.exampleJa.textContent = ex.ja;
+    el.exampleJa.classList.toggle('hidden', !state.showJa);
+  }
+}
+
+// モード切替時：関連コントロールの表示とヒントを更新
+function updateProdUI() {
+  const isProd = el.optMode.value === 'prod';
+  el.optRevealWrap.classList.toggle('hidden-opt', !isProd);
+  el.optShowJa.classList.toggle('hidden-opt', isProd);
+  el.prodHint.classList.remove('show');
+  el.prodHint.innerHTML = '';
+}
+
+// 和文プロンプトを読み上げ
+function speakJaPrompt() {
+  const ex = examples()[state.currentIdx];
+  if (!ex) return;
+  stopSpeak();
+  state.playToken++;
+  speak(ex.ja, 'ja');
+}
+
+// このモードの設定値（繰返＝英語の回数 / 間隔＝沈黙秒数）
+function prodSettings() {
+  return {
+    repeat: Math.max(1, parseInt(el.optRepeat.value, 10) || 1),
+    gap: parseFloat(el.optGap.value) || 0,
+  };
+}
+
+// 英語を「繰返」回・間に「間隔」秒の沈黙を入れて読み上げ（手動シャドーイング用）
+async function prodPlayEn() {
+  const ex = examples()[state.currentIdx];
+  if (!ex) return;
+  stopSpeak();
+  state.playToken++;
+  const t = state.playToken;
+  const { repeat, gap } = prodSettings();
+  for (let r = 0; r < repeat; r++) {
+    if (t !== state.playToken) return;
+    el.exampleEn.classList.add('speaking');
+    await speak(ex.en, 'en');
+    el.exampleEn.classList.remove('speaking');
+    if (t !== state.playToken) return;
+    if (r < repeat - 1) await wait(gap, t); // 英語の後の沈黙
+  }
+}
+
+// 手動めくりの操作：未公開なら答えを出して読み上げ、公開済みなら再生（シャドーイング）
+function prodManualAction() {
+  if (!state.prodRevealed) {
+    state.prodRevealed = true;
+    applyExampleVisibility();
+  }
+  prodPlayEn();
 }
 
 // ============================================================
@@ -3471,6 +3591,7 @@ function goNext() {
   if (state.currentIdx < exs.length - 1) {
     state.currentIdx++;
     renderExample();
+    if (el.optMode.value === 'prod') speakJaPrompt();
   }
 }
 function goPrev() {
@@ -3478,6 +3599,7 @@ function goPrev() {
   if (state.currentIdx > 0) {
     state.currentIdx--;
     renderExample();
+    if (el.optMode.value === 'prod') speakJaPrompt();
   }
 }
 function shuffle() {
@@ -3650,6 +3772,10 @@ async function speakCurrent() {
 
 async function startPlaying() {
   if (state.isPlaying) return;
+  // 手動めくりモードでは自動再生しない（▶/PはtogglePlayで「次へ」に割当）
+  if (el.optMode.value === 'prod' && el.optReveal.value === 'manual') {
+    return;
+  }
   state.isPlaying = true;
   state.playToken++;
   const myToken = state.playToken;
@@ -3661,13 +3787,36 @@ async function startPlaying() {
   while (state.isPlaying && myToken === state.playToken) {
     const exs = examples();
     if (state.currentIdx >= exs.length) break;
+    const isProd = el.optMode.value === 'prod';
 
-    // Speak current example, repeat times
-    for (let r = 0; r < repeat; r++) {
+    if (isProd) {
+      // 1. 和文プロンプト（英語は隠す）
+      state.prodRevealed = false;
+      applyExampleVisibility();
+      await speak(exs[state.currentIdx].ja, 'ja');
       if (myToken !== state.playToken) break;
-      await speakCurrent();
-      if (myToken !== state.playToken) break;
+      // 2. 日本語の後の沈黙（「間隔(秒)」）＝自分で英語を言う時間
       await wait(gap, myToken);
+      if (myToken !== state.playToken) break;
+      // 3. 正解を表示し、英語を「繰返」回・各回の後に「間隔」秒の沈黙
+      state.prodRevealed = true;
+      applyExampleVisibility();
+      for (let r = 0; r < repeat; r++) {
+        if (myToken !== state.playToken) break;
+        el.exampleEn.classList.add('speaking');
+        await speak(exs[state.currentIdx].en, 'en');
+        el.exampleEn.classList.remove('speaking');
+        if (myToken !== state.playToken) break;
+        await wait(gap, myToken); // 英語の後の沈黙
+      }
+    } else {
+      // Speak current example, repeat times
+      for (let r = 0; r < repeat; r++) {
+        if (myToken !== state.playToken) break;
+        await speakCurrent();
+        if (myToken !== state.playToken) break;
+        await wait(gap, myToken);
+      }
     }
     if (myToken !== state.playToken) break;
 
@@ -3735,6 +3884,16 @@ function stopPlaying() {
 }
 
 function togglePlay() {
+  // 日→自分→英の手動めくり：▶/Pは段階送り
+  //  未公開 → 英語を表示して再生 / 公開済み → 次の文（日本語が流れる）
+  if (el.optMode.value === 'prod' && el.optReveal.value === 'manual') {
+    if (!state.prodRevealed) {
+      prodManualAction();
+    } else {
+      goNext();
+    }
+    return;
+  }
   if (state.isPlaying) stopPlaying();
   else startPlaying();
 }
@@ -3746,6 +3905,10 @@ el.search.addEventListener('input', () => renderList(el.search.value));
 el.btnPrev.addEventListener('click', goPrev);
 el.btnNext.addEventListener('click', goNext);
 el.btnSpeak.addEventListener('click', async () => {
+  if (el.optMode.value === 'prod' && !state.isPlaying) {
+    prodManualAction();
+    return;
+  }
   stopPlaying();
   state.playToken++;
   await speakCurrent();
@@ -3763,6 +3926,34 @@ el.optShowJa.addEventListener('click', () => {
   el.exampleJa.classList.toggle('hidden', !state.showJa);
 });
 
+// モードごとに繰返/間隔の設定を記憶（prodは専用デフォルト：繰返1・間隔5）
+const modeSettings = {
+  normal: { repeat: '5', gap: '5' },
+  prod:   { repeat: '2', gap: '5' },
+};
+function modeGroup(mode) { return mode === 'prod' ? 'prod' : 'normal'; }
+let currentSettingGroup = modeGroup(el.optMode.value);
+
+el.optMode.addEventListener('change', () => {
+  stopPlaying();
+  state.prodRevealed = false;
+
+  // 設定グループが変わったら、現在値を保存して新グループの値を読み込む
+  const newGroup = modeGroup(el.optMode.value);
+  if (newGroup !== currentSettingGroup) {
+    modeSettings[currentSettingGroup].repeat = el.optRepeat.value;
+    modeSettings[currentSettingGroup].gap = el.optGap.value;
+    el.optRepeat.value = modeSettings[newGroup].repeat;
+    el.optGap.value = modeSettings[newGroup].gap;
+    currentSettingGroup = newGroup;
+  }
+
+  updateProdUI();
+  renderExample();
+  if (el.optMode.value === 'prod') speakJaPrompt();
+});
+el.optReveal.addEventListener('change', updateProdUI);
+
 // keyboard shortcuts
 document.addEventListener('keydown', (e) => {
   if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
@@ -3777,14 +3968,19 @@ document.addEventListener('keydown', (e) => {
       break;
     case ' ':
       e.preventDefault();
-      stopPlaying();
-      state.playToken++;
-      speakCurrent();
+      if (el.optMode.value === 'prod' && !state.isPlaying) {
+        prodManualAction();
+      } else {
+        stopPlaying();
+        state.playToken++;
+        speakCurrent();
+      }
       break;
     case 'j':
     case 'J':
       e.preventDefault();
-      el.optShowJa.click();
+      if (el.optMode.value === 'prod') speakJaPrompt();
+      else el.optShowJa.click();
       break;
     case 'p':
     case 'P':
@@ -3814,6 +4010,7 @@ document.addEventListener('visibilitychange', () => {
 // ============================================================
 renderList();
 renderConstruction();
+updateProdUI();
 
 </script>
 </body>
