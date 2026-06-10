@@ -134,6 +134,22 @@
     background: var(--accent);
     color: var(--bg-0);
   }
+  .construction-item.story-focus {
+    background: var(--accent-soft);
+    color: var(--accent);
+    box-shadow: inset 0 0 0 1.5px var(--accent);
+  }
+  .construction-item.story-focus .item-num {
+    background: var(--accent);
+    color: var(--bg-0);
+  }
+  @keyframes storyFocusPulse {
+    0% { box-shadow: inset 0 0 0 1.5px var(--accent), 0 0 0 0 var(--accent-soft); }
+    100% { box-shadow: inset 0 0 0 1.5px var(--accent), 0 0 0 8px transparent; }
+  }
+  .construction-item.story-focus.pulse {
+    animation: storyFocusPulse 0.5s ease-out;
+  }
   .construction-item.placeholder {
     color: var(--text-3);
     opacity: 0.5;
@@ -298,34 +314,6 @@
     pointer-events: none;
     user-select: none;
   }
-
-  /* ----- Production mode (日→自分→英) ----- */
-  .example-en.prod-masked {
-    color: var(--text-3);
-    font-style: italic;
-    font-weight: 500;
-    opacity: 0.85;
-  }
-  .prod-hint {
-    margin-top: 18px;
-    font-size: 12px;
-    color: var(--text-3);
-    line-height: 1.7;
-    display: none;
-  }
-  .prod-hint.show { display: block; }
-  .prod-hint kbd {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    background: var(--bg-3);
-    color: var(--text-1);
-    padding: 1px 6px;
-    border-radius: 4px;
-    border: 1px solid var(--border);
-    margin: 0 1px;
-  }
-  .option.hidden-opt,
-  .option-toggle.hidden-opt { display: none; }
 
   .placeholder-message {
     text-align: center;
@@ -632,6 +620,226 @@
     .browse-ex:nth-last-child(2) { border-bottom: 1px solid var(--border-soft); }
   }
 
+  /* ==============================
+     STORY VIEW
+     ============================== */
+  .story-view {
+    flex: 1;
+    overflow-y: auto;
+    display: none;
+    flex-direction: column;
+  }
+  .story-view.active { display: flex; }
+
+  .story-list {
+    padding: 28px 36px 60px;
+  }
+  .story-card {
+    background: var(--bg-1);
+    border: 1px solid var(--border-soft);
+    border-radius: 14px;
+    padding: 22px 26px;
+    margin-bottom: 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .story-card:hover {
+    border-color: var(--accent-dim);
+    transform: translateY(-2px);
+  }
+  .story-card.locked {
+    opacity: 0.5;
+    cursor: default;
+  }
+  .story-card.locked:hover {
+    border-color: var(--border-soft);
+    transform: none;
+  }
+  .story-chapter {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+  .story-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text-0);
+    margin-bottom: 4px;
+    letter-spacing: -0.01em;
+  }
+  .story-subtitle {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 13px;
+    color: var(--text-2);
+    margin-bottom: 10px;
+  }
+  .story-meta {
+    font-size: 11px;
+    color: var(--text-3);
+    display: flex;
+    gap: 12px;
+  }
+
+  /* Story reader */
+  .story-reader {
+    display: none;
+    flex-direction: column;
+    flex: 1;
+    overflow: hidden;
+  }
+  .story-reader.active { display: flex; }
+
+  .story-reader-header {
+    padding: 18px 36px 14px;
+    border-bottom: 1px solid var(--border-soft);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    background: var(--bg-1);
+  }
+  .story-back {
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    color: var(--text-1);
+    padding: 8px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.15s;
+  }
+  .story-back:hover {
+    background: var(--bg-3);
+    color: var(--text-0);
+  }
+  .story-reader-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-0);
+    flex: 1;
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .story-settings {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    padding: 10px 36px;
+    border-bottom: 1px solid var(--border-soft);
+    background: var(--bg-1);
+    flex-wrap: wrap;
+  }
+  .story-settings .option { margin: 0; }
+  .story-play-all {
+    background: var(--accent);
+    color: var(--bg-0);
+    border: none;
+    padding: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+  }
+  .story-play-all:hover {
+    background: #95c8ff;
+  }
+  .story-play-all.playing {
+    background: var(--warn);
+  }
+
+  .story-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 28px 40px 60px;
+    max-width: 900px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  .story-sentence {
+    padding: 14px 16px;
+    border-radius: 10px;
+    margin-bottom: 8px;
+    transition: background 0.2s;
+    cursor: pointer;
+    display: grid;
+    grid-template-columns: 28px 1fr;
+    gap: 12px;
+    align-items: start;
+  }
+  .story-sentence:hover {
+    background: var(--bg-2);
+  }
+  .story-sentence.current {
+    background: var(--accent-soft);
+  }
+  .story-sentence-icon {
+    color: var(--text-3);
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+    flex-shrink: 0;
+  }
+  .story-sentence:hover .story-sentence-icon {
+    background: var(--bg-3);
+    color: var(--accent);
+  }
+  .story-sentence.current .story-sentence-icon {
+    background: var(--accent);
+    color: var(--bg-0);
+  }
+  .story-sentence-text {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+  }
+  .story-sentence-en {
+    font-size: 19px;
+    color: var(--text-0);
+    line-height: 1.5;
+    font-weight: 500;
+  }
+  .story-sentence-ja {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 14px;
+    color: var(--text-2);
+    line-height: 1.55;
+  }
+  .story-sentence-ja.hidden {
+    display: none;
+  }
+
+  @media (max-width: 800px) {
+    .story-list { padding: 20px 16px 40px; }
+    .story-reader-header { padding: 12px 16px 10px; }
+    .story-settings { padding: 8px 16px; gap: 14px; }
+    .story-reader-title { font-size: 14px; }
+    .story-body { padding: 20px 16px 40px; }
+    .story-sentence { padding: 10px 12px; gap: 10px; }
+    .story-sentence-en { font-size: 16px; }
+    .story-sentence-ja { font-size: 12px; }
+  }
+
   /* ----- responsive ----- */
   @media (max-width: 800px) {
     .app { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
@@ -693,6 +901,7 @@
         <div class="view-switcher">
           <button id="tabDrill" class="active">ドリル</button>
           <button id="tabBrowse">一覧</button>
+          <button id="tabStory">物語</button>
         </div>
       </div>
     </header>
@@ -707,7 +916,6 @@
           </div>
           <div class="example-en" id="exampleEn"></div>
           <div class="example-ja" id="exampleJa"></div>
-          <div class="prod-hint" id="prodHint"></div>
         </div>
       </div>
 
@@ -741,14 +949,6 @@
             <option value="en">英のみ</option>
             <option value="ja-en">日→英</option>
             <option value="en-ja">英→日</option>
-            <option value="prod">日→自分→英</option>
-          </select>
-        </div>
-        <div class="option hidden-opt" id="optRevealWrap">
-          <label for="optReveal">めくり:</label>
-          <select id="optReveal">
-            <option value="manual" selected>手動</option>
-            <option value="auto">自動</option>
           </select>
         </div>
         <div class="option">
@@ -784,12 +984,14 @@
     </div><!-- /.drill-view -->
 
     <div class="browse-view" id="browseView"></div>
+    <div class="story-view" id="storyView"></div>
   </main>
 </div>
 
 <script>
-// シャドーイング・ドリル データ
+// ATSU 120選 シャドーイング・ドリル データ
 // 各構文に対し、主語/時制/疑問/目的語などを変えた12パターンの例文
+// 構文の型と訳語の枠組みは Atsueigo「ATSUの表現・構文厳選120選」を参照
 // 例文（12パターン）はオリジナルに書き起こし
 
 const CONSTRUCTIONS = [
@@ -1742,7 +1944,7 @@ const CONSTRUCTIONS = [
     meaning: "文と言われる",
     examples: [
       { en: "It's said that everything happens for a reason.", ja: "全てのことは理由があって起こると言われている。" },
-      { en: "It's said that this channel is the best one.", ja: "このチャンネルが一番だと言われている。" },
+      { en: "It's said that Atsueigo is the best channel.", ja: "Atsueigoが一番のチャンネルだと言われている。" },
       { en: "It's said that the early bird catches the worm.", ja: "早起きは三文の徳と言われる。" },
       { en: "It's said that he was a great leader.", ja: "彼は偉大なリーダーだったと言われている。" },
       { en: "It's said that this temple is over 1000 years old.", ja: "この寺は1000年以上前のものだと言われている。" },
@@ -1995,10 +2197,10 @@ const CONSTRUCTIONS = [
       { en: "I'm going to have to think about it.", ja: "考えないといけないな。" },
     ],
   },
-  // ===== 表現集 Part 1 (61-80) =====
+  // ===== ATSU表現 Part 1 (61-80) =====
   {
     id: 61,
-    section: "表現集 Part 1",
+    section: "ATSU表現 Part 1",
     pattern: "It's 形容詞 how 文",
     meaning: "文は形容詞だ (会話的)",
     examples: [
@@ -2018,7 +2220,7 @@ const CONSTRUCTIONS = [
   },
   {
     id: 62,
-    section: "表現集 Part 1",
+    section: "ATSU表現 Part 1",
     pattern: "at the end of the day",
     meaning: "結局は",
     examples: [
@@ -2038,7 +2240,7 @@ const CONSTRUCTIONS = [
   },
   {
     id: 63,
-    section: "表現集 Part 1",
+    section: "ATSU表現 Part 1",
     pattern: "if that makes sense",
     meaning: "言ってること分かる?",
     examples: [
@@ -2058,7 +2260,7 @@ const CONSTRUCTIONS = [
   },
   {
     id: 64,
-    section: "表現集 Part 1",
+    section: "ATSU表現 Part 1",
     pattern: "if you think about it",
     meaning: "考え方によれば、よく考えると",
     examples: [
@@ -2078,7 +2280,7 @@ const CONSTRUCTIONS = [
   },
   {
     id: 65,
-    section: "表現集 Part 1",
+    section: "ATSU表現 Part 1",
     pattern: "you know what I mean?",
     meaning: "言ってること分かる?",
     examples: [
@@ -2098,7 +2300,7 @@ const CONSTRUCTIONS = [
   },
   {
     id: 66,
-    section: "表現集 Part 1",
+    section: "ATSU表現 Part 1",
     pattern: "or so",
     meaning: "〜とかその辺、大体",
     examples: [
@@ -2118,7 +2320,7 @@ const CONSTRUCTIONS = [
   },
   {
     id: 67,
-    section: "表現集 Part 1",
+    section: "ATSU表現 Part 1",
     pattern: "and stuff",
     meaning: "〜とか",
     examples: [
@@ -2138,7 +2340,7 @@ const CONSTRUCTIONS = [
   },
   {
     id: 68,
-    section: "表現集 Part 1",
+    section: "ATSU表現 Part 1",
     pattern: "or something like that",
     meaning: "〜とかなんとか",
     examples: [
@@ -2158,7 +2360,7 @@ const CONSTRUCTIONS = [
   },
   {
     id: 69,
-    section: "表現集 Part 1",
+    section: "ATSU表現 Part 1",
     pattern: "pretty much",
     meaning: "ほぼ",
     examples: [
@@ -2178,7 +2380,7 @@ const CONSTRUCTIONS = [
   },
   {
     id: 70,
-    section: "表現集 Part 1",
+    section: "ATSU表現 Part 1",
     pattern: "or not really?",
     meaning: "ちょっと違う?",
     examples: [
@@ -2198,7 +2400,7 @@ const CONSTRUCTIONS = [
   },
   {
     id: 71,
-    section: "表現集 Part 1",
+    section: "ATSU表現 Part 1",
     pattern: "I have a feeling 文",
     meaning: "〜という気がする",
     examples: [
@@ -2218,27 +2420,27 @@ const CONSTRUCTIONS = [
   },
   {
     id: 72,
-    section: "表現集 Part 1",
+    section: "ATSU表現 Part 1",
     pattern: "I know, right?",
     meaning: "ほんとそれ",
     examples: [
-      { en: "This is delicious. I know, right?", ja: "これ美味しすぎる。 ほんとそれ。" },
-      { en: "She is gorgeous. I know, right?", ja: "あの人めっちゃ綺麗だね。 ほんとそれ。" },
-      { en: "He did a great job. I know, right?", ja: "彼めっちゃ良い仕事したね。 ほんとそれ。" },
-      { en: "This is beautiful. I know, right?", ja: "これ綺麗だね。 ほんとそれ。" },
-      { en: "That movie was so good. I know, right?", ja: "あの映画めっちゃ良かった。 ほんとそれ。" },
-      { en: "It's so cold today. I know, right?", ja: "今日めっちゃ寒い。 ほんとそれ。" },
-      { en: "He's such a great singer. I know, right?", ja: "彼、すごく歌が上手いよね。 ほんとそれ。" },
-      { en: "Mondays are the worst. I know, right?", ja: "月曜って最悪だよね。 ほんとそれ。" },
-      { en: "Time flies. I know, right?", ja: "時間が経つの早い。 ほんとそれ。" },
-      { en: "This café is so cozy. I know, right?", ja: "このカフェめっちゃ落ち着く。 ほんとそれ。" },
-      { en: "He talks too much. I know, right?", ja: "彼、話しすぎ。 ほんとそれ。" },
-      { en: "Tokyo is amazing in spring. I know, right?", ja: "春の東京最高だね。 ほんとそれ。" },
+      { en: "— This is delicious. — I know, right?", ja: "— これ美味しすぎる。 — ほんとそれ。" },
+      { en: "— She is gorgeous. — I know, right?", ja: "— あの人めっちゃ綺麗だね。 — ほんとそれ。" },
+      { en: "— He did a great job. — I know, right?", ja: "— 彼めっちゃ良い仕事したね。 — ほんとそれ。" },
+      { en: "— This is beautiful. — I know, right?", ja: "— これ綺麗だね。 — ほんとそれ。" },
+      { en: "— That movie was so good. — I know, right?", ja: "— あの映画めっちゃ良かった。 — ほんとそれ。" },
+      { en: "— It's so cold today. — I know, right?", ja: "— 今日めっちゃ寒い。 — ほんとそれ。" },
+      { en: "— He's such a great singer. — I know, right?", ja: "— 彼、すごく歌が上手いよね。 — ほんとそれ。" },
+      { en: "— Mondays are the worst. — I know, right?", ja: "— 月曜って最悪だよね。 — ほんとそれ。" },
+      { en: "— Time flies. — I know, right?", ja: "— 時間が経つの早い。 — ほんとそれ。" },
+      { en: "— This café is so cozy. — I know, right?", ja: "— このカフェめっちゃ落ち着く。 — ほんとそれ。" },
+      { en: "— He talks too much. — I know, right?", ja: "— 彼、話しすぎ。 — ほんとそれ。" },
+      { en: "— Tokyo is amazing in spring. — I know, right?", ja: "— 春の東京最高だね。 — ほんとそれ。" },
     ],
   },
   {
     id: 73,
-    section: "表現集 Part 1",
+    section: "ATSU表現 Part 1",
     pattern: "kind of thing",
     meaning: "〜みたいなもの",
     examples: [
@@ -2258,7 +2460,7 @@ const CONSTRUCTIONS = [
   },
   {
     id: 74,
-    section: "表現集 Part 1",
+    section: "ATSU表現 Part 1",
     pattern: "in which case (短縮形)",
     meaning: "その場合",
     examples: [
@@ -2278,7 +2480,7 @@ const CONSTRUCTIONS = [
   },
   {
     id: 75,
-    section: "表現集 Part 1",
+    section: "ATSU表現 Part 1",
     pattern: "even if",
     meaning: "たとえ〜だったとしても",
     examples: [
@@ -2298,13 +2500,13 @@ const CONSTRUCTIONS = [
   },
   {
     id: 76,
-    section: "表現集 Part 1",
+    section: "ATSU表現 Part 1",
     pattern: "simply put",
     meaning: "簡単に言えば",
     examples: [
       { en: "Simply put, he doesn't like sports.", ja: "簡単に言えば、彼はスポーツが好きじゃない。" },
       { en: "Simply put, I'm not interested.", ja: "簡単に言えば、興味がない。" },
-      { en: "How was the event? Simply put, it was a disaster.", ja: "イベントどうだった? 簡単に言えば、最悪だったよ。" },
+      { en: "— How was the event? — Simply put, it was a disaster.", ja: "— イベントどうだった? — 簡単に言えば、最悪だったよ。" },
       { en: "Simply put, this isn't working.", ja: "簡単に言えば、これはうまくいってない。" },
       { en: "Simply put, we need more time.", ja: "簡単に言えば、もっと時間が必要だ。" },
       { en: "Simply put, the plan needs to change.", ja: "簡単に言えば、計画を変えないといけない。" },
@@ -2318,7 +2520,7 @@ const CONSTRUCTIONS = [
   },
   {
     id: 77,
-    section: "表現集 Part 1",
+    section: "ATSU表現 Part 1",
     pattern: "let's say",
     meaning: "仮に〜としよう",
     examples: [
@@ -2338,27 +2540,27 @@ const CONSTRUCTIONS = [
   },
   {
     id: 78,
-    section: "表現集 Part 1",
+    section: "ATSU表現 Part 1",
     pattern: "That's true",
     meaning: "確かにそうだね",
     examples: [
-      { en: "I think we've got to look at it from a different angle. Yeah, that's true.", ja: "違う角度から見ないと。 確かにそうだね。" },
-      { en: "Don't you think? Yeah, that's true.", ja: "そう思わない? 確かにそうだね。" },
-      { en: "Practice makes perfect. That's true.", ja: "練習が完璧を作る。 確かにね。" },
-      { en: "You can't please everyone. That's true.", ja: "みんなを満足させることはできない。 確かに。" },
-      { en: "Time is money. That's true.", ja: "時は金なり。 確かにそうだね。" },
-      { en: "He's been working really hard. That's true.", ja: "彼、すごく頑張ってるよ。 確かに。" },
-      { en: "This place gets busy in summer. That's true.", ja: "ここ夏は混むんだよね。 確かに。" },
-      { en: "You learn more by doing. That's true.", ja: "やることで学ぶ。 確かにね。" },
-      { en: "Sleep is so important. That's true.", ja: "睡眠ってすごく大事。 確かにそう。" },
-      { en: "Tokyo is really safe. That's true.", ja: "東京って本当に安全。 確かに。" },
-      { en: "She's always punctual. That's true.", ja: "彼女、いつも時間通り。 確かに。" },
-      { en: "Money isn't everything. That's true.", ja: "お金が全てじゃない。 確かにね。" },
+      { en: "— I think we've got to look at it from a different angle. — Yeah, that's true.", ja: "— 違う角度から見ないと。 — 確かにそうだね。" },
+      { en: "— Don't you think? — Yeah, that's true.", ja: "— そう思わない? — 確かにそうだね。" },
+      { en: "— Practice makes perfect. — That's true.", ja: "— 練習が完璧を作る。 — 確かにね。" },
+      { en: "— You can't please everyone. — That's true.", ja: "— みんなを満足させることはできない。 — 確かに。" },
+      { en: "— Time is money. — That's true.", ja: "— 時は金なり。 — 確かにそうだね。" },
+      { en: "— He's been working really hard. — That's true.", ja: "— 彼、すごく頑張ってるよ。 — 確かに。" },
+      { en: "— This place gets busy in summer. — That's true.", ja: "— ここ夏は混むんだよね。 — 確かに。" },
+      { en: "— You learn more by doing. — That's true.", ja: "— やることで学ぶ。 — 確かにね。" },
+      { en: "— Sleep is so important. — That's true.", ja: "— 睡眠ってすごく大事。 — 確かにそう。" },
+      { en: "— Tokyo is really safe. — That's true.", ja: "— 東京って本当に安全。 — 確かに。" },
+      { en: "— She's always punctual. — That's true.", ja: "— 彼女、いつも時間通り。 — 確かに。" },
+      { en: "— Money isn't everything. — That's true.", ja: "— お金が全てじゃない。 — 確かにね。" },
     ],
   },
   {
     id: 79,
-    section: "表現集 Part 1",
+    section: "ATSU表現 Part 1",
     pattern: "instead of",
     meaning: "〜じゃなくて",
     examples: [
@@ -2378,7 +2580,7 @@ const CONSTRUCTIONS = [
   },
   {
     id: 80,
-    section: "表現集 Part 1",
+    section: "ATSU表現 Part 1",
     pattern: "rather than",
     meaning: "〜よりもむしろ",
     examples: [
@@ -2396,10 +2598,10 @@ const CONSTRUCTIONS = [
       { en: "I want quality rather than quantity.", ja: "量よりも質が欲しい。" },
     ],
   },
-  // ===== 表現集 Part 2 (81-100) =====
+  // ===== ATSU表現 Part 2 (81-100) =====
   {
     id: 81,
-    section: "表現集 Part 2",
+    section: "ATSU表現 Part 2",
     pattern: "the reason being",
     meaning: "理由は",
     examples: [
@@ -2419,7 +2621,7 @@ const CONSTRUCTIONS = [
   },
   {
     id: 82,
-    section: "表現集 Part 2",
+    section: "ATSU表現 Part 2",
     pattern: "as to",
     meaning: "〜に関して",
     examples: [
@@ -2439,7 +2641,7 @@ const CONSTRUCTIONS = [
   },
   {
     id: 83,
-    section: "表現集 Part 2",
+    section: "ATSU表現 Part 2",
     pattern: "whereas",
     meaning: "一方で",
     examples: [
@@ -2459,7 +2661,7 @@ const CONSTRUCTIONS = [
   },
   {
     id: 84,
-    section: "表現集 Part 2",
+    section: "ATSU表現 Part 2",
     pattern: "whether or not",
     meaning: "〜かどうか",
     examples: [
@@ -2479,13 +2681,13 @@ const CONSTRUCTIONS = [
   },
   {
     id: 85,
-    section: "表現集 Part 2",
+    section: "ATSU表現 Part 2",
     pattern: "what's it called",
     meaning: "なんていうんだっけ",
     examples: [
       { en: "He was talking about this book, what's it called, Distinction.", ja: "彼は本の話をしてたけど、なんて名前だっけ、Distinctionだ。" },
       { en: "I was reading this book... What's it called?", ja: "本を読んでたんだけど、なんていう名前だっけ。" },
-      { en: "What's it called? Oh, the dictionary app! Yeah, that's the one.", ja: "なんていうんだっけ。あ、辞書アプリ! それだ。" },
+      { en: "What's it called? Oh, Atsueigo! Yeah, that's the one.", ja: "なんていうんだっけ。あ、Atsueigo! それだ。" },
       { en: "I went to that café, what's it called, on the corner.", ja: "あのカフェ行ったよ、なんて名前だっけ、角のやつ。" },
       { en: "He uses that app, what's it called, for productivity.", ja: "彼そのアプリ使ってるよ、なんていうんだっけ、生産性のやつ。" },
       { en: "I saw this movie, what's it called, with the time travel.", ja: "あの映画見た、なんていうんだっけ、タイムトラベルのやつ。" },
@@ -2499,7 +2701,7 @@ const CONSTRUCTIONS = [
   },
   {
     id: 86,
-    section: "表現集 Part 2",
+    section: "ATSU表現 Part 2",
     pattern: "what's the point of doing (深掘り)",
     meaning: "〜の目的は何",
     examples: [
@@ -2519,27 +2721,27 @@ const CONSTRUCTIONS = [
   },
   {
     id: 87,
-    section: "表現集 Part 2",
+    section: "ATSU表現 Part 2",
     pattern: "That's a fair point",
     meaning: "確かにそうだね",
     examples: [
-      { en: "We've got to consider this as well. Oh, that's a fair point.", ja: "これも考慮しないと。 あ、確かにそうだね。" },
-      { en: "We've got to do this as well. Yeah, that's a fair point.", ja: "これもやらないと。 あ、確かにそうだね。" },
-      { en: "This is very important too. Yeah, that's a fair point. That's true.", ja: "これもすごく大事だよ。 あ、そうだね。確かに確かに。" },
-      { en: "We need more budget. That's a fair point.", ja: "もっと予算が必要だ。 確かに。" },
-      { en: "The schedule is too tight. That's a fair point.", ja: "スケジュールがきつすぎる。 確かにそうだね。" },
-      { en: "He needs more training. Yeah, that's a fair point.", ja: "彼にはもっと訓練が必要。 確かに。" },
-      { en: "We should listen to the team. That's a fair point.", ja: "チームの意見を聞くべきだ。 確かに。" },
-      { en: "Quality matters more than speed. That's a fair point.", ja: "スピードより品質が大事。 確かにそうだね。" },
-      { en: "We can't ignore the feedback. That's a fair point.", ja: "フィードバックは無視できない。 確かに。" },
-      { en: "She needs more support. That's a fair point.", ja: "彼女にはもっとサポートが必要。 確かに。" },
-      { en: "The plan needs refinement. That's a fair point.", ja: "計画には改良が必要。 確かにそうだね。" },
-      { en: "Communication has been weak. That's a fair point.", ja: "連携が弱かった。 確かに。" },
+      { en: "— We've got to consider this as well. — Oh, that's a fair point.", ja: "— これも考慮しないと。 — あ、確かにそうだね。" },
+      { en: "— We've got to do this as well. — Yeah, that's a fair point.", ja: "— これもやらないと。 — あ、確かにそうだね。" },
+      { en: "— This is very important too. — Yeah, that's a fair point. That's true.", ja: "— これもすごく大事だよ。 — あ、そうだね。確かに確かに。" },
+      { en: "— We need more budget. — That's a fair point.", ja: "— もっと予算が必要だ。 — 確かに。" },
+      { en: "— The schedule is too tight. — That's a fair point.", ja: "— スケジュールがきつすぎる。 — 確かにそうだね。" },
+      { en: "— He needs more training. — Yeah, that's a fair point.", ja: "— 彼にはもっと訓練が必要。 — 確かに。" },
+      { en: "— We should listen to the team. — That's a fair point.", ja: "— チームの意見を聞くべきだ。 — 確かに。" },
+      { en: "— Quality matters more than speed. — That's a fair point.", ja: "— スピードより品質が大事。 — 確かにそうだね。" },
+      { en: "— We can't ignore the feedback. — That's a fair point.", ja: "— フィードバックは無視できない。 — 確かに。" },
+      { en: "— She needs more support. — That's a fair point.", ja: "— 彼女にはもっとサポートが必要。 — 確かに。" },
+      { en: "— The plan needs refinement. — That's a fair point.", ja: "— 計画には改良が必要。 — 確かにそうだね。" },
+      { en: "— Communication has been weak. — That's a fair point.", ja: "— 連携が弱かった。 — 確かに。" },
     ],
   },
   {
     id: 88,
-    section: "表現集 Part 2",
+    section: "ATSU表現 Part 2",
     pattern: "come across",
     meaning: "〜に出会う、見つける",
     examples: [
@@ -2559,7 +2761,7 @@ const CONSTRUCTIONS = [
   },
   {
     id: 89,
-    section: "表現集 Part 2",
+    section: "ATSU表現 Part 2",
     pattern: "going back to",
     meaning: "〜に戻ると",
     examples: [
@@ -2579,7 +2781,7 @@ const CONSTRUCTIONS = [
   },
   {
     id: 90,
-    section: "表現集 Part 2",
+    section: "ATSU表現 Part 2",
     pattern: "in this case",
     meaning: "この場合は",
     examples: [
@@ -2599,7 +2801,7 @@ const CONSTRUCTIONS = [
   },
   {
     id: 91,
-    section: "表現集 Part 2",
+    section: "ATSU表現 Part 2",
     pattern: "more about",
     meaning: "〜の方がもっと重要だ",
     examples: [
@@ -2619,7 +2821,7 @@ const CONSTRUCTIONS = [
   },
   {
     id: 92,
-    section: "表現集 Part 2",
+    section: "ATSU表現 Part 2",
     pattern: "for the sake of",
     meaning: "〜のために",
     examples: [
@@ -2639,7 +2841,7 @@ const CONSTRUCTIONS = [
   },
   {
     id: 93,
-    section: "表現集 Part 2",
+    section: "ATSU表現 Part 2",
     pattern: "like you said",
     meaning: "あなたが言ったように",
     examples: [
@@ -2659,7 +2861,7 @@ const CONSTRUCTIONS = [
   },
   {
     id: 94,
-    section: "表現集 Part 2",
+    section: "ATSU表現 Part 2",
     pattern: "this might be just me, but",
     meaning: "これは私だけかもしれないけど",
     examples: [
@@ -2679,7 +2881,7 @@ const CONSTRUCTIONS = [
   },
   {
     id: 95,
-    section: "表現集 Part 2",
+    section: "ATSU表現 Part 2",
     pattern: "get to the point",
     meaning: "要点を言う",
     examples: [
@@ -2699,7 +2901,7 @@ const CONSTRUCTIONS = [
   },
   {
     id: 96,
-    section: "表現集 Part 2",
+    section: "ATSU表現 Part 2",
     pattern: "end up doing",
     meaning: "最終的に〜することになる",
     examples: [
@@ -2719,7 +2921,7 @@ const CONSTRUCTIONS = [
   },
   {
     id: 97,
-    section: "表現集 Part 2",
+    section: "ATSU表現 Part 2",
     pattern: "it is what it is",
     meaning: "仕方がない",
     examples: [
@@ -2739,7 +2941,7 @@ const CONSTRUCTIONS = [
   },
   {
     id: 98,
-    section: "表現集 Part 2",
+    section: "ATSU表現 Part 2",
     pattern: "in general",
     meaning: "全体的に、一般に",
     examples: [
@@ -2759,7 +2961,7 @@ const CONSTRUCTIONS = [
   },
   {
     id: 99,
-    section: "表現集 Part 2",
+    section: "ATSU表現 Part 2",
     pattern: "at all (疑問文/if節)",
     meaning: "ちょっとでも",
     examples: [
@@ -2779,7 +2981,7 @@ const CONSTRUCTIONS = [
   },
   {
     id: 100,
-    section: "表現集 Part 2",
+    section: "ATSU表現 Part 2",
     pattern: "if that's the case",
     meaning: "もしそうなら",
     examples: [
@@ -2797,10 +2999,10 @@ const CONSTRUCTIONS = [
       { en: "If that's the case, the deal is off.", ja: "もしそうなら、取引はナシだ。" },
     ],
   },
-  // ===== 表現集 Part 3 (101-120) =====
+  // ===== ATSU表現 Part 3 (101-120) =====
   {
     id: 101,
-    section: "表現集 Part 3",
+    section: "ATSU表現 Part 3",
     pattern: "I'd say",
     meaning: "私の意見では",
     examples: [
@@ -2820,7 +3022,7 @@ const CONSTRUCTIONS = [
   },
   {
     id: 102,
-    section: "表現集 Part 3",
+    section: "ATSU表現 Part 3",
     pattern: "in the process of",
     meaning: "〜の過程にある",
     examples: [
@@ -2840,7 +3042,7 @@ const CONSTRUCTIONS = [
   },
   {
     id: 103,
-    section: "表現集 Part 3",
+    section: "ATSU表現 Part 3",
     pattern: "it's more like",
     meaning: "むしろ〜のようだ",
     examples: [
@@ -2860,7 +3062,7 @@ const CONSTRUCTIONS = [
   },
   {
     id: 104,
-    section: "表現集 Part 3",
+    section: "ATSU表現 Part 3",
     pattern: "from that point of view",
     meaning: "その観点から見ると",
     examples: [
@@ -2880,7 +3082,7 @@ const CONSTRUCTIONS = [
   },
   {
     id: 105,
-    section: "表現集 Part 3",
+    section: "ATSU表現 Part 3",
     pattern: "if that works for you",
     meaning: "それが都合がいいなら",
     examples: [
@@ -2900,7 +3102,7 @@ const CONSTRUCTIONS = [
   },
   {
     id: 106,
-    section: "表現集 Part 3",
+    section: "ATSU表現 Part 3",
     pattern: "just out of curiosity",
     meaning: "単なる好奇心から",
     examples: [
@@ -2920,7 +3122,7 @@ const CONSTRUCTIONS = [
   },
   {
     id: 107,
-    section: "表現集 Part 3",
+    section: "ATSU表現 Part 3",
     pattern: "off-topic, but",
     meaning: "話は変わりますが",
     examples: [
@@ -2940,7 +3142,7 @@ const CONSTRUCTIONS = [
   },
   {
     id: 108,
-    section: "表現集 Part 3",
+    section: "ATSU表現 Part 3",
     pattern: "out of the blue",
     meaning: "突然に",
     examples: [
@@ -2960,7 +3162,7 @@ const CONSTRUCTIONS = [
   },
   {
     id: 109,
-    section: "表現集 Part 3",
+    section: "ATSU表現 Part 3",
     pattern: "off the top of my head",
     meaning: "思いつくままに",
     examples: [
@@ -2980,7 +3182,7 @@ const CONSTRUCTIONS = [
   },
   {
     id: 110,
-    section: "表現集 Part 3",
+    section: "ATSU表現 Part 3",
     pattern: "but at the same time",
     meaning: "しかし同時に",
     examples: [
@@ -3000,7 +3202,7 @@ const CONSTRUCTIONS = [
   },
   {
     id: 111,
-    section: "表現集 Part 3",
+    section: "ATSU表現 Part 3",
     pattern: "the flip side of it is",
     meaning: "それの裏側は…/その反面",
     examples: [
@@ -3020,7 +3222,7 @@ const CONSTRUCTIONS = [
   },
   {
     id: 112,
-    section: "表現集 Part 3",
+    section: "ATSU表現 Part 3",
     pattern: "from the perspective of",
     meaning: "〜の観点から",
     examples: [
@@ -3040,7 +3242,7 @@ const CONSTRUCTIONS = [
   },
   {
     id: 113,
-    section: "表現集 Part 3",
+    section: "ATSU表現 Part 3",
     pattern: "two sides of the same coin",
     meaning: "表裏一体",
     examples: [
@@ -3060,7 +3262,7 @@ const CONSTRUCTIONS = [
   },
   {
     id: 114,
-    section: "表現集 Part 3",
+    section: "ATSU表現 Part 3",
     pattern: "like I (you) said,",
     meaning: "私(あなた)が言ったように",
     examples: [
@@ -3080,7 +3282,7 @@ const CONSTRUCTIONS = [
   },
   {
     id: 115,
-    section: "表現集 Part 3",
+    section: "ATSU表現 Part 3",
     pattern: "I'm more of a",
     meaning: "私はむしろ〜タイプの人間です",
     examples: [
@@ -3100,7 +3302,7 @@ const CONSTRUCTIONS = [
   },
   {
     id: 116,
-    section: "表現集 Part 3",
+    section: "ATSU表現 Part 3",
     pattern: "it's all about",
     meaning: "すべては〜にかかっている",
     examples: [
@@ -3120,7 +3322,7 @@ const CONSTRUCTIONS = [
   },
   {
     id: 117,
-    section: "表現集 Part 3",
+    section: "ATSU表現 Part 3",
     pattern: "given that",
     meaning: "〜を考慮すると",
     examples: [
@@ -3140,7 +3342,7 @@ const CONSTRUCTIONS = [
   },
   {
     id: 118,
-    section: "表現集 Part 3",
+    section: "ATSU表現 Part 3",
     pattern: "I might be wrong, but",
     meaning: "私が間違っているかもしれませんが",
     examples: [
@@ -3160,7 +3362,7 @@ const CONSTRUCTIONS = [
   },
   {
     id: 119,
-    section: "表現集 Part 3",
+    section: "ATSU表現 Part 3",
     pattern: "in terms of",
     meaning: "〜の点では",
     examples: [
@@ -3180,7 +3382,7 @@ const CONSTRUCTIONS = [
   },
   {
     id: 120,
-    section: "表現集 Part 3",
+    section: "ATSU表現 Part 3",
     pattern: "this is something that",
     meaning: "これは〜というものだ",
     examples: [
@@ -3208,9 +3410,9 @@ for (let i = CONSTRUCTIONS.length + 1; i <= TOTAL_CONSTRUCTIONS; i++) {
   let section;
   if (i <= 30) section = "初級";
   else if (i <= 60) section = "中・上級";
-  else if (i <= 80) section = "表現集 Part 1";
-  else if (i <= 100) section = "表現集 Part 2";
-  else section = "表現集 Part 3";
+  else if (i <= 80) section = "ATSU表現 Part 1";
+  else if (i <= 100) section = "ATSU表現 Part 2";
+  else section = "ATSU表現 Part 3";
 
   CONSTRUCTIONS.push({
     id: i,
@@ -3222,10 +3424,295 @@ for (let i = CONSTRUCTIONS.length + 1; i <= TOTAL_CONSTRUCTIONS; i++) {
   });
 }
 
+// ============================================================
+// STORIES — 構文を物語仕立てで使った長文素材
+// 日本人エンジニアYukiの1年間の海外赴任ストーリー(全5章)
+// ============================================================
+
+const STORIES = [
+  {
+    id: 1,
+    chapter: 1,
+    title: "A New Beginning",
+    subtitle: "新しい始まり — 海外赴任の決意",
+    section: "初級 (構文 1-30)",
+    constructionRange: [1, 30],
+    sentences: [
+      { en: "It's hard to wake up at 6 AM, but today felt different.", ja: "朝6時に起きるのは大変だが、今日は違った。", c: [1] },
+      { en: "For the first time in months, I felt like getting out of bed early.", ja: "数ヶ月ぶりに、早く起き出したい気分になった。", c: [16] },
+      { en: "It was the day I had been waiting for — the day I would tell my family about my decision to move to Singapore.", ja: "ずっと待っていた日だった。シンガポールへの引っ越しを家族に伝える日。", c: [] },
+      { en: "\"You know,\" my mom said over breakfast, \"it's amazing that you got this opportunity.\"", ja: "「ねえ」と母は朝食の席で言った。「このチャンスを得られたなんてすごいわね。」", c: [2] },
+      { en: "\"But it's not necessarily going to be easy.\"", ja: "「でも、必ずしも簡単とは限らないわよ。」", c: [11] },
+      { en: "\"I know,\" I replied. \"I find it scary to leave everything behind.\"", ja: "「分かってる」と私は答えた。「全部置いて出ていくのは怖いと思う。」", c: [6] },
+      { en: "\"But I find it exciting at the same time.\"", ja: "「でも同時にワクワクするとも思うんだ。」", c: [6] },
+      { en: "\"How about we talk about the logistics?\" my dad asked.", ja: "「具体的な話をしようか?」と父が言った。", c: [22] },
+      { en: "\"You spend so much time at work that you haven't planned anything.\"", ja: "「お前は仕事に時間を使いすぎて、何の準備もできてないだろう。」", c: [15] },
+      { en: "He was right.", ja: "確かにそうだった。", c: [] },
+      { en: "I used to think I'd have plenty of time to prepare.", ja: "以前は準備の時間はたっぷりあると思っていた。", c: [12] },
+      { en: "But it's been three weeks since I accepted the offer, and I still hadn't started packing.", ja: "でもオファーを受けてから3週間が経つのに、まだ荷造りも始めていなかった。", c: [20] },
+      { en: "That afternoon, I sat down with my checklist.", ja: "その日の午後、チェックリストを広げて座った。", c: [] },
+      { en: "I find it useful to write everything down — it's a habit I've kept since college.", ja: "全部書き出すのは便利だと思う。大学からの習慣だ。", c: [6] },
+      { en: "\"It's not as scary as I expected,\" I told myself.", ja: "「思ったほど怖くないな」と自分に言い聞かせた。", c: [14] },
+      { en: "I called my best friend Mei so that I could tell her in person.", ja: "親友のメイに直接伝えられるよう電話をかけた。", c: [7] },
+      { en: "Mei is the same as me — always honest about her feelings, and she's used to my sudden decisions.", ja: "メイは私と同じで、いつも自分の気持ちに正直で、私の突然の決断にも慣れている。", c: [9, 13] },
+      { en: "\"Did you know that I'm moving to Singapore?\" I asked.", ja: "「私、シンガポールに引っ越すんだけど、知ってた?」と聞いた。", c: [] },
+      { en: "\"What?! When?\"", ja: "「えっ?! いつ?」", c: [] },
+      { en: "\"In three weeks. It's so sudden that even I can't believe it.\"", ja: "「3週間後。突然すぎて自分でも信じられない。」", c: [3] },
+      { en: "\"I'm too shocked to think straight,\" she said. \"But I'm happy for you.\"", ja: "「ショックすぎてまともに考えられない」と彼女は言った。「でも嬉しいよ。」", c: [4] },
+      { en: "\"Just because you're moving doesn't mean we won't stay in touch.\"", ja: "「引っ越すからって、連絡取らなくなるわけじゃないし。」", c: [10] },
+      { en: "\"I wonder if we can do video calls every week?\"", ja: "「毎週ビデオ通話できるかな?」", c: [19] },
+      { en: "\"Of course. It takes time to adjust to a new country, but knowing you're there makes me strong.\"", ja: "「もちろん。新しい国に慣れるには時間がかかるけど、あなたがいるって思うと強くいられる。」", c: [21, 27] },
+      { en: "I felt like crying, but I held back.", ja: "泣きたい気分だったが、こらえた。", c: [16] },
+      { en: "I didn't want her to worry at all.", ja: "彼女に少しも心配させたくなかった。", c: [8] },
+      { en: "The next day, I started packing.", ja: "翌日、荷造りを始めた。", c: [] },
+      { en: "It took me about six hours to sort through everything.", ja: "全部整理するのに6時間かかった。", c: [21] },
+      { en: "I had my brother help me — I knew I'd have him sort the books, and I'd get him to pack the kitchen stuff.", ja: "弟に手伝ってもらった。本の整理は弟にやってもらい、キッチン用品も任せることにした。", c: [23, 24] },
+      { en: "\"Don't make me do all the work!\" he complained.", ja: "「全部俺にやらせるな!」と弟は文句を言った。", c: [25] },
+      { en: "\"Just let me focus on the important stuff,\" I said. \"Plus, you owe me.\"", ja: "「私には大事なことに集中させて」と私は言った。「それに貸し1つあるからね。」", c: [26] },
+      { en: "We laughed.", ja: "私たちは笑った。", c: [] },
+      { en: "As soon as I finished packing, I sat down to write goodbye letters to my coworkers.", ja: "荷造りが終わるとすぐ、同僚への別れの手紙を書き始めた。", c: [17] },
+      { en: "I find it hard to say goodbye in person, so writing felt easier.", ja: "面と向かってさよならを言うのは難しいから、書く方が楽だった。", c: [6] },
+      { en: "The day I left, the airport was crowded.", ja: "出発の日、空港は混んでいた。", c: [] },
+      { en: "My family came to see me off.", ja: "家族が見送りに来てくれた。", c: [] },
+      { en: "\"Is it safe to travel alone?\" my mom asked.", ja: "「一人で旅行して大丈夫?」と母が聞いた。", c: [1] },
+      { en: "\"It's safe enough, Mom. Don't worry.\"", ja: "「十分安全だよ、母さん。心配しないで。」", c: [5] },
+      { en: "\"I'm not worried at all,\" she said — though her eyes told a different story.", ja: "「全然心配してないわよ」と母は言った。でも目はそうじゃなかった。", c: [8] },
+      { en: "I saw her crying as I walked toward the gate.", ja: "ゲートに向かって歩きながら、母が泣いているのを見た。", c: [28] },
+      { en: "I heard my brother shouting \"good luck!\" behind me.", ja: "後ろで弟が「がんばれ!」と叫んでいるのが聞こえた。", c: [29] },
+      { en: "I don't know if I'll ever forget that moment.", ja: "あの瞬間を忘れることがあるかどうか、分からない。", c: [18] },
+      { en: "\"What I want to remember about today,\" I thought, \"is how much they love me.\"", ja: "「今日のことで覚えておきたいのは」と私は思った。「家族がどれだけ愛してくれているかだ。」", c: [30] },
+      { en: "The flight was long.", ja: "フライトは長かった。", c: [] },
+      { en: "It's been years since I traveled internationally.", ja: "海外に行くのは何年ぶりだろう。", c: [20] },
+      { en: "I used to fly a lot for work, but lately I'd been mostly home.", ja: "昔は出張でよく飛んだものだが、最近はほとんど家にいた。", c: [12] },
+      { en: "When I landed, the heat hit me.", ja: "着陸すると、暑さが襲ってきた。", c: [] },
+      { en: "\"It's hot enough to melt,\" I joked to myself.", ja: "「溶けそうなくらい暑い」と心の中でジョークを言った。", c: [5] },
+      { en: "A driver was waiting with a sign.", ja: "プラカードを持った運転手が待っていた。", c: [] },
+      { en: "\"It's nice to meet you,\" he said. \"How about I show you around tomorrow?\"", ja: "「はじめまして」と彼は言った。「明日、街を案内しましょうか?」", c: [1, 22] },
+      { en: "\"That would be great. It's been a long day.\"", ja: "「ありがとうございます。長い一日でした。」", c: [] },
+      { en: "As we drove through the city, I realized something:", ja: "街を抜けながら、私はあることに気づいた。", c: [] },
+      { en: "It's hard to leave home, but it's also exciting to start fresh.", ja: "故郷を離れるのはつらい。でも、新しく始めるのはワクワクすることでもある。", c: [1] },
+      { en: "This was just the beginning.", ja: "これは、ほんの始まりに過ぎなかった。", c: [] },
+    ],
+  },
+  {
+    id: 2,
+    chapter: 2,
+    title: "Finding My Way",
+    subtitle: "自分の居場所を探して — 仕事と文化に慣れる日々",
+    section: "中・上級 (構文 31-60)",
+    constructionRange: [31, 60],
+    sentences: [
+      { en: "My first morning in Singapore, I woke up long before the alarm.", ja: "シンガポールでの最初の朝、私は目覚ましよりずっと早く目が覚めた。", c: [] },
+      { en: "For the first time in years, I had no idea what the day would bring.", ja: "何年ぶりだろう、その日が何をもたらすのか全く見当もつかなかった。", c: [33] },
+      { en: "I was supposed to meet my new manager at nine, so I left the apartment early.", ja: "9時に新しい上司と会うことになっていたので、早めに家を出た。", c: [41] },
+      { en: "The reason I arrived an hour early was simple: I didn't want to be late on my first day.", ja: "1時間も早く着いた理由は単純で、初日に遅刻したくなかったからだ。", c: [42] },
+      { en: "It feels like the whole city moves at twice the speed of home.", ja: "この街全体が、故郷の倍のスピードで動いているような気がする。", c: [36] },
+      { en: "The office was bright and busy, and a colleague came over to greet me right away.", ja: "オフィスは明るく活気があり、すぐに同僚が一人挨拶に来てくれた。", c: [] },
+      { en: "\"You know how some offices feel cold and silent?\" he said. \"This one isn't like that at all.\"", ja: "「ほら、冷たくて静まり返ったオフィスってあるじゃないですか?」と彼は言った。「ここは全然そうじゃないんです。」", c: [31] },
+      { en: "His name was Raj, and he offered to show me around.", ja: "彼の名前はラジで、社内を案内すると言ってくれた。", c: [] },
+      { en: "\"When it comes to lunch, you have to try the food court downstairs,\" he said.", ja: "「ランチのことなら、下のフードコートは絶対に試すべきですよ」と彼は言った。", c: [56] },
+      { en: "He pointed out the rooftop terrace, the quiet rooms, and the best coffee machine.", ja: "彼は屋上テラスや静かな小部屋、一番いいコーヒーマシンの場所を教えてくれた。", c: [] },
+      { en: "\"It's such a cheap and tasty place that the whole building eats there.\"", ja: "「あまりに安くて美味しいので、ビル中の人がそこで食べるんです。」", c: [50] },
+      { en: "\"I'll probably go there every day, then,\" I joked.", ja: "「じゃあ、きっと毎日通うことになりそうですね」と私は冗談を言った。", c: [45] },
+      { en: "My manager, Ms. Tan, was direct but warm.", ja: "上司のタンさんは、率直だが温かい人だった。", c: [] },
+      { en: "\"What I like about our team is that everyone speaks up,\" she told me.", ja: "「うちのチームで好きなところは、みんなが意見を言うところよ」と彼女は言った。", c: [53] },
+      { en: "I nodded, though inside I was still half in shock from the move.", ja: "私はうなずいたが、内心ではまだ引っ越しの衝撃が半分残っていた。", c: [] },
+      { en: "\"If you could share your ideas openly, that would be wonderful.\"", ja: "「あなたも遠慮なく考えを共有してくれたら、とても助かるわ。」", c: [32] },
+      { en: "Honestly, I wasn't sure if I could keep up at first.", ja: "正直なところ、最初はついていけるかどうか自信がなかった。", c: [38] },
+      { en: "But the more I listened, the more I understood the rhythm of the place.", ja: "けれど、聞けば聞くほど、この場所のリズムが分かってきた。", c: [43] },
+      { en: "People left work on time, yet somehow everything still got done.", ja: "みんな定時で帰るのに、なぜか仕事はきちんと回っていた。", c: [] },
+      { en: "It's amazing how easily people switch between English, Mandarin, and Malay.", ja: "人々が英語、中国語、マレー語をいとも簡単に切り替えるのは見事だ。", c: [40] },
+      { en: "\"What if I make a mistake in a meeting?\" I asked Raj nervously.", ja: "「会議でミスをしたらどうしよう?」と私は不安げにラジに聞いた。", c: [34] },
+      { en: "\"There's no way you'll avoid mistakes,\" he laughed. \"We all make them.\"", ja: "「ミスを避けるなんて無理ですよ」と彼は笑った。「みんなやらかしますから。」", c: [37] },
+      { en: "\"It's not that we don't care about quality,\" he added.", ja: "「品質を気にしてないって訳じゃないんです」と彼は付け加えた。", c: [46] },
+      { en: "\"It's just that we move on quickly and fix things as we go.\"", ja: "「ただ、さっと前に進んで、進めながら直していくだけなんです。」", c: [44] },
+      { en: "Coming from a place where mistakes felt like the end of the world, this was a relief.", ja: "ミスがこの世の終わりのように感じられる職場から来た私には、これは救いだった。", c: [] },
+      { en: "That's why I slowly started to relax.", ja: "だから私は少しずつ肩の力が抜けていった。", c: [35] },
+      { en: "By my first Friday, I got to join a real client call.", ja: "最初の金曜日には、本物のクライアント電話に参加する機会を得た。", c: [59] },
+      { en: "It's said that first impressions matter more than anything.", ja: "第一印象は何よりも大事だと言われている。", c: [48] },
+      { en: "So I prepared all my notes the night before without sleeping much.", ja: "そこで前夜、ろくに眠らずに資料をすべて準備した。", c: [47] },
+      { en: "\"What's the point of worrying so much?\" Raj asked when he saw my tired face.", ja: "「そんなに心配して何になるんですか?」私の疲れた顔を見てラジが言った。", c: [39] },
+      { en: "He was like, \"Just be yourself and listen.\"", ja: "彼は「ただ自分らしく、よく聞けばいいんですよ」という感じだった。", c: [54] },
+      { en: "With my notes ready and my coffee in hand, I joined the call.", ja: "資料を整え、コーヒーを手に、私は電話会議に加わった。", c: [57] },
+      { en: "It went far better than I had expected.", ja: "思っていたよりずっとうまくいった。", c: [] },
+      { en: "Afterward, Ms. Tan told me how valuable my input had been.", ja: "あとで、タンさんは私の意見がどれほど役に立ったかを話してくれた。", c: [58] },
+      { en: "\"I'm at the stage where I'm still learning all the systems,\" I admitted.", ja: "「私はまだ全部のシステムを覚えている段階なんです」と私は正直に言った。", c: [51] },
+      { en: "\"That's fine — learning our systems properly is worth doing slowly,\" she said.", ja: "「それでいいの。うちのシステムをきちんと覚えるのは、ゆっくりやる価値があるから」と彼女は言った。", c: [52] },
+      { en: "Outside work, the city itself was a lesson every single day.", ja: "仕事を離れても、街そのものが毎日が学びだった。", c: [] },
+      { en: "I learned to order kopi the local way, and to carry an umbrella for the afternoon rain.", ja: "地元流のコピー(コーヒー)の頼み方を覚え、午後の雨に備えて傘を持ち歩くようになった。", c: [] },
+      { en: "My neighbors, an elderly couple, taught me a few words of Malay over the weeks.", ja: "隣に住む年配の夫婦は、何週間かかけてマレー語をいくつか教えてくれた。", c: [] },
+      { en: "Adjusting to the culture took time, too.", ja: "文化に慣れるのにも時間がかかった。", c: [] },
+      { en: "Some weeks the team would be sent to an off-site workshop, in which case we'd all travel together.", ja: "ある週はチームが社外の研修に送られることもあり、そういう時はみんなで一緒に移動した。", c: [55] },
+      { en: "If I were to describe those first weeks, I would call them one long, exciting blur.", ja: "あの最初の数週間を一言で表すなら、長くて刺激的な、ぼんやりした時間だったと言うだろう。", c: [49] },
+      { en: "Late one Thursday, Raj told me we were going to have to stay and fix a bug before the release.", ja: "ある木曜の夜遅く、ラジは、リリース前にバグを直すため残業しないといけないと言った。", c: [60] },
+      { en: "We ordered dinner to the office and worked side by side.", ja: "私たちはオフィスに夕食を注文し、隣り合って作業した。", c: [] },
+      { en: "Around midnight, the bug was gone, and Raj bought us both a victory drink.", ja: "夜中ごろにバグは消え、ラジが二人分の祝杯をおごってくれた。", c: [] },
+      { en: "\"You're one of us now,\" he said, raising his cup.", ja: "「もう君は仲間だよ」と彼はカップを掲げて言った。", c: [] },
+      { en: "Slowly, the team stopped feeling like strangers.", ja: "少しずつ、チームは他人ではなくなっていった。", c: [] },
+      { en: "I was starting, at last, to find my way.", ja: "私はようやく、自分の居場所を見つけ始めていた。", c: [] },
+    ],
+  },
+  {
+    id: 3,
+    chapter: 3,
+    title: "Friends and Free Days",
+    subtitle: "友達と、何でもない休日 — カジュアルな会話の日々",
+    section: "ATSU表現 Part 1 (構文 61-80)",
+    constructionRange: [61, 80],
+    sentences: [
+      { en: "By my third month in Singapore, the weekends finally started to feel like my own.", ja: "シンガポール3か月目になって、週末がようやく自分のものに感じられるようになった。", c: [] },
+      { en: "Work had calmed down, and Raj had pulled me into his circle of friends.", ja: "仕事も落ち着き、ラジが私を彼の友達の輪に引き入れてくれた。", c: [] },
+      { en: "Most Saturdays, a few of us would meet near Clarke Quay and figure out the day from there.", ja: "たいていの土曜は、数人でクラークキー辺りに集まって、そこからその日の予定を決めた。", c: [] },
+      { en: "\"It's funny how quickly strangers turn into your people here,\" I said one evening.", ja: "「ここだと、他人があっという間に仲間になるのが面白いよね」と、ある晩私は言った。", c: [61] },
+      { en: "\"I know, right?\" Lina laughed, stirring her iced tea.", ja: "「ほんとそれ」とリナがアイスティーをかき混ぜながら笑った。", c: [72] },
+      { en: "She was a designer I'd met at a rooftop party a month or so earlier.", ja: "彼女は、1か月くらい前に屋上パーティーで知り合ったデザイナーだった。", c: [66] },
+      { en: "\"At the end of the day, almost everyone here came from somewhere else,\" she said.", ja: "「結局、ここの人はほとんどみんなどこか別の場所から来てるのよ」と彼女は言った。", c: [62] },
+      { en: "\"If you think about it, that's exactly why people are so open to newcomers.\"", ja: "「よく考えると、だからこそみんな新参者にこんなにオープンなんだよね」", c: [64] },
+      { en: "We spent our Sundays wandering through hawker centers, old temples, and stuff.", ja: "日曜はホーカーセンターや古い寺なんかをぶらぶらして過ごした。", c: [67] },
+      { en: "\"I have a feeling you'll never want to cook for yourself again,\" Raj teased.", ja: "「お前、もう二度と自炊したくなくなる気がするな」とラジがからかった。", c: [71] },
+      { en: "\"Pretty much,\" I admitted, holding a plate of chili crab.", ja: "「ほぼその通り」と、チリクラブの皿を手に私は認めた。", c: [69] },
+      { en: "\"Eating here is like one long festival, kind of thing,\" I tried to explain.", ja: "「ここで食べるのって、ずっと続くお祭りみたいなものなんだよ」と私は説明しようとした。", c: [73] },
+      { en: "\"Simply put, you just eat your way through the whole weekend.\"", ja: "「簡単に言えば、週末はずっと食べ続けるってこと」", c: [76] },
+      { en: "\"That's true,\" Lina said. \"Instead of staying inside, we let the city decide for us.\"", ja: "「確かにね」とリナ。「家にこもる代わりに、街に予定を決めてもらうのよ」", c: [78, 79] },
+      { en: "One week, we planned a trip out to the islands — or something like that.", ja: "ある週、私たちは島へ出かける計画を立てた——みたいな感じのことを。", c: [68] },
+      { en: "\"Let's say we leave at eight,\" Raj proposed. \"In which case, we'll make the first ferry.\"", ja: "「仮に8時に出るとしよう」とラジが提案した。「その場合、始発のフェリーに間に合う」", c: [77, 74] },
+      { en: "\"Eight? Or not really?\" I groaned. \"Can we make it nine?\"", ja: "「8時?ちょっと無理じゃない?」と私はうめいた。「9時にできない?」", c: [70] },
+      { en: "\"Even if we leave a little late, the beach isn't going anywhere,\" Lina said.", ja: "「たとえ少し遅く出ても、ビーチは逃げないわよ」とリナが言った。", c: [75] },
+      { en: "In the end, we took the ferry rather than the slow bus, and I was glad we did.", ja: "結局、のろいバスよりフェリーを選んで、それで良かったと思った。", c: [80] },
+      { en: "\"You know what I mean? The open water just resets your head,\" I said.", ja: "「分かる?広い海って、頭をリセットしてくれるんだ」と私は言った。", c: [65] },
+      { en: "\"It's hard to put into words, if that makes sense,\" I added, half to myself.", ja: "「うまく言葉にできないんだけど、言ってること分かるかな」と半ば独り言のように付け加えた。", c: [63] },
+      { en: "Lina nodded as if she understood completely.", ja: "リナは、すっかり分かったというようにうなずいた。", c: [] },
+      { en: "That afternoon, we swam, ate too much, and fell asleep under the trees.", ja: "その午後、私たちは泳いで、食べ過ぎて、木陰で眠ってしまった。", c: [] },
+      { en: "On the way back, Raj asked about my family in Japan.", ja: "帰り道、ラジが日本の家族のことを聞いてきた。", c: [] },
+      { en: "\"They worried at first, but they're proud now,\" I told him.", ja: "「最初は心配してたけど、今は誇りに思ってくれてるよ」と私は答えた。", c: [] },
+      { en: "\"My mom video-calls me every Sunday without fail.\"", ja: "「母は毎週日曜、欠かさずビデオ電話をかけてくるんだ」", c: [] },
+      { en: "\"That's the dream,\" Lina said softly. \"Distance, but still close.\"", ja: "「それが理想だよね」とリナが静かに言った。「離れていても、近い」", c: [] },
+      { en: "Over those weeks, the three of us became almost inseparable.", ja: "その数週間で、私たち3人はほとんど離れられない仲になった。", c: [] },
+      { en: "We tried rock climbing one weekend, even though none of us really knew how.", ja: "ある週末、誰もろくにやり方を知らないのにロッククライミングに挑戦した。", c: [] },
+      { en: "\"This was a terrible idea,\" Raj called down, clinging to the wall.", ja: "「これは最悪のアイデアだった」と、壁にしがみつきながらラジが下に向かって叫んだ。", c: [] },
+      { en: "But we laughed the whole way through, and that was the point.", ja: "でも最初から最後まで笑いっぱなしで、それこそが目的だった。", c: [] },
+      { en: "Some evenings we just sat by the river and talked about nothing in particular.", ja: "夜には、ただ川辺に座って、特に意味のない話をすることもあった。", c: [] },
+      { en: "\"Back home, I never had time for this,\" I confessed.", ja: "「日本にいた頃は、こんな時間は全然なかったな」と私は打ち明けた。", c: [] },
+      { en: "\"I'd work late, eat alone, then sleep, and start all over again.\"", ja: "「遅くまで働いて、一人で食べて、寝て、また同じことの繰り返し」", c: [] },
+      { en: "\"I don't miss that life at all, honestly.\"", ja: "「正直、あの生活は全然恋しくないよ」", c: [] },
+      { en: "Lina smiled. \"So Singapore changed you.\"", ja: "リナは微笑んだ。「じゃあ、シンガポールがあなたを変えたんだね」", c: [] },
+      { en: "\"In a way, yes,\" I said, and we both laughed.", ja: "「ある意味ね」と私は言い、二人で笑った。", c: [] },
+      { en: "As the ferry lights came on across the water, I realized something simple.", ja: "水面の向こうにフェリーの明かりがともる頃、私はシンプルなことに気づいた。", c: [] },
+      { en: "For the first time, this city no longer felt like a place I was only visiting.", ja: "初めて、この街がただ訪れているだけの場所には感じられなくなっていた。", c: [] },
+      { en: "It felt like a place where I actually belonged.", ja: "自分が本当に属している場所のように感じられた。", c: [] },
+    ],
+  },
+  {
+    id: 4,
+    chapter: 4,
+    title: "Around the Table",
+    subtitle: "テーブルを囲んで — 会議と議論の中で",
+    section: "ATSU表現 Part 2 (構文 81-100)",
+    constructionRange: [81, 100],
+    sentences: [
+      { en: "Around my sixth month, Ms. Tan asked me to help lead a project review.", ja: "6か月目あたりで、タンさんから、あるプロジェクトのレビューを主導するのを手伝ってほしいと頼まれた。", c: [] },
+      { en: "It was the biggest meeting I'd been part of since arriving.", ja: "赴任して以来、関わった中で一番大きな会議だった。", c: [] },
+      { en: "The team gathered around the long table, laptops open, coffee everywhere.", ja: "チームは長いテーブルを囲み、ノートPCを開き、あちこちにコーヒーを置いて集まった。", c: [] },
+      { en: "\"Let's get to the point,\" Ms. Tan began. \"Is this feature ready or not?\"", ja: "「要点から話しましょう」とタンさんが切り出した。「この機能は出せるの、出せないの?」", c: [95] },
+      { en: "\"In general, the core works well,\" I said, \"but there are edge cases.\"", ja: "「全体としては中心の機能はうまく動きます」と私は言った。「ただ、例外的なケースがあります」", c: [98] },
+      { en: "\"The reason being, we haven't tested it on slower networks,\" I added.", ja: "「理由は、遅いネットワークでまだテストしていないからです」と付け加えた。", c: [81] },
+      { en: "\"That's a fair point,\" said Daniel, the product lead.", ja: "「それはもっともだ」とプロダクトリードのダニエルが言った。", c: [87] },
+      { en: "\"As to the timeline, though, we can't slip another week.\"", ja: "「ただ、スケジュールに関しては、もう1週間も遅らせられない」", c: [82] },
+      { en: "\"Whether or not we slip, shipping something broken helps no one,\" I replied.", ja: "「遅れるか遅れないかに関わらず、壊れたものを出しても誰のためにもなりません」と私は返した。", c: [84] },
+      { en: "\"This might be just me, but quality has to come first here,\" I said carefully.", ja: "「私だけかもしれませんが、ここは品質を最優先にすべきだと思います」と私は慎重に言った。", c: [94] },
+      { en: "Raj nodded. \"Like you said earlier, our users aren't very forgiving.\"", ja: "ラジがうなずいた。「さっき君が言ったように、うちのユーザーはあまり寛容じゃない」", c: [93] },
+      { en: "\"Going back to the network issue,\" Daniel asked, \"how bad is it, really?\"", ja: "「ネットワークの問題に話を戻すと」とダニエルが聞いた。「実際、どれくらい深刻なんだ?」", c: [89] },
+      { en: "\"In this case, about one in ten users would see errors,\" I explained.", ja: "「この場合、10人に1人くらいのユーザーがエラーに遭遇します」と私は説明した。", c: [90] },
+      { en: "\"What's the point of launching if a tenth of people hit a wall?\" Raj asked.", ja: "「10人に1人が行き詰まるなら、リリースする意味は何なんだ?」とラジが問うた。", c: [86] },
+      { en: "Ms. Tan tapped her pen, thinking it over.", ja: "タンさんはペンをトントンと鳴らしながら、じっくり考えた。", c: [] },
+      { en: "\"Whereas the competitor already shipped, we're still polishing,\" she noted.", ja: "「競合はもう出している一方で、うちはまだ磨いている段階ね」と彼女は指摘した。", c: [83] },
+      { en: "\"For the sake of our users, I'd rather be late than wrong,\" I argued.", ja: "「ユーザーのためを思えば、間違うより遅れる方がましです」と私は主張した。", c: [92] },
+      { en: "\"The thing — what's it called — the fallback mode could help,\" Raj offered.", ja: "「あの、なんていうんだっけ——フォールバックモードが役に立つかも」とラジが提案した。", c: [85] },
+      { en: "\"A graceful degradation, you mean,\" Daniel said. \"That's more about reliability than speed.\"", ja: "「グレースフルな機能低下のことだな」とダニエル。「それは速さより信頼性の話だ」", c: [91] },
+      { en: "\"If that's the case, can we build it in two days?\" Ms. Tan asked, turning to me.", ja: "「もしそうなら、2日で作れる?」とタンさんが私の方を向いて聞いた。", c: [100] },
+      { en: "\"If we focus, yes,\" I said. \"Though we might end up working late again.\"", ja: "「集中すればできます」と私は言った。「また残業することになるかもしれませんが」", c: [96] },
+      { en: "\"I didn't mean to come across as negative earlier,\" Daniel said to me afterward.", ja: "「さっきは否定的に聞こえる言い方をするつもりはなかったんだ」と、後でダニエルが私に言った。", c: [88] },
+      { en: "\"You didn't at all,\" I assured him. \"Honest debate is how we get better.\"", ja: "「全然そんなことなかったですよ」と私は請け合った。「率直な議論こそが、私たちを良くするんです」", c: [99] },
+      { en: "\"It is what it is,\" he shrugged with a smile. \"Deadlines never love us.\"", ja: "「仕方ないさ」と彼は笑って肩をすくめた。「締め切りが私たちに優しかったためしはない」", c: [97] },
+      { en: "We spent the next two days heads-down, building the fallback mode.", ja: "それから2日間、私たちは没頭してフォールバックモードを作り込んだ。", c: [] },
+      { en: "Raj and I traded code reviews late into the night, fueled by kopi.", ja: "ラジと私はコピー(コーヒー)を燃料に、夜遅くまでコードレビューをやり取りした。", c: [] },
+      { en: "\"Remember when you were scared of meetings?\" he teased around midnight.", ja: "「会議が怖かった頃を覚えてるか?」と、夜中ごろに彼がからかった。", c: [] },
+      { en: "\"I still am,\" I laughed. \"I've just learned to hide it better.\"", ja: "「今でも怖いよ」と私は笑った。「ただ、隠すのが上手くなっただけ」", c: [] },
+      { en: "By Thursday, the feature was solid — fallback and all.", ja: "木曜には、機能はフォールバックも含めて盤石になっていた。", c: [] },
+      { en: "We shipped it on time, and the error reports barely moved.", ja: "私たちは予定通りリリースし、エラー報告はほとんど増えなかった。", c: [] },
+      { en: "Ms. Tan called me into her office the next morning.", ja: "翌朝、タンさんが私をオフィスに呼んだ。", c: [] },
+      { en: "\"You spoke up in that meeting,\" she said. \"Six months ago, you wouldn't have.\"", ja: "「あの会議で、あなたは声を上げた」と彼女は言った。「半年前のあなたなら、しなかったでしょうね」", c: [] },
+      { en: "I didn't know what to say, so I just nodded.", ja: "何と言えばいいか分からず、私はただうなずいた。", c: [] },
+      { en: "\"Keep doing that,\" she added. \"This team needs people who push back.\"", ja: "「それを続けて」と彼女は付け加えた。「このチームには、異を唱える人が必要なの」", c: [] },
+      { en: "Walking out, I felt taller somehow.", ja: "部屋を出るとき、なぜか少し背が高くなったような気がした。", c: [] },
+      { en: "Back home, disagreeing with a manager felt almost impossible.", ja: "日本では、上司に異を唱えるなんて、ほとんど不可能に思えた。", c: [] },
+      { en: "Here, it was simply part of the job — expected, even welcomed.", ja: "ここでは、それは仕事の一部にすぎなかった——求められ、歓迎さえされた。", c: [] },
+      { en: "That evening, the team went out to celebrate the launch.", ja: "その晩、チームはリリースを祝いに出かけた。", c: [] },
+      { en: "Daniel raised his glass. \"To shipping things we're proud of.\"", ja: "ダニエルがグラスを掲げた。「誇れるものを世に出すことに」", c: [] },
+      { en: "We clinked glasses, tired but happy.", ja: "私たちはグラスを合わせた。疲れていたが、幸せだった。", c: [] },
+      { en: "I was no longer the quiet new hire in the corner.", ja: "私はもう、隅にいる物静かな新入りではなかった。", c: [] },
+      { en: "I had earned my seat at the table.", ja: "私は、そのテーブルに着く席を自分で勝ち取ったのだ。", c: [] },
+    ],
+  },
+  {
+    id: 5,
+    chapter: 5,
+    title: "The Turning Point",
+    subtitle: "転機 — キャリアと人生の選択",
+    section: "ATSU表現 Part 3 (構文 101-120)",
+    constructionRange: [101, 120],
+    sentences: [
+      { en: "Near the end of my first year, the offer came almost out of the blue.", ja: "赴任1年目が終わりに近づいた頃、その話はほとんど突然やってきた。", c: [108] },
+      { en: "Ms. Tan wanted me to stay on permanently and lead a small team.", ja: "タンさんは、私に正式に残って、小さなチームを率いてほしいと言った。", c: [] },
+      { en: "\"Just out of curiosity, what made you pick me?\" I asked her.", ja: "「単なる好奇心なんですが、どうして私を選んだんですか?」と私は彼女に聞いた。", c: [106] },
+      { en: "\"Given that you've grown so much this year, it wasn't a hard choice,\" she said.", ja: "「この1年であなたがこれだけ成長したことを考えれば、難しい選択じゃなかったわ」と彼女は言った。", c: [117] },
+      { en: "That night, I called my parents, still unsure how I felt.", ja: "その夜、自分の気持ちもまだ定まらないまま、私は両親に電話した。", c: [] },
+      { en: "\"I'd say it's the chance of a lifetime,\" my dad told me.", ja: "「私に言わせれば、一生に一度のチャンスだ」と父は言った。", c: [101] },
+      { en: "\"But at the same time, you've been away from home for a year,\" my mom added.", ja: "「でも同時に、あなたはもう1年も家を離れているのよ」と母が付け加えた。", c: [110] },
+      { en: "\"The flip side of staying is that I might never move back,\" I said quietly.", ja: "「残ることの裏返しは、もう二度と戻らないかもしれないってことなんだ」と私は静かに言った。", c: [111] },
+      { en: "\"In terms of your career, though, this is huge,\" my dad pressed.", ja: "「ただ、キャリアの点で言えば、これは大きいぞ」と父は押した。", c: [119] },
+      { en: "\"From that point of view, yes,\" I agreed. \"But life isn't only a career.\"", ja: "「その観点から見れば、そうだね」と私は同意した。「でも人生はキャリアだけじゃない」", c: [104] },
+      { en: "The next day, I talked it through with Lina over coffee.", ja: "翌日、私はコーヒーを飲みながらリナとじっくり話した。", c: [] },
+      { en: "\"Off the top of my head, I can think of ten reasons to stay,\" she said.", ja: "「思いつくままで、残る理由なら10個は挙げられるよ」と彼女は言った。", c: [109] },
+      { en: "\"And ten to leave,\" I replied. \"They're two sides of the same coin.\"", ja: "「そして去る理由も10個ね」と私は返した。「表裏一体だよ」", c: [113] },
+      { en: "\"It's not really about the job, is it?\" she asked. \"It's more like a question of home.\"", ja: "「これって本当は仕事の話じゃないよね?」と彼女は聞いた。「むしろ“home”の問題に近い」", c: [103] },
+      { en: "\"Exactly,\" I said. \"At this point, it's all about where I want my life to be.\"", ja: "「その通り」と私は言った。「今となっては、すべては自分の人生をどこに置きたいか次第なんだ」", c: [116] },
+      { en: "\"From the perspective of someone who left her own country, I get it,\" Lina said.", ja: "「自分の国を離れた人間の視点から言うと、すごく分かるよ」とリナは言った。", c: [112] },
+      { en: "\"Like I said before, you've already built a home here, whether you see it or not.\"", ja: "「前にも言ったけど、気づいてるかどうかは別として、あなたはもうここに居場所を築いてるんだよ」", c: [114] },
+      { en: "\"I might be wrong, but I think you already know your answer.\"", ja: "「私が間違ってるかもしれないけど、あなたはもう答えを知ってる気がする」", c: [118] },
+      { en: "I sat with that for a long moment.", ja: "私はその言葉を、しばらくかみしめていた。", c: [] },
+      { en: "\"I'm more of a slow decider,\" I admitted. \"Give me a little time.\"", ja: "「僕はどちらかというと、じっくり決めるタイプなんだ」と私は認めた。「少し時間をくれ」", c: [115] },
+      { en: "\"If that works for you, take all the time you need,\" she smiled.", ja: "「それでいいなら、好きなだけ時間をかけて」と彼女は微笑んだ。", c: [105] },
+      { en: "\"Off-topic, but have you eaten? You always think better when you're fed.\"", ja: "「話は変わるけど、ご飯食べた?あなた、お腹が満たされてる方がよく考えられるでしょ」", c: [107] },
+      { en: "We laughed, and for a while we just talked about ordinary things.", ja: "私たちは笑い、しばらくはただ、何でもないことを話した。", c: [] },
+      { en: "Over the next week, I was in the process of weighing every angle.", ja: "それからの1週間、私はあらゆる角度から検討を重ねている最中だった。", c: [102] },
+      { en: "This is something that no one else could decide for me.", ja: "これは、他の誰にも代わりに決められないことだった。", c: [120] },
+      { en: "I made a list, the way I always do when my head is full.", ja: "頭がいっぱいになると私はいつもそうするように、リストを作った。", c: [] },
+      { en: "Stay: the team, the friends, the life I'd built.", ja: "残る——チーム、友達、自分が築いてきた生活。", c: [] },
+      { en: "Leave: my family, my roots, the comfort of the familiar.", ja: "去る——家族、自分のルーツ、慣れ親しんだものの安心感。", c: [] },
+      { en: "Both choices were good ones, which somehow made it harder.", ja: "どちらの選択も良いもので、それがかえって決断を難しくした。", c: [] },
+      { en: "Then I remembered something Raj had said months ago.", ja: "そのとき、何か月も前にラジが言ったことを思い出した。", c: [] },
+      { en: "\"Home isn't where you're from. It's where you choose to be.\"", ja: "「故郷とは、出身地のことじゃない。自分が選んでいる場所のことだ」", c: [] },
+      { en: "The morning I decided, the city was quiet and golden.", ja: "決断した朝、街は静かで、金色に輝いていた。", c: [] },
+      { en: "I walked into Ms. Tan's office and told her I would stay.", ja: "私はタンさんのオフィスに入り、残りますと伝えた。", c: [] },
+      { en: "\"I had a feeling,\" she said, shaking my hand. \"Welcome aboard, properly this time.\"", ja: "「そんな気がしてたわ」と彼女は私と握手した。「今度こそ、正式にようこそ」", c: [] },
+      { en: "I called my parents that evening with the news.", ja: "その晩、私はその知らせを両親に電話で伝えた。", c: [] },
+      { en: "There was a pause, and then my mother said she was happy for me.", ja: "少し間があって、それから母は、良かったね、と言ってくれた。", c: [] },
+      { en: "\"Come visit often,\" she said. \"And we'll come to you.\"", ja: "「ちょくちょく帰ってきなさい」と母は言った。「私たちも会いに行くから」", c: [] },
+      { en: "That weekend, Lina and Raj took me out to mark the decision.", ja: "その週末、リナとラジが、決断を祝って私を連れ出してくれた。", c: [] },
+      { en: "\"To staying,\" Raj said, raising his glass. \"And to whatever comes next.\"", ja: "「残ることに」とラジがグラスを掲げて言った。「そして、次に来る何にでも」", c: [] },
+      { en: "Looking around the table, I understood how far I'd come.", ja: "テーブルを見回して、自分がどれだけ遠くまで来たのかを実感した。", c: [] },
+      { en: "A year ago, I had been a stranger packing a single suitcase.", ja: "1年前、私はスーツケース1つを詰めるよそ者だった。", c: [] },
+      { en: "Now, I was exactly where I wanted to be.", ja: "今、私は、自分がいたいと思う場所に、まさにいた。", c: [] },
+    ],
+  },
+];
+
+
 </script>
 <script>
 // ============================================================
-// シャドーイング・ドリル
+// ATSU 120選 シャドーイング・ドリル
 // ============================================================
 
 const state = {
@@ -3234,7 +3721,6 @@ const state = {
   isPlaying: false,       // 自動再生中か
   shuffleOrder: null,     // シャッフル時の順序 (null = 通常順)
   showJa: true,           // 日本語訳の表示
-  prodRevealed: false,    // 日→自分→英モードで正解の英語を表示済みか
   playToken: 0,           // 再生キャンセル用トークン
 };
 
@@ -3258,9 +3744,6 @@ const el = {
   btnShuffle:  document.getElementById('btnShuffle'),
   btnRandomC:  document.getElementById('btnRandomC'),
   optMode:     document.getElementById('optMode'),
-  optReveal:   document.getElementById('optReveal'),
-  optRevealWrap: document.getElementById('optRevealWrap'),
-  prodHint:    document.getElementById('prodHint'),
   optRate:     document.getElementById('optRate'),
   optRepeat:   document.getElementById('optRepeat'),
   optGap:      document.getElementById('optGap'),
@@ -3268,8 +3751,10 @@ const el = {
   optShowJa:   document.getElementById('optShowJa'),
   tabDrill:    document.getElementById('tabDrill'),
   tabBrowse:   document.getElementById('tabBrowse'),
+  tabStory:    document.getElementById('tabStory'),
   drillView:   document.getElementById('drillView'),
   browseView:  document.getElementById('browseView'),
+  storyView:   document.getElementById('storyView'),
 };
 
 // ============================================================
@@ -3387,23 +3872,304 @@ function scrollBrowseTo(id) {
 }
 
 function switchView(view) {
+  // hide all views
+  el.drillView.classList.add('hidden');
+  el.browseView.classList.remove('active');
+  el.storyView.classList.remove('active');
+  el.tabDrill.classList.remove('active');
+  el.tabBrowse.classList.remove('active');
+  el.tabStory.classList.remove('active');
+
   if (view === 'browse') {
     stopPlaying();
+    stopStoryPlay();
     renderBrowseView();
-    el.drillView.classList.add('hidden');
     el.browseView.classList.add('active');
-    el.tabDrill.classList.remove('active');
     el.tabBrowse.classList.add('active');
     highlightBrowseCurrent();
-    // Wait for layout to compute, then scroll
     requestAnimationFrame(() => {
       requestAnimationFrame(() => scrollBrowseTo(state.currentId));
     });
+  } else if (view === 'story') {
+    stopPlaying();
+    renderStoryView();
+    el.storyView.classList.add('active');
+    el.tabStory.classList.add('active');
   } else {
+    stopStoryPlay();
     el.drillView.classList.remove('hidden');
-    el.browseView.classList.remove('active');
     el.tabDrill.classList.add('active');
-    el.tabBrowse.classList.remove('active');
+  }
+}
+
+// ============================================================
+// STORY VIEW
+// ============================================================
+const storyState = {
+  currentStoryId: null,
+  isPlaying: false,
+  playToken: 0,
+  currentSentenceIdx: 0,
+  repeat: 2,            // 各英文の繰り返し回数
+  gap: 3,               // 文・繰り返しの間隔(秒)
+};
+
+function renderStoryView() {
+  if (storyState.currentStoryId !== null) {
+    renderStoryReader(storyState.currentStoryId);
+  } else {
+    renderStoryList();
+  }
+}
+
+function renderStoryList() {
+  const parts = ['<div class="story-list">'];
+  const chapterMeta = [
+    { chapter: 1, title: "A New Beginning", subtitle: "新しい始まり — 海外赴任の決意", section: "初級 (構文 1-30)" },
+    { chapter: 2, title: "Finding My Way", subtitle: "自分の居場所を探して — 仕事と文化に慣れる日々", section: "中・上級 (構文 31-60)" },
+    { chapter: 3, title: "Friends and Free Days", subtitle: "友達と、何でもない休日 — カジュアルな会話の日々", section: "ATSU表現 Part 1 (構文 61-80)" },
+    { chapter: 4, title: "Around the Table", subtitle: "テーブルを囲んで — 会議と議論の中で", section: "ATSU表現 Part 2 (構文 81-100)" },
+    { chapter: 5, title: "The Turning Point", subtitle: "転機 — キャリアと人生の選択", section: "ATSU表現 Part 3 (構文 101-120)" },
+  ];
+
+  chapterMeta.forEach(meta => {
+    const story = STORIES.find(s => s.chapter === meta.chapter);
+    const locked = !story;
+    const cls = locked ? 'story-card locked' : 'story-card';
+    const dataAttr = locked ? '' : `data-story-id="${story.id}"`;
+    parts.push(`<div class="${cls}" ${dataAttr}>`);
+    parts.push(`  <div class="story-chapter">Chapter ${meta.chapter}${locked ? ' · COMING SOON' : ''}</div>`);
+    parts.push(`  <div class="story-title">${escapeHtml(story ? story.title : meta.title)}</div>`);
+    parts.push(`  <div class="story-subtitle">${escapeHtml(story ? story.subtitle : meta.subtitle)}</div>`);
+    parts.push(`  <div class="story-meta">`);
+    parts.push(`    <span>${escapeHtml(meta.section)}</span>`);
+    if (story) parts.push(`    <span>${story.sentences.length} 文</span>`);
+    parts.push(`  </div>`);
+    parts.push(`</div>`);
+  });
+
+  parts.push('</div>');
+  el.storyView.innerHTML = parts.join('\n');
+
+  el.storyView.querySelectorAll('.story-card:not(.locked)').forEach(card => {
+    card.addEventListener('click', () => {
+      const id = parseInt(card.dataset.storyId, 10);
+      storyState.currentStoryId = id;
+      storyState.currentSentenceIdx = 0;
+      renderStoryReader(id);
+    });
+  });
+}
+
+function renderStoryReader(storyId) {
+  const story = STORIES.find(s => s.id === storyId);
+  if (!story) return;
+
+  const parts = [];
+  parts.push(`<div class="story-reader active">`);
+  parts.push(`  <div class="story-reader-header">`);
+  parts.push(`    <button class="story-back" id="storyBackBtn">← 一覧に戻る</button>`);
+  parts.push(`    <div class="story-reader-title">${escapeHtml(story.title)}</div>`);
+  parts.push(`    <button class="story-play-all" id="storyPlayAllBtn" title="全文再生">`);
+  parts.push(`      <svg class="icon-play" viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`);
+  parts.push(`      <svg class="icon-pause" viewBox="0 0 24 24" width="18" height="18" fill="currentColor" style="display:none"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`);
+  parts.push(`    </button>`);
+  parts.push(`  </div>`);
+  parts.push(`  <div class="story-settings">`);
+  parts.push(`    <div class="option">`);
+  parts.push(`      <label for="storyRepeat">繰返:</label>`);
+  parts.push(`      <input id="storyRepeat" max="10" min="1" type="number" value="${storyState.repeat}">`);
+  parts.push(`    </div>`);
+  parts.push(`    <div class="option">`);
+  parts.push(`      <label for="storyGap">間隔(秒):</label>`);
+  parts.push(`      <input id="storyGap" max="10" min="0" step="0.5" type="number" value="${storyState.gap}">`);
+  parts.push(`    </div>`);
+  parts.push(`  </div>`);
+  parts.push(`  <div class="story-body" id="storyBody">`);
+  story.sentences.forEach((s, i) => {
+    parts.push(`    <div class="story-sentence" data-idx="${i}">`);
+    parts.push(`      <div class="story-sentence-icon">`);
+    parts.push(`        <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`);
+    parts.push(`      </div>`);
+    parts.push(`      <div class="story-sentence-text">`);
+    parts.push(`        <div class="story-sentence-en">${escapeHtml(s.en)}</div>`);
+    parts.push(`        <div class="story-sentence-ja${state.showJa ? '' : ' hidden'}">${escapeHtml(s.ja)}</div>`);
+    parts.push(`      </div>`);
+    parts.push(`    </div>`);
+  });
+  parts.push(`  </div>`);
+  parts.push(`</div>`);
+  el.storyView.innerHTML = parts.join('\n');
+
+  document.getElementById('storyBackBtn').addEventListener('click', () => {
+    stopStoryPlay();
+    storyState.currentStoryId = null;
+    renderStoryList();
+  });
+
+  document.getElementById('storyPlayAllBtn').addEventListener('click', () => {
+    if (storyState.isPlaying) {
+      stopStoryPlay();
+    } else {
+      startStoryPlay();
+    }
+  });
+
+  const repeatInput = document.getElementById('storyRepeat');
+  if (repeatInput) repeatInput.addEventListener('change', () => {
+    const v = parseInt(repeatInput.value, 10);
+    storyState.repeat = (isNaN(v) || v < 1) ? 1 : Math.min(v, 10);
+    repeatInput.value = storyState.repeat;
+  });
+  const gapInput = document.getElementById('storyGap');
+  if (gapInput) gapInput.addEventListener('change', () => {
+    const v = parseFloat(gapInput.value);
+    storyState.gap = (isNaN(v) || v < 0) ? 0 : Math.min(v, 10);
+    gapInput.value = storyState.gap;
+  });
+
+  el.storyView.querySelectorAll('.story-sentence').forEach(div => {
+    div.addEventListener('click', () => {
+      const idx = parseInt(div.dataset.idx, 10);
+      storyState.currentSentenceIdx = idx;
+      stopStoryPlay();
+      storyState.playToken++;
+      highlightStoryCurrent();
+      const st = STORIES.find(s => s.id === storyState.currentStoryId);
+      const sent = st && st.sentences[idx];
+      focusSidebarConstructions(sent && sent.c ? sent.c : []);
+      speakStorySentence(idx);
+    });
+  });
+}
+
+function focusSidebarConstructions(ids) {
+  // clear ALL existing highlights — both the previous story focus and the
+  // leftover drill-selection (.active) highlight — so only the tapped
+  // sentence's construction(s) remain highlighted
+  el.list.querySelectorAll('.construction-item.story-focus, .construction-item.active').forEach(n => {
+    n.classList.remove('story-focus', 'pulse', 'active');
+  });
+  if (!ids || !ids.length) return;
+
+  const apply = () => {
+    let first = null;
+    ids.forEach(id => {
+      const item = el.list.querySelector(`.construction-item[data-id="${id}"]`);
+      if (item) {
+        item.classList.add('story-focus');
+        // retrigger pulse animation
+        item.classList.remove('pulse');
+        void item.offsetWidth;
+        item.classList.add('pulse');
+        if (!first) first = id;
+      }
+    });
+    if (first !== null) scrollSidebarTo(first);
+  };
+
+  // if a search filter is hiding the target, clear it so the construction is visible
+  const firstItem = el.list.querySelector(`.construction-item[data-id="${ids[0]}"]`);
+  if (!firstItem && el.search.value) {
+    el.search.value = '';
+    renderList('');
+    // renderList re-applies .active to state.currentId — strip it again
+    el.list.querySelectorAll('.construction-item.active').forEach(n => n.classList.remove('active'));
+  }
+  apply();
+}
+
+function scrollSidebarTo(id) {
+  const target = el.list.querySelector(`.construction-item[data-id="${id}"]`);
+  if (!target) return;
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    const tRect = target.getBoundingClientRect();
+    const cRect = el.list.getBoundingClientRect();
+    el.list.scrollTop += (tRect.top - cRect.top) - cRect.height * 0.33;
+  }));
+}
+
+function highlightStoryCurrent() {
+  el.storyView.querySelectorAll('.story-sentence.current').forEach(n => n.classList.remove('current'));
+  const target = el.storyView.querySelector(`.story-sentence[data-idx="${storyState.currentSentenceIdx}"]`);
+  if (target) {
+    target.classList.add('current');
+    const body = document.getElementById('storyBody');
+    if (body) {
+      const targetRect = target.getBoundingClientRect();
+      const containerRect = body.getBoundingClientRect();
+      const delta = targetRect.top - containerRect.top;
+      body.scrollTop += delta - containerRect.height * 0.33;
+    }
+  }
+}
+
+async function speakStorySentence(idx) {
+  const story = STORIES.find(s => s.id === storyState.currentStoryId);
+  if (!story) return;
+  const s = story.sentences[idx];
+  if (!s) return;
+  await speak(s.en, 'en');
+}
+
+function waitStory(seconds, token) {
+  return new Promise((resolve) => {
+    const start = Date.now();
+    const check = () => {
+      if (token !== storyState.playToken) return resolve(); // cancelled
+      if (Date.now() - start >= seconds * 1000) return resolve();
+      setTimeout(check, 50);
+    };
+    check();
+  });
+}
+
+async function startStoryPlay() {
+  if (storyState.isPlaying) return;
+  storyState.isPlaying = true;
+  storyState.playToken++;
+  const myToken = storyState.playToken;
+  const btn = document.getElementById('storyPlayAllBtn');
+  if (btn) btn.classList.add('playing');
+  const playIcon = btn ? btn.querySelector('.icon-play') : null;
+  const pauseIcon = btn ? btn.querySelector('.icon-pause') : null;
+  if (playIcon) playIcon.style.display = 'none';
+  if (pauseIcon) pauseIcon.style.display = 'block';
+
+  const story = STORIES.find(s => s.id === storyState.currentStoryId);
+  if (!story) { stopStoryPlay(); return; }
+
+  while (storyState.isPlaying && myToken === storyState.playToken && storyState.currentSentenceIdx < story.sentences.length) {
+    highlightStoryCurrent();
+    const reps = storyState.repeat;
+    for (let r = 0; r < reps; r++) {
+      await speakStorySentence(storyState.currentSentenceIdx);
+      if (myToken !== storyState.playToken) break;
+      // 繰り返しの合間と、次の文へ移る前に間隔を入れる
+      if (storyState.gap > 0) await waitStory(storyState.gap, myToken);
+      if (myToken !== storyState.playToken) break;
+    }
+    if (myToken !== storyState.playToken) break;
+    storyState.currentSentenceIdx++;
+  }
+
+  if (myToken === storyState.playToken) {
+    storyState.currentSentenceIdx = 0;
+    stopStoryPlay();
+  }
+}
+
+function stopStoryPlay() {
+  storyState.isPlaying = false;
+  storyState.playToken++;
+  stopSpeak();
+  const btn = document.getElementById('storyPlayAllBtn');
+  if (btn) {
+    btn.classList.remove('playing');
+    const playIcon = btn.querySelector('.icon-play');
+    const pauseIcon = btn.querySelector('.icon-pause');
+    if (playIcon) playIcon.style.display = 'block';
+    if (pauseIcon) pauseIcon.style.display = 'none';
   }
 }
 
@@ -3495,91 +4261,12 @@ function renderExample() {
   const ex = exs[state.currentIdx];
   if (!ex) return;
 
-  // 新しい例文を表示するときは必ず「未公開」に戻す
-  state.prodRevealed = false;
-
   el.exCurrent.textContent = state.currentIdx + 1;
   el.exTotal.textContent = exs.length;
-  applyExampleVisibility();
+  el.exampleEn.textContent = ex.en;
+  el.exampleJa.textContent = ex.ja;
+  el.exampleJa.classList.toggle('hidden', !state.showJa);
   renderProgress();
-}
-
-// 現在のモード／公開状態に応じて英文・和文の表示を更新
-function applyExampleVisibility() {
-  const ex = examples()[state.currentIdx];
-  if (!ex) return;
-  const isProd = el.optMode.value === 'prod';
-
-  if (isProd) {
-    // 和文がプロンプトなので常に表示
-    el.exampleJa.textContent = ex.ja;
-    el.exampleJa.classList.remove('hidden');
-    if (state.prodRevealed) {
-      el.exampleEn.textContent = ex.en;
-      el.exampleEn.classList.remove('prod-masked');
-    } else {
-      el.exampleEn.textContent = '🗣 英語で言ってみよう';
-      el.exampleEn.classList.add('prod-masked');
-    }
-  } else {
-    el.exampleEn.textContent = ex.en;
-    el.exampleEn.classList.remove('prod-masked');
-    el.exampleJa.textContent = ex.ja;
-    el.exampleJa.classList.toggle('hidden', !state.showJa);
-  }
-}
-
-// モード切替時：関連コントロールの表示とヒントを更新
-function updateProdUI() {
-  const isProd = el.optMode.value === 'prod';
-  el.optRevealWrap.classList.toggle('hidden-opt', !isProd);
-  el.optShowJa.classList.toggle('hidden-opt', isProd);
-  el.prodHint.classList.remove('show');
-  el.prodHint.innerHTML = '';
-}
-
-// 和文プロンプトを読み上げ
-function speakJaPrompt() {
-  const ex = examples()[state.currentIdx];
-  if (!ex) return;
-  stopSpeak();
-  state.playToken++;
-  speak(ex.ja, 'ja');
-}
-
-// このモードの設定値（繰返＝英語の回数 / 間隔＝沈黙秒数）
-function prodSettings() {
-  return {
-    repeat: Math.max(1, parseInt(el.optRepeat.value, 10) || 1),
-    gap: parseFloat(el.optGap.value) || 0,
-  };
-}
-
-// 英語を「繰返」回・間に「間隔」秒の沈黙を入れて読み上げ（手動シャドーイング用）
-async function prodPlayEn() {
-  const ex = examples()[state.currentIdx];
-  if (!ex) return;
-  stopSpeak();
-  state.playToken++;
-  const t = state.playToken;
-  const { repeat, gap } = prodSettings();
-  for (let r = 0; r < repeat; r++) {
-    if (t !== state.playToken) return;
-    el.exampleEn.classList.add('speaking');
-    await speak(ex.en, 'en');
-    el.exampleEn.classList.remove('speaking');
-    if (t !== state.playToken) return;
-    if (r < repeat - 1) await wait(gap, t); // 英語の後の沈黙
-  }
-}
-
-// 手動めくりの操作：未公開なら答えを出して読み上げ、公開済みなら再生（シャドーイング）
-function prodManualAction() {
-  if (!state.prodRevealed) {
-    state.prodRevealed = true;
-    applyExampleVisibility();
-  }
-  prodPlayEn();
 }
 
 // ============================================================
@@ -3591,7 +4278,6 @@ function goNext() {
   if (state.currentIdx < exs.length - 1) {
     state.currentIdx++;
     renderExample();
-    if (el.optMode.value === 'prod') speakJaPrompt();
   }
 }
 function goPrev() {
@@ -3599,7 +4285,6 @@ function goPrev() {
   if (state.currentIdx > 0) {
     state.currentIdx--;
     renderExample();
-    if (el.optMode.value === 'prod') speakJaPrompt();
   }
 }
 function shuffle() {
@@ -3772,10 +4457,6 @@ async function speakCurrent() {
 
 async function startPlaying() {
   if (state.isPlaying) return;
-  // 手動めくりモードでは自動再生しない（▶/PはtogglePlayで「次へ」に割当）
-  if (el.optMode.value === 'prod' && el.optReveal.value === 'manual') {
-    return;
-  }
   state.isPlaying = true;
   state.playToken++;
   const myToken = state.playToken;
@@ -3787,36 +4468,13 @@ async function startPlaying() {
   while (state.isPlaying && myToken === state.playToken) {
     const exs = examples();
     if (state.currentIdx >= exs.length) break;
-    const isProd = el.optMode.value === 'prod';
 
-    if (isProd) {
-      // 1. 和文プロンプト（英語は隠す）
-      state.prodRevealed = false;
-      applyExampleVisibility();
-      await speak(exs[state.currentIdx].ja, 'ja');
+    // Speak current example, repeat times
+    for (let r = 0; r < repeat; r++) {
       if (myToken !== state.playToken) break;
-      // 2. 日本語の後の沈黙（「間隔(秒)」）＝自分で英語を言う時間
+      await speakCurrent();
+      if (myToken !== state.playToken) break;
       await wait(gap, myToken);
-      if (myToken !== state.playToken) break;
-      // 3. 正解を表示し、英語を「繰返」回・各回の後に「間隔」秒の沈黙
-      state.prodRevealed = true;
-      applyExampleVisibility();
-      for (let r = 0; r < repeat; r++) {
-        if (myToken !== state.playToken) break;
-        el.exampleEn.classList.add('speaking');
-        await speak(exs[state.currentIdx].en, 'en');
-        el.exampleEn.classList.remove('speaking');
-        if (myToken !== state.playToken) break;
-        await wait(gap, myToken); // 英語の後の沈黙
-      }
-    } else {
-      // Speak current example, repeat times
-      for (let r = 0; r < repeat; r++) {
-        if (myToken !== state.playToken) break;
-        await speakCurrent();
-        if (myToken !== state.playToken) break;
-        await wait(gap, myToken);
-      }
     }
     if (myToken !== state.playToken) break;
 
@@ -3884,16 +4542,6 @@ function stopPlaying() {
 }
 
 function togglePlay() {
-  // 日→自分→英の手動めくり：▶/Pは段階送り
-  //  未公開 → 英語を表示して再生 / 公開済み → 次の文（日本語が流れる）
-  if (el.optMode.value === 'prod' && el.optReveal.value === 'manual') {
-    if (!state.prodRevealed) {
-      prodManualAction();
-    } else {
-      goNext();
-    }
-    return;
-  }
   if (state.isPlaying) stopPlaying();
   else startPlaying();
 }
@@ -3905,10 +4553,6 @@ el.search.addEventListener('input', () => renderList(el.search.value));
 el.btnPrev.addEventListener('click', goPrev);
 el.btnNext.addEventListener('click', goNext);
 el.btnSpeak.addEventListener('click', async () => {
-  if (el.optMode.value === 'prod' && !state.isPlaying) {
-    prodManualAction();
-    return;
-  }
   stopPlaying();
   state.playToken++;
   await speakCurrent();
@@ -3919,40 +4563,17 @@ el.btnRandomC.addEventListener('click', () => jumpToRandomConstruction());
 
 el.tabDrill.addEventListener('click', () => switchView('drill'));
 el.tabBrowse.addEventListener('click', () => switchView('browse'));
+el.tabStory.addEventListener('click', () => switchView('story'));
 
 el.optShowJa.addEventListener('click', () => {
   state.showJa = !state.showJa;
   el.optShowJa.classList.toggle('on', state.showJa);
   el.exampleJa.classList.toggle('hidden', !state.showJa);
+  // also toggle in story view if active
+  el.storyView.querySelectorAll('.story-sentence-ja').forEach(node => {
+    node.classList.toggle('hidden', !state.showJa);
+  });
 });
-
-// モードごとに繰返/間隔の設定を記憶（prodは専用デフォルト：繰返1・間隔5）
-const modeSettings = {
-  normal: { repeat: '5', gap: '5' },
-  prod:   { repeat: '2', gap: '5' },
-};
-function modeGroup(mode) { return mode === 'prod' ? 'prod' : 'normal'; }
-let currentSettingGroup = modeGroup(el.optMode.value);
-
-el.optMode.addEventListener('change', () => {
-  stopPlaying();
-  state.prodRevealed = false;
-
-  // 設定グループが変わったら、現在値を保存して新グループの値を読み込む
-  const newGroup = modeGroup(el.optMode.value);
-  if (newGroup !== currentSettingGroup) {
-    modeSettings[currentSettingGroup].repeat = el.optRepeat.value;
-    modeSettings[currentSettingGroup].gap = el.optGap.value;
-    el.optRepeat.value = modeSettings[newGroup].repeat;
-    el.optGap.value = modeSettings[newGroup].gap;
-    currentSettingGroup = newGroup;
-  }
-
-  updateProdUI();
-  renderExample();
-  if (el.optMode.value === 'prod') speakJaPrompt();
-});
-el.optReveal.addEventListener('change', updateProdUI);
 
 // keyboard shortcuts
 document.addEventListener('keydown', (e) => {
@@ -3968,19 +4589,14 @@ document.addEventListener('keydown', (e) => {
       break;
     case ' ':
       e.preventDefault();
-      if (el.optMode.value === 'prod' && !state.isPlaying) {
-        prodManualAction();
-      } else {
-        stopPlaying();
-        state.playToken++;
-        speakCurrent();
-      }
+      stopPlaying();
+      state.playToken++;
+      speakCurrent();
       break;
     case 'j':
     case 'J':
       e.preventDefault();
-      if (el.optMode.value === 'prod') speakJaPrompt();
-      else el.optShowJa.click();
+      el.optShowJa.click();
       break;
     case 'p':
     case 'P':
@@ -4010,7 +4626,6 @@ document.addEventListener('visibilitychange', () => {
 // ============================================================
 renderList();
 renderConstruction();
-updateProdUI();
 
 </script>
 </body>
